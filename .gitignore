@@ -1,0 +1,6 @@
+/.vagrant
+/notes
+boostnote.json
+*.mdj
+*.vp
+/ui/resources
