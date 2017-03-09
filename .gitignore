@@ -1,6 +1,9 @@
+/server/node_modules/
 /.vagrant
 /notes
 boostnote.json
 *.mdj
 *.vp
 /ui/resources
+/server/**/*.js
+/server/server.js

@@ -1,18 +1,25 @@
-<!--
-  Generated template for the PortfolioList page.
-
-  See http://ionicframework.com/docs/v2/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
-
-  <ion-navbar>
-    <ion-title>portfolio-list</ion-title>
-  </ion-navbar>
-
+	<ion-navbar>
+		<ion-title>{{title}}</ion-title>
+	</ion-navbar>
 </ion-header>
-
-
 <ion-content padding>
-
+	<ion-list>
+		<ion-item *ngFor="let portfolio of portfolioList" color="{{settingsColor(portfolio)}}" (click)="showPortfolio(portfolio)" (press)="deletePortfolio(portfolio)">
+			<!-- ポートフォリオ名 -->
+			<span>
+				{{portfolio.name}}
+			</span>
+			<!-- ポートフォリオ損得 -->
+			<span>
+				損益:{{portfolio.profit | number}}円
+			</span>
+		</ion-item>
+		<!-- 追加ボタン -->
+		<ion-fab center>
+			<button ion-fab mini color="primary" (click)="addPortfolio()" item-right>
+				<ion-icon name="add"></ion-icon>
+			</button>
+		</ion-fab>
+	</ion-list>
 </ion-content>

@@ -1,7 +1,7 @@
 
 -- PORTFOLIO DATA
-INSERT INTO portfolio(no, name) VALUES(1, '持株');
-INSERT INTO portfolio(no, name) VALUES(2, 'お気に入り');
+INSERT INTO portfolio(no, name, profit) VALUES(1, '持株', 100);
+INSERT INTO portfolio(no, name, profit) VALUES(2, 'お気に入り', 100);
 
 
 -- BRAND DATA

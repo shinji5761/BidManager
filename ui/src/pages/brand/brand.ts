@@ -8,15 +8,15 @@ import { NavController, NavParams } from 'ionic-angular';
   Ionic pages and navigation.
 */
 @Component({
-  selector: 'page-brand',
-  templateUrl: 'brand.html'
+	selector: 'page-brand',
+	templateUrl: 'brand.html'
 })
 export class BrandPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {}
+	constructor(public navCtrl: NavController, public navParams: NavParams) {}
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad BrandPage');
-  }
+	ionViewDidLoad() {
+		console.log('ionViewDidLoad BrandPage');
+	}
 
 }

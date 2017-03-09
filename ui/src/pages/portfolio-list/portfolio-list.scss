@@ -1,3 +1,18 @@
-page-portfolio-list {
+$portfolio-profit-back-color: rgba(20, 130, 180, 0.5);
+$portfolio-loss-back-color: rgba(220, 40, 10, 0.8);
 
+
+page-portfolio-list {
+	ion-content ion-list {
+		ion-item {
+			span:nth-of-type(1) {
+				float: left;
+				padding-left: 30px;
+			}
+			span:nth-of-type(2) {
+				float: right;
+				padding-right: 30px;
+			}
+		}
+	}
 }

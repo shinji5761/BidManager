@@ -1,22 +1,28 @@
+/**
+ * @author shinji5761@gmail.com
+ * 
+ */
+
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 
-/*
-  Generated class for the Home page.
 
-  See http://ionicframework.com/docs/v2/components/#navigation for more info on
-  Ionic pages and navigation.
-*/
 @Component({
-  selector: 'page-home',
-  templateUrl: 'home.html'
+	selector: 'page-home',
+	templateUrl: 'home.html'
 })
 export class HomePage {
+	
+	// === タイトル ===
+	title: string = 'ホーム';
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {}
+	constructor(
+		public _navCtrl: NavController,
+		public _navParams: NavParams
+	) {}
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad HomePage');
-  }
+	ionViewDidLoad() {
+		console.log('ionViewDidLoad HomePage');
+	}
 
 }

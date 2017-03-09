@@ -9,7 +9,8 @@ GRANT ALL ON bid_manager.* TO admin;
 -- CREATE PORTFOLIO TABLE 
 CREATE TABLE bid_manager.portfolio(
 	no INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	name VARCHAR(30)
+	name VARCHAR(30),
+	profit INT
 );
 
 -- CREATE BRAND TABLE
