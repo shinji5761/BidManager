@@ -35,14 +35,6 @@ export class Dao {
 	 */
 	private DATABASE: string = 'bid_manager';
 
-	/**
-	 * URL
-	 * @private
-	 * @type {string}
-	 */
-	private url: string ='';
-
-
 	public const :DaoConst;
 
 	/**
@@ -54,10 +46,7 @@ export class Dao {
 	/**
 	 * @constructor
 	 */
-	constructor(url: string) {
-		// urlの設定
-		this.url = url;
-
+	constructor() {
 		// MySQL 接続
 		this.connection = mysql.createConnection(
 			{
@@ -71,15 +60,6 @@ export class Dao {
 		this.const = new DaoConst();
 	}
 
-	/**
-	 * エラー処理
-	 * @param {string} eMessage
-	 * @param {number} status 
-	 */
-	public isError(eMessage, status, response) :void {
-		response.status(status).send(eMessage);
-	}
-
 	
 	/**
 	 * Getter(connection)
@@ -91,27 +71,38 @@ export class Dao {
 	}
 
 	/**
-	 * Getter(url)
-	 * @return {string} url
-	 */
-	public getUrl() :string {
-		return this.url;
-	}
-
-	/**
 	 * ポートフォリオ Get
-	 * @param req 
-	 * @param res 
+	 * @param {Function} onSuccess 
+	 * @param {Function} onFail 
+	 * @param {Object} caller
 	 */
-	public get(req, res): void {
+	public get(onSuccess, onFail, caller): void {
 	}
 
 	/**
 	 * ポートフォリオ Post
-	 * @param req 
-	 * @param res 
+	 * @param {Function} onSuccess 
+	 * @param {Function} onFail 
+	 * @param {Object} caller
 	 */
-	public post(req, res): void {
+	public post(onSuccess, onFail, caller): void {
 	}
 
+	/**
+	 * update
+	 * @param {Function} onSuccess 
+	 * @param {Function} onFail 
+	 * @param {Object} caller
+	 */
+	public update(onSuccess, onFail, caller) :void {
+	}
+
+	/**
+	 * delete
+	 * @param {Function} onSuccess 
+	 * @param {Function} onFail 
+	 * @param {Object} caller
+	 */
+	public delete(onSuccess, onFail, caller) :void {
+	}
 }

@@ -15,9 +15,11 @@ CREATE TABLE bid_manager.portfolio(
 
 -- CREATE BRAND TABLE
 CREATE TABLE bid_manager.brand(
-	no INT,
+	no INT NOT NULL,
 	code INT NOT NULL,
-	name VARCHAR(30)
+	name VARCHAR(30),
+	PRIMARY KEY (no, code),
+	FOREIGN KEY (no) REFERENCES portfolio(no)
 );
 
 -- CREATE STOCK TABLE
@@ -25,7 +27,8 @@ CREATE TABLE bid_manager.stock(
 	no INT NOT NULL,
 	code INT NOT NULL,
 	price INT,
-	stock INT
+	stock INT,
+	FOREIGN KEY (no, code) REFERENCES brand(no, code)
 );
 
 -- CREATE ONE_DAY TABLE
@@ -37,4 +40,10 @@ CREATE TABLE bid_manager.one_day(
 	low FLOAT,
 	close FLOAT,
 	volume INT 
+);
+
+-- CREATE PURCHASES VIEW
+CREATE VIEW bid_manager.purchases as (
+	SELECT brand.no, brand.code, brand.name, stock.price, stock.stock FROM bid_manager.brand
+	INNER JOIN bid_manager.stock ON brand.no = stock.no && brand.code = stock.code
 );

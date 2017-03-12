@@ -11,7 +11,8 @@ import { PortfolioApiService } from './PortfolioApiService';
 @Injectable()
 export class ApiService {
 	/**
-	 * URL
+	 * URL(http://････)
+	 * @type {string}
 	 */
 	public host: string = 'http://192.168.33.101:18456/'
 

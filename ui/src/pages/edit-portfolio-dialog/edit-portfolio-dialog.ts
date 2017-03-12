@@ -1,22 +1,92 @@
-import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { Component, OnInit } from '@angular/core';
+import { NavController, NavParams, ViewController } from 'ionic-angular';
 
-/*
-  Generated class for the EditPortfolioDialog page.
+// === Entity ===
+import { PortfolioEntity } from '../../entity/PortfolioEntity';
+import { ButtonEntity } from '../../entity/ButtonEntity';
 
-  See http://ionicframework.com/docs/v2/components/#navigation for more info on
-  Ionic pages and navigation.
-*/
+// === API ===
+import { ApiService } from '../../providers/api/api-service';
+import { PortfolioApiService } from '../../providers/api/PortfolioApiService';
+
+
 @Component({
-  selector: 'page-edit-portfolio-dialog',
-  templateUrl: 'edit-portfolio-dialog.html'
+	selector: 'page-edit-portfolio-dialog',
+	templateUrl: 'edit-portfolio-dialog.html'
 })
-export class EditPortfolioDialogPage {
+export class EditPortfolioDialogPage implements OnInit {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {}
+	/**
+	 * タイトル
+	 * @private
+	 * @type {string}
+	 */
+	private title :string;
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad EditPortfolioDialogPage');
-  }
+	/**
+	 * ポートフォリオ
+	 * @type {PortfolioEntity}
+	 */
+	private portfolio :PortfolioEntity;
+	
+	/**
+	 * API
+	 * @private
+	 * @type {PortfolioApiService}
+	 */
+	private api :PortfolioApiService;
+	
 
+	/**
+	 * ボタンオブジェクト
+	 */
+	private buttons :Array<any> = [
+		new ButtonEntity('保存', 'primary', () => { this.save(); }, function(){}),
+		new ButtonEntity('キャンセル', 'danger',() => { this.cancel();}, function(){})
+	];
+
+	/**
+	 * @constructor
+	 * @param _navCtrl 
+	 * @param _navParams 
+	 * @param _viewCtrl 
+	 * @param _api 
+	 */
+	constructor(
+		public _navCtrl: NavController,
+		public _navParams: NavParams,
+		private _viewCtrl: ViewController,
+		private _api: ApiService
+	) {}
+
+	/**
+	 * 初期化
+	 * @public
+	 * @return {void}
+	 */
+	public ngOnInit() :void {
+		this.title = this._navParams.get('title');
+		this.portfolio = this._navParams.get('portfolio');
+		this.api = this._api.getPortfolioApiService();
+	}
+
+
+	/**
+	 * ポートフォィオを追加する
+	 * @private
+	 * @return {void}
+	 */
+	private save() :void {
+		alert('save');
+	}
+
+
+	/**
+	 * モーダルを閉じる
+	 * @private
+	 * @return {void}
+	 */
+	private cancel() :void {
+		this._viewCtrl.dismiss();
+	}
 }

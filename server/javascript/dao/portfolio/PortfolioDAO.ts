@@ -1,5 +1,5 @@
 /**
- * @fileoverview PortfolioDAO.ts
+ * @fileoverview PortfolioDao.ts
  * @author shinji5761
  */
 
@@ -9,48 +9,51 @@ import { Portfolio } from '../../entity/portfolio';
 
 /**
  * ポートフォリオクラス
- * @class {PortfolioDAO} PortfolioDAO
+ * @class {PortfolioDao} PortfolioDao
  */
-export class PortfolioDAO extends Dao {
+export class PortfolioDao extends Dao {
 
 	/**
 	 * @constructor
 	 */
 	constructor(){
-		super('/portfolio');
+		super();
 	};
 
 	/**
 	 * ポートフォリオ Get
-	 * @param req 
-	 * @param res 
+	 * @param {Function} onSuccess 
+	 * @param {Function} onFail 
+	 * @param {Object} caller
 	 */
-	public get(req, res): void {
+	public get(onSuccess, onFail, caller): void {
 		// サーバー接続
 		this.getConnection().query(
 			'SELECT * FROM portfolio',
 			[],
-			(error, result, fieleds) => {
+			(error, data, fieleds) => {
+				// エラーが発生した場合
 				if(error) {
-					this.isError(error, this.const.ERROR_CODE_OTHER, res);
+					onFail.call(caller, error, this.const.ERROR_CODE_OTHER);
+				}
+				// レコードが空の場合
+				else if(data.length == 0) {
+					onFail.call(caller, error, this.const.ERROR_CODE_NOT_FOUND);
 					return;
 				}
-				else if(result.length == 0) {
-					this.isError(error, this.const.ERROR_CODE_NOT_FOUND, res);
-					return;
-				}
-				res.status(this.const.SUCCESS_CODE);
-				res.send(result);
+				// 成功の場合
+				onSuccess.call(caller, data);
 			}
 		);
 	}
 
 	/**
 	 * ポートフォリオ Post
-	 * @param req 
-	 * @param res 
+	 * @param {Function} onSuccess 
+	 * @param {Function} onFail 
+	 * @param {Object} caller
 	 */
-	public post(req, res): void {
+	public post(onSuccess, onFail, caller): void {
 
 	}
 }

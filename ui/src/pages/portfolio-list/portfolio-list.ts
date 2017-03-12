@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams, ModalController, LoadingController } from 'ionic-angular';
 
+
+// === Dialog ===
+import { EditPortfolioDialogPage } from '../edit-portfolio-dialog/edit-portfolio-dialog';
 
 // === Entity ===
 import { PortfolioEntity } from '../../entity/PortfolioEntity';
+import { BrandEntity } from '../../entity/BrandEntity';
 
 // === API ===
 import { ApiService } from '../../providers/api/api-service';
@@ -35,6 +39,8 @@ export class PortfolioListPage implements OnInit {
 	constructor(
 		public _navCtrl: NavController,
 		public _navParams: NavParams,
+		public _modalCtrl: ModalController,
+		public _lodingCtrl: LoadingController,
 		public _api: ApiService
 	) {}
 
@@ -48,6 +54,10 @@ export class PortfolioListPage implements OnInit {
 		this.runGetPortfolio();
 	}
 
+	/**
+	 * ポートフォリオ 取得処理
+	 * @return {void}
+	 */
 	public runGetPortfolio() :void {
 		// ポートフォリオの取得
 		this.api.query().subscribe(
@@ -61,9 +71,9 @@ export class PortfolioListPage implements OnInit {
 	 * @param {Array<Object>} result api取得結果
 	 */
 	public createPortfolio(result) :void {
-		// ポートフォィオの設定
+		// ポートフォリオの設定(Brandは空)
 		for(let index in result) {
-			this.portfolioList.push(new PortfolioEntity(result[index].no, result[index].name, result[index].profit));
+			this.portfolioList.push(new PortfolioEntity(result[index].no, result[index].name, result[index].profit, new Array<BrandEntity>()));
 		}
 	}
 
@@ -72,7 +82,16 @@ export class PortfolioListPage implements OnInit {
 	 * @return {void}
 	 */
 	public addPortfolio() :void {
-		alert('addPortfolio');
+		// パラメータの設定
+		let portfolio = new PortfolioEntity(null, '', 0, new Array<BrandEntity>());
+		let title = 'ポートフォリオの追加';
+		let inputData = {'portfolio': portfolio, 'title': title};
+
+		// ダイアログの設定
+		let modal = this._modalCtrl.create(EditPortfolioDialogPage, inputData);
+
+		// Dialog展開
+		modal.present();
 	}
 
 	/**
@@ -99,6 +118,6 @@ export class PortfolioListPage implements OnInit {
 	 * @return {string} 色
 	 */
 	public settingsColor(portfolio: PortfolioEntity) :string {
-		return portfolio.getProfit() > 0 ? 'primary' : 'danger';
+		return portfolio.getProfit() > 0 ? 'up' : 'down';
 	}
 }

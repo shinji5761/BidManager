@@ -3,7 +3,7 @@ import jsonp = require('jsonp-express');
 import bodyParser = require('body-parser');
 
 // === API ===
-import { PortfolioDAO } from './javascript/dao/portfolio/PortfolioDAO';
+import { PortfolioController } from './javascript/controller/portfolio/PortfolioController';
 
 /**
  * メインクラス
@@ -15,7 +15,7 @@ class Main {
 	app;
 
 	// api
-	api: Object = {};
+	controller: Object = {};
 
 	/**
 	 * @constructor
@@ -23,7 +23,7 @@ class Main {
 	constructor() {
 		this.app = express();
 
-		this.api['portfolio'] = new PortfolioDAO();
+		this.controller['portfolio'] = new PortfolioController();
 
 		this.settingMiddleware();
 
@@ -55,8 +55,8 @@ class Main {
 		});
 
 		///////////////////// Portfolio /////////////////////
-		this.app.get(this.api['portfolio'].getUrl(), (req, res) => this.api['portfolio'].get(req, res));
-		this.app.post(this.api['portfolio'].getUrl(), (req, res) => this.api['portfolio'].post(req, res));
+		this.app.get(this.controller['portfolio'].getUrl(), (req, res) => this.controller['portfolio'].get(req, res));
+		this.app.post(this.controller['portfolio'].getUrl(), (req, res) => this.controller['portfolio'].post(req, res));
 	}
 
 

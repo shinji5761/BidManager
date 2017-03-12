@@ -4,7 +4,7 @@ var express = require("express");
 var jsonp = require("jsonp-express");
 var bodyParser = require("body-parser");
 // === API ===
-var PortfolioDAO_1 = require("./javascript/dao/portfolio/PortfolioDAO");
+var PortfolioController_1 = require("./javascript/controller/portfolio/PortfolioController");
 /**
  * メインクラス
  * @class
@@ -15,9 +15,9 @@ var Main = (function () {
      */
     function Main() {
         // api
-        this.api = {};
+        this.controller = {};
         this.app = express();
-        this.api['portfolio'] = new PortfolioDAO_1.PortfolioDAO();
+        this.controller['portfolio'] = new PortfolioController_1.PortfolioController();
         this.settingMiddleware();
         this.settingApi();
         this.start();
@@ -45,8 +45,8 @@ var Main = (function () {
             res.send('HelloWorld');
         });
         ///////////////////// Portfolio /////////////////////
-        this.app.get(this.api['portfolio'].getUrl(), function (req, res) { return _this.api['portfolio'].get(req, res); });
-        this.app.post(this.api['portfolio'].getUrl(), function (req, res) { return _this.api['portfolio'].post(req, res); });
+        this.app.get(this.controller['portfolio'].getUrl(), function (req, res) { return _this.controller['portfolio'].get(req, res); });
+        this.app.post(this.controller['portfolio'].getUrl(), function (req, res) { return _this.controller['portfolio'].post(req, res); });
     };
     /**
      * サーバーの開始

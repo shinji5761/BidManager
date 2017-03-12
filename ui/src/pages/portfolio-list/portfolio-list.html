@@ -5,7 +5,7 @@
 </ion-header>
 <ion-content padding>
 	<ion-list>
-		<ion-item *ngFor="let portfolio of portfolioList" color="{{settingsColor(portfolio)}}" (click)="showPortfolio(portfolio)" (press)="deletePortfolio(portfolio)">
+		<ion-item *ngFor="let portfolio of portfolioList" (click)="showPortfolio(portfolio)" (press)="deletePortfolio(portfolio)">
 			<!-- ポートフォリオ名 -->
 			<span>
 				{{portfolio.name}}
