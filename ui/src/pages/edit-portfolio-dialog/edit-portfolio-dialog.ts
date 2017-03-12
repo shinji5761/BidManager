@@ -6,7 +6,7 @@ import { PortfolioEntity } from '../../entity/PortfolioEntity';
 import { ButtonEntity } from '../../entity/ButtonEntity';
 
 // === API ===
-import { ApiService } from '../../providers/api/api-service';
+import { ApiAccessor } from '../../providers/api/api-accessor';
 import { PortfolioApiService } from '../../providers/api/PortfolioApiService';
 
 
@@ -39,8 +39,9 @@ export class EditPortfolioDialogPage implements OnInit {
 
 	/**
 	 * ボタンオブジェクト
+	 * @type {ButtonEntity}
 	 */
-	private buttons :Array<any> = [
+	private buttons :Array<ButtonEntity> = [
 		new ButtonEntity('保存', 'primary', () => { this.save(); }, function(){}),
 		new ButtonEntity('キャンセル', 'danger',() => { this.cancel();}, function(){})
 	];
@@ -56,7 +57,7 @@ export class EditPortfolioDialogPage implements OnInit {
 		public _navCtrl: NavController,
 		public _navParams: NavParams,
 		private _viewCtrl: ViewController,
-		private _api: ApiService
+		private _accessor: ApiAccessor
 	) {}
 
 	/**
@@ -67,7 +68,9 @@ export class EditPortfolioDialogPage implements OnInit {
 	public ngOnInit() :void {
 		this.title = this._navParams.get('title');
 		this.portfolio = this._navParams.get('portfolio');
-		this.api = this._api.getPortfolioApiService();
+		this.api = this._accessor.getPurchasesApiService();
+
+		
 	}
 
 

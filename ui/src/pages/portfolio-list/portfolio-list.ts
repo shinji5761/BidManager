@@ -10,7 +10,7 @@ import { PortfolioEntity } from '../../entity/PortfolioEntity';
 import { BrandEntity } from '../../entity/BrandEntity';
 
 // === API ===
-import { ApiService } from '../../providers/api/api-service';
+import { ApiAccessor } from '../../providers/api/api-accessor';
 import { PortfolioApiService } from '../../providers/api/PortfolioApiService';
 
 @Component({
@@ -41,7 +41,7 @@ export class PortfolioListPage implements OnInit {
 		public _navParams: NavParams,
 		public _modalCtrl: ModalController,
 		public _lodingCtrl: LoadingController,
-		public _api: ApiService
+		public _accessor: ApiAccessor
 	) {}
 
 	/**
@@ -50,7 +50,7 @@ export class PortfolioListPage implements OnInit {
 	 */
 	ngOnInit() :void {
 		// APIの取得
-		this.api = this._api.getPortfolioApiService();
+		this.api = this._accessor.getPortfolioApiService();
 		this.runGetPortfolio();
 	}
 

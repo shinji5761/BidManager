@@ -2,11 +2,11 @@ import { Http } from '@angular/http';
 import { ApiService } from './api-service';
 
 /**
- * PortfolioApiService
+ * PurchasesApiService
  * @class
  * @extends ApiService
  */
-export class PortfolioApiService extends ApiService {
+export class PurchasesApiService extends ApiService {
 
 	/**
 	 * @constructor

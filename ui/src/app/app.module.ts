@@ -16,7 +16,8 @@ import { EditPortfolioDialogPage } from '../pages/edit-portfolio-dialog/edit-por
 
 
 // === API ===
-import { ApiService } from '../providers/api/api-service';
+import { ApiAccessor } from '../providers/api/api-accessor';
+// import { ApiService } from '../providers/api/api-service';
 // import { PortfolioApiService } from '../providers/api/PortfolioApiService';
 
 @NgModule({
@@ -44,6 +45,6 @@ import { ApiService } from '../providers/api/api-service';
 		BrandPage,
 		EditPortfolioDialogPage,
 	],
-	providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, ApiService]
+	providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, ApiAccessor]
 })
 export class AppModule {}
