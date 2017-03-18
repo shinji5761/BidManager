@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController, NavParams, ModalController, LoadingController } from 'ionic-angular';
 
+// === Dialog ===
+import { PortfolioPage } from '../portfolio/portfolio';
 
 // === Dialog ===
 import { EditPortfolioDialogPage } from '../edit-portfolio-dialog/edit-portfolio-dialog';
@@ -18,6 +20,13 @@ import { PortfolioApiService } from '../../providers/api/PortfolioApiService';
 	templateUrl: 'portfolio-list.html'
 })
 export class PortfolioListPage implements OnInit {
+
+	/**
+	 * タイトル
+	 * @private 
+	 * @type {string}
+	 */
+	private title :string = 'ポートフォリオ';
 
 	/**
 	 * ポートフォリオリスト
@@ -90,6 +99,12 @@ export class PortfolioListPage implements OnInit {
 		// ダイアログの設定
 		let modal = this._modalCtrl.create(EditPortfolioDialogPage, inputData);
 
+		// ダイアログ終了イベントの設定
+		modal.onDidDismiss((data) => {
+			// ポートフォリオを初期化
+			this.ngOnInit();
+		});
+
 		// Dialog展開
 		modal.present();
 	}
@@ -109,7 +124,8 @@ export class PortfolioListPage implements OnInit {
 	 */
 	public showPortfolio(portfolio: PortfolioEntity) :void {
 		console.log('showPortfolio');
-		// alert('showPortfolio');
+		let inputData = {'portfolio': portfolio};
+		this._navCtrl.push(PortfolioPage, inputData);
 	}
 
 	/**

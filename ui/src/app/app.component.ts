@@ -23,9 +23,10 @@ export class MyApp implements OnInit {
 
 	/**
 	 * メニューリスト
+	 * @private
 	 * @type {Array<MenuEntity>}
 	 */
-	menuList: Array<MenuEntity> = [];
+	private menuList: Array<MenuEntity> = [];
 
 
 	/**
@@ -59,10 +60,11 @@ export class MyApp implements OnInit {
 
 	/**
 	 * ページ切り替え
+	 * @private
 	 * @param {Component} page 遷移先のページオブジェクト
 	 * @return {void}
 	 */
-	changePage(page: Component): void {
+	private changePage(page: Component): void {
 		this.content.push(page);
 		this._menuCtrl.close();
 	}

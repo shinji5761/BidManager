@@ -157,7 +157,7 @@ export class EditPortfolioDialogPage implements OnInit {
 	 */
 	private onSuccessSave(res :any) :void {
 		// toast
-		let toastOption = new ToastOptionEntity('保存しました｡', 2000);
+		let toastOption = new ToastOptionEntity('保存しました｡', 2000, 'top');
 		let toast = this._toastCtrl.create(toastOption.getOption());
 		toast.present();
 
@@ -172,7 +172,7 @@ export class EditPortfolioDialogPage implements OnInit {
 	 */
 	private onFailSave(error :any) :void {
 		// toast
-		let toastOption = new ToastOptionEntity('保存に失敗しました｡', 2000);
+		let toastOption = new ToastOptionEntity('保存に失敗しました｡', 2000, 'top');
 		let toast = this._toastCtrl.create(toastOption.getOption());
 		toast.present();
 	}

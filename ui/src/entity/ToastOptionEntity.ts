@@ -16,9 +16,10 @@ export class ToastOptionEntity {
 	 * @param {string} message
 	 * @param {number} duration
 	 */
-	constructor(message :string, duration :number) {
+	constructor(message :string, duration :number, position :string) {
 		this.option['message'] = message;
 		this.option['duration'] = duration;
+		this.option['position'] = position;
 	}
 
 	/**
