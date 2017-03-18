@@ -4,6 +4,14 @@
  * @class
  */
 export class Service {
+
+	/**
+	 * @constructor
+	 */
+	constructor() {
+		
+	}
+
 	/**
 	 * @public
 	 * @param {any} data 加工対象のデータ

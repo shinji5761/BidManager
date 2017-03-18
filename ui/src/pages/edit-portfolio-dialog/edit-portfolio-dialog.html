@@ -4,16 +4,49 @@
 	</ion-navbar>
 </ion-header>
 <ion-content padding>
-
-
-	<ion-grid>
-		<ion-row>
-			<ion-col width-50 *ngFor="let button of buttons">
-				<button ion-button (click)="button.onClickEvent()" [color]="button.color" full>
-					{{button.label}}
-				</button>
-			</ion-col>
-		</ion-row>
-	</ion-grid>
-
+	<ion-list>
+		<ion-item>
+			<ion-label stacked>ポートフォリオ名</ion-label>
+			<ion-input type="text" [(ngModel)]="portfolio.name"></ion-input>
+		</ion-item>
+		<ion-item-sliding *ngFor="let item of portfolio.getBrand(); let i = index;">
+			<ion-item>
+				<!-- 銘柄コード -->
+				<ion-label stacked>銘柄コード{{i + 1}}</ion-label>
+				<ion-input type="tel" [(ngModel)]="item.code"></ion-input>
+				<!-- 閉じるボタン -->
+				<ion-avater item-right>
+					<button ion-fab mini (click)="deleteBrand(i)">
+						<ion-icon name="close"></ion-icon>
+					</button>
+				</ion-avater>
+			</ion-item>
+			<ion-item>
+				<ion-label stacked>購入額</ion-label>
+				<ion-input type="number" [(ngModel)]="item.price"></ion-input>
+			</ion-item>
+			<ion-item>
+				<ion-label stacked>保有数</ion-label>
+				<ion-input type="tel" [(ngModel)]="item.stock"></ion-input>
+			</ion-item>
+		</ion-item-sliding>
+		<!-- プラスボタン -->
+		<ion-fab center>
+			<button ion-fab mini color="primary" (click)="addBrand()" item-right>
+				<ion-icon name="add"></ion-icon>
+			</button>
+		</ion-fab>
+	</ion-list>
+	<div style="margin-top: 90px">
+		<!-- 追加ボタン キャンセルボタン -->
+		<ion-grid>
+			<ion-row>
+				<ion-col width-50 *ngFor="let button of buttons">
+					<button ion-button (click)="button.onClickEvent()" [color]="button.color" full>
+						{{button.label}}
+					</button>
+				</ion-col>
+			</ion-row>
+		</ion-grid>
+	</div>
 </ion-content>

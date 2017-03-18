@@ -1,4 +1,4 @@
-import { NgModule, ErrorHandler } from '@angular/core';
+import { NgModule, ErrorHandler, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { HttpModule, JsonpModule } from '@angular/http';
@@ -45,6 +45,7 @@ import { ApiAccessor } from '../providers/api/api-accessor';
 		BrandPage,
 		EditPortfolioDialogPage,
 	],
-	providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, ApiAccessor]
+	providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, ApiAccessor],
+	schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule {}

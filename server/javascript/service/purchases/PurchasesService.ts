@@ -1,11 +1,12 @@
 import { Service } from '../common/Service';
 
 /**
- * PortfolioService
+ * PurchasesService
  * @class
  * @extends Service
  */
-export class PortfolioService extends Service {
+export class PurchasesService extends Service {
+
 	/**
 	 * @constructor
 	 */

@@ -21,15 +21,41 @@ export class PortfolioController extends Controller {
 	 * @param req 
 	 * @param res 
 	 */
-	public get(req, res): void {
+	public get(req, res) :void {
+		let sql = 'SELECT * FROM portfolio';
+		let params = [];
 		this.dao.get(
+			sql, params,
+			// コールバック(OK)
 			(data) => {
 				data = this.service.createResultData(data);
 				res.status(200).send(data);
 			},
+			// コールバック(NG)
 			(error, status) => {
 				this.isError(error, status, res);
 			},this
+		);
+	}
+
+	/**
+	 * ポートフォリオ POST
+	 * @param req 
+	 * @param res 
+	 */
+	public post(req, res) :void {
+		let sql :string = 'INSERT INTO portfolio SET ?';
+		let params :Object = {
+			'name': req.body.name
+		};
+		this.dao.post(
+			sql, params,
+			(data) => {
+				res.status(200).send(data);
+			},
+			(error, status) => {
+				this.isError(error, status, res);
+			}
 		);
 	}
 }

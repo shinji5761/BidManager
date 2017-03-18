@@ -10,3 +10,8 @@ echo 'データベースを作成しました'
 echo '初回データを登録します...'
 mysql -u admin -padmin bid_manager < ./sql/init_data.sql
 echo '初回データを登録しました'
+
+
+###### Functionの作成
+echo 'Functionの作成'
+mysql -u admin -padmin bid_manager < ./sql/function/func_create_purchases.sql

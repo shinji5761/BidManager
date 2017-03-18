@@ -26,13 +26,12 @@ export class ApiService {
 	 * @private 
 	 * @type {Headers}
 	 */
-	protected _headers: Headers;
-
+	protected headers: Headers;
 
 	/**
 	 * Http
 	 */
-	protected _http :Http;
+	protected http :Http;
 
 	/**
 	 * @constructor
@@ -41,14 +40,55 @@ export class ApiService {
 	 */
 	constructor(http, url) {
 		this.url = url;
+		this.http = http;
 		this.option = new URLSearchParams();
-		this._http = http;
-
-		this._headers = new Headers();
-		this._headers.append("Content-Type", 'application/json');
+		this.headers = new Headers();
+		this.headers.append("Content-Type", 'application/json');
 
 		// オプションの初期化
 		this.clearOption();
+	}
+
+
+	/**
+	 * Portfolio GET
+	 * @return {any}
+	 */
+	public query() :any {
+		return this.http.get(this.url, {'search': this.option}).map(res => res.json());
+	}
+
+	/**
+	 * Portfolio POST
+	 * @param {any} data POST Data
+	 */
+	public post(data :any) :any {
+		let params = JSON.stringify(data);
+		let options = new RequestOptions({headers: this.headers});
+		console.log(params);
+		return this.http.post(this.url, params, options).map(res => res.json());
+	}
+
+	/**
+	 * Portfolio PUT
+	 * @param {any} data PUT Data
+	 */
+	public update(data :any) :any {
+		let params = JSON.stringify(data);
+		let options = new RequestOptions({headers: this.headers});
+		return this.http.post(this.url, params, options).map(res => res.json());
+	}
+
+
+	/**
+	 * オプション設定
+	 * @public
+	 */
+	public setOption(option: Object) {
+		let keys = Object.keys(option);
+		for(let index in keys) {
+			this.option.set(keys[index], option[keys[index]]);
+		}
 	}
 
 	/**
@@ -59,33 +99,4 @@ export class ApiService {
 		this.option.set('callback', 'JSONP_CALLBACK');
 	} 
 
-	/**
-	 * オプション設定
-	 * @public
-	 */
-	public setOption(option: Object) {
-		var keys = Object.keys(option);
-		for(let index in keys) {
-			this.option.set(keys[index], option[keys[index]]);
-		}
-	}
-
-
-	/**
-	 * Portfolio GET
-	 * @return {any}
-	 */
-	public query() :any {
-		return this._http.get(this.url, {'search': this.option}).map(res => res.json());
-	}
-
-	/**
-	 * Portfolio POST
-	 * @param {any} data POST Data
-	 */
-	public post(data: any) :any {
-		var params = JSON.stringify(data);
-		var options = new RequestOptions({headers: this._headers});
-		return this._http.post(this.url, params, options).map(res => res.json());
-	}
 }

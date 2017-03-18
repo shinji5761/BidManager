@@ -33,7 +33,7 @@ export class ApiAccessor {
 	 * @return PurchasesApiService
 	 */
 	public getPurchasesApiService() :PurchasesApiService {
-		return new PurchasesApiService(this._http, this.host + 'purchases');
+		return new PurchasesApiService(this._http, this.host + 'purchases/no/');
 	}
 
 }

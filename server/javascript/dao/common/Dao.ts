@@ -1,5 +1,4 @@
-import mysql = require('mysql');
-
+import mysql = require('mysql2');
 import { DaoConst } from './DaoConst';
 
 /**
@@ -35,13 +34,18 @@ export class Dao {
 	 */
 	private DATABASE: string = 'bid_manager';
 
-	public const :DaoConst;
+	/**
+	 * Dao用 定数オブジェクト
+	 * @protected
+	 * @type {DaoConst}
+	 */
+	protected const :DaoConst;
 
 	/**
 	 * MySQLコネクション
-	 * @private 
+	 * @protected 
 	 */
-	public connection;
+	protected connection;
 
 	/**
 	 * @constructor
@@ -72,37 +76,78 @@ export class Dao {
 
 	/**
 	 * ポートフォリオ Get
+	 * @param {string} sql 実行するSQL文
+	 * @param {Array<any>} params パラメータ 
 	 * @param {Function} onSuccess 
 	 * @param {Function} onFail 
 	 * @param {Object} caller
 	 */
-	public get(onSuccess, onFail, caller): void {
+	public get(sql, params, onSuccess, onFail, caller): void {
+		// サーバー接続
+		let rows = [];
+		let query = this.connection.query(sql, params);
+		query
+		.on('error', (error) => {
+			onFail.call(caller, error, this.const.ERROR_CODE_OTHER);
+		})
+		.on('result', (row) => {
+			rows.push(row);
+		})
+		.on('end', () => {
+			// レコードが空の場合
+			if(rows.length == 0) {
+				onFail.call(caller, rows, this.const.ERROR_CODE_NOT_FOUND);
+				return;
+			}
+			// 成功の場合
+			onSuccess.call(caller, rows);
+		});
 	}
 
 	/**
-	 * ポートフォリオ Post
+	 * Post
+	 * @param {string} sql 実行するSQL文
+	 * @param {Array<any>} params パラメータ 
 	 * @param {Function} onSuccess 
 	 * @param {Function} onFail 
 	 * @param {Object} caller
 	 */
-	public post(onSuccess, onFail, caller): void {
+	public post(sql, params, onSuccess, onFail, caller): void {
+		// サーバー接続
+		let query = this.connection.query(sql, params);
+		let data;
+		query
+		.on('error', (error) => {
+			onFail.call(caller, error, this.const.ERROR_CODE_OTHER);
+		})
+		.on('result', (result) => {
+			data = result;
+		})
+		.on('end', (result) => {
+			// 成功の場合
+			onSuccess.call(caller, data);
+		});
 	}
 
 	/**
 	 * update
+	 * @param {string} sql 実行するSQL文
+	 * @param {Array<any>} params パラメータ 
 	 * @param {Function} onSuccess 
 	 * @param {Function} onFail 
 	 * @param {Object} caller
 	 */
-	public update(onSuccess, onFail, caller) :void {
+	public update(sql, params, onSuccess, onFail, caller) :void {
 	}
 
 	/**
 	 * delete
+	 * @param {string} sql 実行するSQL文
+	 * @param {Array<any>} params パラメータ 
 	 * @param {Function} onSuccess 
 	 * @param {Function} onFail 
 	 * @param {Object} caller
 	 */
-	public delete(onSuccess, onFail, caller) :void {
+	public delete(sql, params, onSuccess, onFail, caller) :void {
 	}
 }

@@ -1,3 +1,21 @@
-page-edit-portfolio-dialog {
+// === 銘柄コード ===
+$code-width: 80%;
+// === 購入額 ===
+$price-width: 50%;
+// === 保有数===
+$stock-width: 50%;
 
+page-edit-portfolio-dialog {
+	// 銘柄コード
+	ion-content ion-list ion-item-sliding ion-item:nth-of-type(1) {
+		width: $code-width !important;
+	}
+	// 購入額
+	ion-content ion-list ion-item-sliding ion-item:nth-of-type(2) {
+		width: $price-width !important;
+	}
+	// 保有数
+	ion-content ion-list ion-item-sliding ion-item:nth-of-type(3) {
+		width: $stock-width !important;
+	}
 }
