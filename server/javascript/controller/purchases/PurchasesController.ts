@@ -20,42 +20,39 @@ export class PurchasesController extends Controller {
 
 	/**
 	 * 購入物 Get
+	 * @override
 	 * @param req 
 	 * @param res 
 	 */
 	public get(req, res) :void {
-		let sql = 'SELECT code, name, price, stock FROM purchases WHERE no = ? ORDER BY code'
-		let no = req.params.no;
-		let params = [no];
-
+		let body = req.body;
+		body['no'] = req.params.no;
 		this.dao.get(
-			sql, params,
+			body,
 			(data) => {
-				data = this.service.createResultData(data);
-				res.status(200).send(data);
+				this.afterGet(req, res, data);
 			},
 			(error, status) => {
 				this.isError(error, status, res);
-			},this
+			}
 		);
 	}
 
 	/**
 	 * 購入物 Post
+	 * @override
 	 * @param req 
 	 * @param res 
 	 */
 	public post(req, res) :void {
-		let sql = 'SELECT func_create_purchases(?, ?, ?, ?)';
-		let no = req.params.no;
-		let brand = req.body;
-		let params = [Number(no), Number(brand.code), brand.price, brand.stock];
+		let body = req.body;
+		body['no'] = req.params.no;
 		this.dao.post(
-			sql, params,
-			function(data) {
-				res.status(200).send(data);
+			body,
+			(data) => {
+				this.afterPost(req, res, data);
 			},
-			function(error, status) {
+			(error, status) => {
 				this.isError(error, status, res);
 			}, this
 		);

@@ -13,5 +13,7 @@ echo '初回データを登録しました'
 
 
 ###### Functionの作成
-echo 'Functionの作成'
+echo 'Functionの作成します...'
 mysql -u admin -padmin bid_manager < ./sql/function/func_create_purchases.sql
+mysql -u admin -padmin bid_manager < ./sql/function/func_delete_purchases.sql
+echo 'Functionの作成しました'

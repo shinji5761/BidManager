@@ -25,7 +25,7 @@ export class ApiAccessor {
 	 * @return PortfolioApiService
 	 */
 	public getPortfolioApiService() :PortfolioApiService {
-		return new PortfolioApiService(this._http, this.host + 'portfolio');
+		return new PortfolioApiService(this._http, this.host + 'portfolio/');
 	}
 
 	/**

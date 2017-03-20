@@ -48,9 +48,15 @@ export class Dao {
 	protected connection;
 
 	/**
+	 * Serviceクラス
+	 * @protected
+	 */
+	protected service :any;
+
+	/**
 	 * @constructor
 	 */
-	constructor() {
+	constructor(service :any) {
 		// MySQL 接続
 		this.connection = mysql.createConnection(
 			{
@@ -60,8 +66,8 @@ export class Dao {
 				'database': this.DATABASE,
 			}
 		);
-
 		this.const = new DaoConst();
+		this.service = new service();
 	}
 
 	
@@ -76,16 +82,18 @@ export class Dao {
 
 	/**
 	 * ポートフォリオ Get
-	 * @param {string} sql 実行するSQL文
-	 * @param {Array<any>} params パラメータ 
+	 * @param {Array<any>} body リクエストボディデータ 
 	 * @param {Function} onSuccess 
 	 * @param {Function} onFail 
 	 * @param {Object} caller
 	 */
-	public get(sql, params, onSuccess, onFail, caller): void {
+	public get(body, onSuccess, onFail, caller): void {
+		// SQLパラメータの作成
+		let params = this.service.createGetParams(body);
+
 		// サーバー接続
 		let rows = [];
-		let query = this.connection.query(sql, params);
+		let query = this.connection.query(params.sql, params.data);
 		query
 		.on('error', (error) => {
 			onFail.call(caller, error, this.const.ERROR_CODE_OTHER);
@@ -106,15 +114,17 @@ export class Dao {
 
 	/**
 	 * Post
-	 * @param {string} sql 実行するSQL文
-	 * @param {Array<any>} params パラメータ 
+	 * @param {Array<any>} params
 	 * @param {Function} onSuccess 
 	 * @param {Function} onFail 
 	 * @param {Object} caller
 	 */
-	public post(sql, params, onSuccess, onFail, caller): void {
+	public post(body, onSuccess, onFail, caller): void {
+		// SQLパラメータの作成
+		let params = this.service.createPostParams(body);
+
 		// サーバー接続
-		let query = this.connection.query(sql, params);
+		let query = this.connection.query(params.sql, params.data);
 		let data;
 		query
 		.on('error', (error) => {
@@ -130,24 +140,56 @@ export class Dao {
 	}
 
 	/**
-	 * update
-	 * @param {string} sql 実行するSQL文
-	 * @param {Array<any>} params パラメータ 
+	 * Put
+	 * @param {Array<any>} body パラメータ 
 	 * @param {Function} onSuccess 
 	 * @param {Function} onFail 
 	 * @param {Object} caller
 	 */
-	public put(sql, params, onSuccess, onFail, caller) :void {
+	public put(body, onSuccess, onFail, caller) :void {
+		// SQLパラメータの作成
+		let params = this.service.createPutParams(body);
+
+		// サーバー接続
+		let query = this.connection.query(params.sql, params.data);
+		let data;
+		query
+		.on('error', (error) => {
+			onFail.call(caller, error, this.const.ERROR_CODE_OTHER);
+		})
+		.on('result', (result) => {
+			data = result;
+		})
+		.on('end', (result) => {
+			// 成功の場合
+			onSuccess.call(caller, data);
+		});		
 	}
 
 	/**
-	 * delete
-	 * @param {string} sql 実行するSQL文
-	 * @param {Array<any>} params パラメータ 
+	 * Delete
+	 * @param {Array<any>} body パラメータ 
 	 * @param {Function} onSuccess 
 	 * @param {Function} onFail 
 	 * @param {Object} caller
 	 */
-	public delete(sql, params, onSuccess, onFail, caller) :void {
+	public delete(body, onSuccess, onFail, caller) :void {
+		// SQLパラメータの作成
+		let params = this.service.createDeleteParams(body);
+
+		// サーバー接続
+		let query = this.connection.query(params.sql, params.data);
+		let data;
+		query
+		.on('error', (error) => {
+			onFail.call(caller, error, this.const.ERROR_CODE_OTHER);
+		})
+		.on('result', (result) => {
+			data = result;
+		})
+		.on('end', (result) => {
+			// 成功の場合
+			onSuccess.call(caller, data);
+		});
 	}
 }

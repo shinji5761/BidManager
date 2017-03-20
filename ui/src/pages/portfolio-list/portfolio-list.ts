@@ -81,6 +81,9 @@ export class PortfolioListPage implements OnInit {
 	 * @param {Array<Object>} result api取得結果
 	 */
 	public createPortfolio(result) :void {
+		// ポートフォリオリストの初期化
+		this.portfolioList = [];
+		
 		// ポートフォリオの設定(Brandは空)
 		for(let index in result) {
 			this.portfolioList.push(new PortfolioEntity(result[index].no, result[index].name, result[index].profit, new Array<BrandEntity>()));

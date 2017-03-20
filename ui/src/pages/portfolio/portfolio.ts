@@ -67,7 +67,7 @@ export class PortfolioPage implements OnInit {
 	 * @return {void}
 	 */
 	private runGetPurchases() :void {
-		this.api.setNo(this.portfolio.getId());
+		this.api.setNo(this.portfolio.getNo());
 		this.api.query().subscribe(
 			res => this.createPurchases(res),
 			error => console.error(error)

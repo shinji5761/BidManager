@@ -94,7 +94,7 @@ export class EditPortfolioDialogPage implements OnInit {
 	 */
 	private runPostPortfolio() :void {
 		this.portfolioAccessor.post(this.portfolio).subscribe(
-			res => this.runPostPurchases(res),
+			res => this.runPostPurchases(res.insertId),
 			error => this.onFailSave(error)
 		);
 	}
@@ -106,7 +106,7 @@ export class EditPortfolioDialogPage implements OnInit {
 	 */
 	private runPutPortfolio() :void {
 		this.portfolioAccessor.update(this.portfolio).subscribe(
-			res => this.onSuccessSave(res),
+			res => this.runPostPurchases(this.portfolio.getNo()),
 			error => this.onFailSave(error)
 		);
 	}
@@ -118,8 +118,8 @@ export class EditPortfolioDialogPage implements OnInit {
 	 */
 	private runGetPurchases() :void {
 		// ポートフォリオのIDがある場合
-		if(this.portfolio.getId() != null) {
-			this.purchasesAccessor.setNo(this.portfolio.getId());
+		if(this.portfolio.getNo() != null) {
+			this.purchasesAccessor.setNo(this.portfolio.getNo());
 			this.purchasesAccessor.query().subscribe(
 				res => this.createBrand(res),
 				error => console.error(error)
@@ -135,9 +135,9 @@ export class EditPortfolioDialogPage implements OnInit {
 	 * @private 
 	 * @return {void}
 	 */
-	private runPostPurchases(data :any) :void {
+	private runPostPurchases(no) :void {
 		let postList : Array<any> = [];
-		this.purchasesAccessor.setNo(data.insertId);
+		this.purchasesAccessor.setNo(no);
 		// 銘柄の数だけ､POSTリクエストを送信する｡
 		for(let index in this.portfolio.getBrand()) {
 			let data :BrandEntity = this.portfolio.getBrand()[index];
@@ -149,13 +149,6 @@ export class EditPortfolioDialogPage implements OnInit {
 			error => this.onFailSave(error)
 		);
 	}
-
-	/**
-	 * 
-	 */
-	private runPutPurchases() :void {
-	}
-
 
 
 	/**
@@ -202,7 +195,7 @@ export class EditPortfolioDialogPage implements OnInit {
 	 */
 	private save() :void {
 		// Noが付いている場合はPUT,nullの場合はPOST
-		if(this.portfolio.getId() != null) {
+		if(this.portfolio.getNo() != null) {
 			this.runPutPortfolio();
 		} else {
 			this.runPostPortfolio();

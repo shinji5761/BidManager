@@ -45,6 +45,7 @@ class Main {
 		this.app.use(function(req, res, next) {
 			res.header("Access-Control-Allow-Origin", "*");
 			res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+			res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
 			next();
 		});
 		this.app.use(bodyParser());
@@ -61,13 +62,13 @@ class Main {
 		});
 
 		///////////////////// Portfolio /////////////////////
-		this.app.get(this.controller['portfolio'].getUrl(), (req, res) => this.controller['portfolio'].get(req, res));
-		this.app.post(this.controller['portfolio'].getUrl(), (req, res) => this.controller['portfolio'].post(req, res));
-		this.app.put(this.controller['portfolio'].getUrl(), (req, res) => this.controller['portfolio'].update(req, res));
+		this.app.get(this.controller['portfolio'].getUrl(), (req, res) => this.controller['portfolio'].beforeGet(req, res));
+		this.app.post(this.controller['portfolio'].getUrl(), (req, res) => this.controller['portfolio'].beforePost(req, res));
+		this.app.put(this.controller['portfolio'].getUrl(), (req, res) => this.controller['portfolio'].beforePut(req, res));
 
 		///////////////////// Purchases /////////////////////
-		this.app.get(this.controller['purchases'].getUrl(), (req, res) => this.controller['purchases'].get(req, res));
-		this.app.post(this.controller['purchases'].getUrl(), (req, res) => this.controller['purchases'].post(req, res));
+		this.app.get(this.controller['purchases'].getUrl(), (req, res) => this.controller['purchases'].beforeGet(req, res));
+		this.app.post(this.controller['purchases'].getUrl(), (req, res) => this.controller['purchases'].beforePost(req, res));
 	}
 
 

@@ -1,5 +1,10 @@
 import { Controller } from '../common/Controller';
+
+// === Dao ===
 import { PortfolioDao } from '../../dao/portfolio/PortfolioDao';
+import { PurchasesDao } from '../../dao/purchases/PurchasesDao';
+
+// === Service ===
 import { PortfolioService } from '../../service/portfolio/PortfolioService';
 
 /**
@@ -10,71 +15,37 @@ import { PortfolioService } from '../../service/portfolio/PortfolioService';
 export class PortfolioController extends Controller {
 
 	/**
+	 * 購入物Dao
+	 */
+	private purchasesDao :PurchasesDao;
+
+	/**
 	 * @constructor
 	 */
 	constructor() {
 		super('/portfolio', PortfolioDao, PortfolioService);
+		this.purchasesDao = new PurchasesDao();
 	}
 
 	/**
-	 * ポートフォリオ Get
-	 * @param req 
-	 * @param res 
-	 */
-	public get(req, res) :void {
-		let sql = 'SELECT * FROM portfolio';
-		let params = [];
-		this.dao.get(
-			sql, params,
-			// コールバック(OK)
-			(data) => {
-				data = this.service.createResultData(data);
-				res.status(200).send(data);
-			},
-			// コールバック(NG)
-			(error, status) => {
-				this.isError(error, status, res);
-			},this
-		);
-	}
-
-	/**
-	 * ポートフォリオ POST
-	 * @param req 
-	 * @param res 
-	 */
-	public post(req, res) :void {
-		let sql :string = 'INSERT INTO portfolio SET ?';
-		let params :Object = {
-			'name': req.body.name
-		};
-		this.dao.post(
-			sql, params,
-			(data) => {
-				res.status(200).send(data);
-			},
-			(error, status) => {
-				this.isError(error, status, res);
-			}
-		);
-	}
-
-	/**
-	 * ポートフォリオ PUT
+	 * After Put
+	 * Put後処理｡
+	 * 更新したポートフォリオの購入データをすべて削除する｡
 	 * @param req
-	 * @param res
-	 */
-	public put(req, res) :void {
-
-	}
-
-	/**
-	 * 
-	 * @param req ポートフォリオ 
 	 * @param res 
+	 * @param data 
 	 */
-	public afterPut(req, res) :void {
-
+	public afterPut(req, res, data) :void {
+		console.log('PortfolioController AfterPut');
+		let body = req.body;
+		this.purchasesDao.delete(
+			body,
+			(data) => {
+				res.status(200).send(data);
+			}, 
+			(error, status) => {
+				this.isError(error, status, res);
+			}, this
+		)
 	}
-
 }
