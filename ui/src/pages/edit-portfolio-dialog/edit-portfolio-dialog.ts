@@ -150,6 +150,13 @@ export class EditPortfolioDialogPage implements OnInit {
 		);
 	}
 
+	/**
+	 * 
+	 */
+	private runPutPurchases() :void {
+	}
+
+
 
 	/**
 	 * 保存成功後処理

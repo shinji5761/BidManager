@@ -137,7 +137,7 @@ export class Dao {
 	 * @param {Function} onFail 
 	 * @param {Object} caller
 	 */
-	public update(sql, params, onSuccess, onFail, caller) :void {
+	public put(sql, params, onSuccess, onFail, caller) :void {
 	}
 
 	/**

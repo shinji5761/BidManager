@@ -1,17 +1,24 @@
-import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { Component, OnInit } from '@angular/core';
+import { NavController, NavParams, ModalController, LoadingController } from 'ionic-angular';
+
+// === Dialog ===
+import { EditPortfolioDialogPage } from '../edit-portfolio-dialog/edit-portfolio-dialog';
 
 
 // === Entity ===
 import { PortfolioEntity } from '../../entity/PortfolioEntity';
 import { BrandEntity } from '../../entity/BrandEntity';
 
+// === API ===
+import { ApiAccessor } from '../../providers/api/api-accessor';
+import { PurchasesApiService } from '../../providers/api/PurchasesApiService';
+
+
 @Component({
   selector: 'page-portfolio',
   templateUrl: 'portfolio.html'
 })
-export class PortfolioPage {
-	items = new Array(3);
+export class PortfolioPage implements OnInit {
 	
 	/**
 	 * ポートフォリオ
@@ -21,15 +28,35 @@ export class PortfolioPage {
 	private portfolio :PortfolioEntity;
 
 	/**
+	 * API Service
+	 * @private 
+	 * @type {PurchasesApiService}
+	 */
+	private api :PurchasesApiService;
+
+
+	/**
 	 * @constructor
 	 * @param _navCtrl 
 	 * @param _navParams 
 	 */
 	constructor(
-		public _navCtrl: NavController,
-		public _navParams: NavParams
+		public _navCtrl :NavController,
+		public _navParams :NavParams,
+		public _modalCtrl :ModalController,
+		public _loadingCtrl : LoadingController,
+		private _accessor :ApiAccessor
 	) {
+		// APIの取得
+		this.api = this._accessor.getPurchasesApiService();
 		this.portfolio = this._navParams.get('portfolio');
+	}
+
+	/**
+	 * 初期化
+	 * @return {void}
+	 */
+	ngOnInit() :void {
 		this.runGetPurchases();
 	}
 
@@ -40,17 +67,26 @@ export class PortfolioPage {
 	 * @return {void}
 	 */
 	private runGetPurchases() :void {
-		
-
+		this.api.setNo(this.portfolio.getId());
+		this.api.query().subscribe(
+			res => this.createPurchases(res),
+			error => console.error(error)
+		);
 	}
 
 	/**
-	 * 銘柄情報を取得する
+	 * 銘柄情報を作成する
 	 * @private 
+	 * @param {any} result 取得結果
 	 * @return {void}
 	 */
-	private createPurchases() :void {
-
+	private createPurchases(result) :void {
+		let brandList :Array<BrandEntity> = [];
+		for(let index in result) {
+			let brand :BrandEntity = new BrandEntity(result[index].code, result[index].name, result[index].price, result[index].stock);
+			brandList.push(brand);
+		}
+		this.portfolio.setBrand(brandList);
 	}
 
 	
@@ -60,7 +96,21 @@ export class PortfolioPage {
 	 * @return {void}
 	 */
 	private editPortfolio() :void {
+		// パラメータの設定
+		let title = this.portfolio.getName() + 'の編集';
+		let inputData = {'portfolio': this.portfolio, 'title': title};
 
+		// ダイアログの設定
+		let modal = this._modalCtrl.create(EditPortfolioDialogPage, inputData);
+
+		// ダイアログ終了イベントの設定
+		modal.onDidDismiss((data) => {
+			// ポートフォリオを初期化
+			this.ngOnInit();
+		});
+
+		// Dialog展開
+		modal.present();
 	}
 
 	/**

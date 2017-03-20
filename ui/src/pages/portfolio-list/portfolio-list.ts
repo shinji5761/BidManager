@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController, NavParams, ModalController, LoadingController } from 'ionic-angular';
 
-// === Dialog ===
+// === Page ===
 import { PortfolioPage } from '../portfolio/portfolio';
 
 // === Dialog ===
@@ -51,15 +51,16 @@ export class PortfolioListPage implements OnInit {
 		public _modalCtrl: ModalController,
 		public _lodingCtrl: LoadingController,
 		public _accessor: ApiAccessor
-	) {}
+	) {
+		// APIの取得
+		this.api = this._accessor.getPortfolioApiService();
+	}
 
 	/**
 	 * 初期化
 	 * @return {void}
 	 */
 	ngOnInit() :void {
-		// APIの取得
-		this.api = this._accessor.getPortfolioApiService();
 		this.runGetPortfolio();
 	}
 

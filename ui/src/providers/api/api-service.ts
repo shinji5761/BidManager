@@ -76,7 +76,7 @@ export class ApiService {
 	public update(data :any) :any {
 		let params = JSON.stringify(data);
 		let options = new RequestOptions({headers: this.headers});
-		return this.http.post(this.url, params, options).map(res => res.json());
+		return this.http.put(this.url, params, options).map(res => res.json());
 	}
 
 

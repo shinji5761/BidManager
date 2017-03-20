@@ -58,4 +58,23 @@ export class PortfolioController extends Controller {
 			}
 		);
 	}
+
+	/**
+	 * ポートフォリオ PUT
+	 * @param req
+	 * @param res
+	 */
+	public put(req, res) :void {
+
+	}
+
+	/**
+	 * 
+	 * @param req ポートフォリオ 
+	 * @param res 
+	 */
+	public afterPut(req, res) :void {
+
+	}
+
 }

@@ -11,7 +11,7 @@
 </ion-header>
 <ion-content padding>
 	<ion-list>
-		<button ion-item *ngFor="let item of items">
+		<button ion-item *ngFor="let brand of portfolio.getBrand()">
 			<ion-grid>
 				<!-- 銘柄情報 -->
 				<ion-row>
@@ -20,13 +20,13 @@
 							<ion-row>
 								<!-- 銘柄コード -->
 								<ion-col>
-									XXXX
+									{{brand.code}}
 								</ion-col>
 							</ion-row>
 							<ion-row>
 								<!-- 銘柄名 -->
 								<ion-col>
-									XXXXXXXXXXXX
+									{{brand.name}}
 								</ion-col>
 							</ion-row>
 						</ion-grid>
@@ -36,17 +36,17 @@
 							<ion-row>
 								<!-- 購入額 -->
 								<ion-col width-50>
-										購入額 : XXX.X
+										購入額 : {{brand.price | number}}
 								</ion-col>
 								<!-- 損益 -->
 								<ion-col width-50>
-										損益 : XXX.X
+										損益 : XXXX
 								</ion-col>
 							</ion-row>
 							<ion-row>
 								<!-- 保有数 -->
 								<ion-col width-50>
-										保有数 : XXX
+										保有数 : {{brand.stock}}
 								</ion-col>
 								<!-- 損益 -->
 								<ion-col width-50>
