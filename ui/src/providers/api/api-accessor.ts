@@ -4,6 +4,7 @@ import { Http } from '@angular/http';
 // === API Service ===
 import { PortfolioApiService } from './PortfolioApiService';
 import { PurchasesApiService } from './PurchasesApiService';
+import { BrandApiService } from './BrandApiService';
 
 @Injectable()
 export class ApiAccessor {
@@ -34,6 +35,14 @@ export class ApiAccessor {
 	 */
 	public getPurchasesApiService() :PurchasesApiService {
 		return new PurchasesApiService(this._http, this.host + 'purchases/no/');
+	}
+
+	/**
+	 * BrandApiService 取得
+	 * @return BrandApiService
+	 */
+	public getBrandApiService() :BrandApiService {
+		return new BrandApiService(this._http, this.host + 'brand/code/');
 	}
 
 }

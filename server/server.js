@@ -6,6 +6,7 @@ var bodyParser = require("body-parser");
 // === API ===
 var PortfolioController_1 = require("./javascript/controller/portfolio/PortfolioController");
 var PurchasesController_1 = require("./javascript/controller/purchases/PurchasesController");
+var BrandController_1 = require("./javascript/controller/brand/BrandController");
 /**
  * メインクラス
  * @class
@@ -23,6 +24,7 @@ var Main = (function () {
         // コントローラの設定
         this.controller['portfolio'] = new PortfolioController_1.PortfolioController();
         this.controller['purchases'] = new PurchasesController_1.PurchasesController();
+        this.controller['brand'] = new BrandController_1.BrandController();
         // APIの設定
         this.settingApi();
         // Server開始
@@ -59,6 +61,8 @@ var Main = (function () {
         ///////////////////// Purchases /////////////////////
         this.app.get(this.controller['purchases'].getUrl(), function (req, res) { return _this.controller['purchases'].beforeGet(req, res); });
         this.app.post(this.controller['purchases'].getUrl(), function (req, res) { return _this.controller['purchases'].beforePost(req, res); });
+        ///////////////////// Brand /////////////////////
+        this.app.get(this.controller['brand'].getUrl(), function (req, res) { return _this.controller['brand'].beforeGet(req, res); });
     };
     /**
      * サーバーの開始

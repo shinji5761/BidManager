@@ -45,5 +45,14 @@ export class BrandEntity {
 		this.stock = stock;
 	}
 
+
+	/**
+	 * Getter(code)
+	 * @public 
+	 * @return {number} code
+	 */
+	public getCode() :number {
+		return this.code;
+	}
 	
 }

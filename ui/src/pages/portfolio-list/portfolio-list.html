@@ -11,7 +11,7 @@
 				{{portfolio.name}}
 			</span>
 			<!-- ポートフォリオ損得 -->
-			<span>
+			<span *ngIf="portfolio.profit">
 				損益:{{portfolio.profit | number}}円
 			</span>
 		</ion-item>

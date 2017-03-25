@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController, NavParams, ModalController, LoadingController } from 'ionic-angular';
 
+// === Page ===
+import { BrandPage } from '../brand/brand';
+
 // === Dialog ===
 import { EditPortfolioDialogPage } from '../edit-portfolio-dialog/edit-portfolio-dialog';
-
 
 // === Entity ===
 import { PortfolioEntity } from '../../entity/PortfolioEntity';
@@ -119,9 +121,7 @@ export class PortfolioPage implements OnInit {
 	 * @return {void}
 	 */
 	private showBrand(brand :BrandEntity) :void {
-
+		let inputData = {'brand': brand};
+		this._navCtrl.push(BrandPage, inputData);
 	}
-
-
-
 }

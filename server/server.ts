@@ -5,6 +5,7 @@ import bodyParser = require('body-parser');
 // === API ===
 import { PortfolioController } from './javascript/controller/portfolio/PortfolioController';
 import { PurchasesController } from './javascript/controller/purchases/PurchasesController';
+import { BrandController } from './javascript/controller/brand/BrandController';
 
 /**
  * メインクラス
@@ -29,6 +30,7 @@ class Main {
 		// コントローラの設定
 		this.controller['portfolio'] = new PortfolioController();
 		this.controller['purchases'] = new PurchasesController();
+		this.controller['brand'] = new BrandController();
 
 		// APIの設定
 		this.settingApi();
@@ -69,6 +71,9 @@ class Main {
 		///////////////////// Purchases /////////////////////
 		this.app.get(this.controller['purchases'].getUrl(), (req, res) => this.controller['purchases'].beforeGet(req, res));
 		this.app.post(this.controller['purchases'].getUrl(), (req, res) => this.controller['purchases'].beforePost(req, res));
+
+		///////////////////// Brand /////////////////////
+		this.app.get(this.controller['brand'].getUrl(), (req, res) => this.controller['brand'].beforeGet(req, res));
 	}
 
 

@@ -18,6 +18,5 @@ export class PortfolioApiService extends ApiService {
 		url: string
 	) {
 		super(http, url);
-	};
-
+	}
 }

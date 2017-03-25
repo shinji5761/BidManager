@@ -10,15 +10,16 @@ import { PortfolioListPage } from '../pages/portfolio-list/portfolio-list';
 import { PortfolioPage } from '../pages/portfolio/portfolio';
 import { BrandPage } from '../pages/brand/brand';
 
-
 // === Dialog ===
 import { EditPortfolioDialogPage } from '../pages/edit-portfolio-dialog/edit-portfolio-dialog';
 
-
 // === API ===
 import { ApiAccessor } from '../providers/api/api-accessor';
-// import { ApiService } from '../providers/api/api-service';
-// import { PortfolioApiService } from '../providers/api/PortfolioApiService';
+
+// === ng2-chart ===
+import { ChartsModule } from 'ng2-charts/ng2-charts';
+import '../../node_modules/chart.js/dist/Chart.min.js';
+
 
 @NgModule({
 	declarations: [
@@ -33,7 +34,8 @@ import { ApiAccessor } from '../providers/api/api-accessor';
 	imports: [
 		IonicModule.forRoot(MyApp),
 		HttpModule,
-		JsonpModule
+		JsonpModule,
+		ChartsModule
 	],
 	bootstrap: [IonicApp],
 	entryComponents: [

@@ -127,7 +127,6 @@ export class PortfolioListPage implements OnInit {
 	 * @param {PortfolioEntity} portfolio 削除対象のポートフォリオ
 	 */
 	public showPortfolio(portfolio: PortfolioEntity) :void {
-		console.log('showPortfolio');
 		let inputData = {'portfolio': portfolio};
 		this._navCtrl.push(PortfolioPage, inputData);
 	}

@@ -11,7 +11,7 @@
 </ion-header>
 <ion-content padding>
 	<ion-list>
-		<button ion-item *ngFor="let brand of portfolio.getBrand()">
+		<button ion-item *ngFor="let brand of portfolio.getBrand()" (click)="showBrand(brand)">
 			<ion-grid>
 				<!-- 銘柄情報 -->
 				<ion-row>

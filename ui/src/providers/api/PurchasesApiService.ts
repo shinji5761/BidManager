@@ -28,7 +28,7 @@ export class PurchasesApiService extends ApiService {
 	};
 
 	/**
-	 * Portfolio GET
+	 * Portfolio QUERY
 	 * @override 
 	 * @return {any}
 	 */
