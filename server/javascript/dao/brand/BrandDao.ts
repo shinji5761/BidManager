@@ -1,6 +1,3 @@
-/**
- * 
- */
 import { Dao } from '../common/Dao';
 
 // === Service ===
@@ -8,7 +5,7 @@ import { BrandService } from '../../service/brand/BrandService';
 
 /**
  * BrandDao
- * @class
+ * @class {BrandDao} BrandDao
  * @extends Dao
  */
 export class BrandDao extends Dao {

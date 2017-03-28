@@ -1,18 +1,14 @@
 /**
  * @fileoverview PortfolioDao.ts
- * @author shinji5761
+ * @author shinji5761@gmail.com
  */
 import { Dao } from '../common/Dao';
 
 // === Service ===
 import { PortfolioService } from '../../service/portfolio/PortfolioService';
 
-
-// === Entity ==
-import { Portfolio } from '../../entity/portfolio';
-
 /**
- * ポートフォリオクラス
+ * PortfolioDao
  * @class {PortfolioDao} PortfolioDao
  */
 export class PortfolioDao extends Dao {

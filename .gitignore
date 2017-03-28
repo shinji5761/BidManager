@@ -7,3 +7,4 @@ boostnote.json
 /ui/resources
 /server/**/*.js
 /server/server.js
+/server/logs/

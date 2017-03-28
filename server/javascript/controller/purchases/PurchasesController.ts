@@ -1,8 +1,10 @@
 import { Controller } from '../common/Controller';
-import { PurchasesDao } from '../../dao/purchases/PurchasesDao';
-import { PurchasesService } from '../../service/purchases/PurchasesService';
 
-import url = require('url');
+// === Dao ===
+import { PurchasesDao } from '../../dao/purchases/PurchasesDao';
+
+// === Service ===
+import { PurchasesService } from '../../service/purchases/PurchasesService';
 
 /**
  * PurchasesController
@@ -21,12 +23,16 @@ export class PurchasesController extends Controller {
 	/**
 	 * 購入物 Get
 	 * @override
-	 * @param req 
-	 * @param res 
+	 * @param req
+	 * @param res
 	 */
 	public get(req, res) :void {
+		this.logger.system.debug('PurchasesController.get: start');
+
 		let body = req.body;
 		body['no'] = req.params.no;
+		this.logger.system.info('PurchasesController.get: ' + JSON.stringify(body));
+
 		this.dao.get(
 			body,
 			(data) => {
@@ -41,12 +47,16 @@ export class PurchasesController extends Controller {
 	/**
 	 * 購入物 Post
 	 * @override
-	 * @param req 
-	 * @param res 
+	 * @param req
+	 * @param res
 	 */
 	public post(req, res) :void {
+		this.logger.system.debug('PurchasesController.post: start');
+
 		let body = req.body;
 		body['no'] = req.params.no;
+		this.logger.system.info('PurchasesController.post: ' + JSON.stringify(body));
+
 		this.dao.post(
 			body,
 			(data) => {

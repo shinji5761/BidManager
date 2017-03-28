@@ -7,9 +7,8 @@ import { Dao } from '../common/Dao';
 // === Service ===
 import { PurchasesService } from '../../service/purchases/PurchasesService';
 
-
 /**
- * ポートフォリオクラス
+ * PurchasesDao
  * @class {PurchasesDao} PurchasesDao
  * @extends Dao
  */

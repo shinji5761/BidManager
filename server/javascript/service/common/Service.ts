@@ -1,15 +1,22 @@
+// === Logger ===
+import logger = require('../../../LogSettings');
 
 /**
  * Service
  * @class
  */
-export class Service {
+export abstract class Service {
+	/**
+	 * ログ
+	 * @type {any}
+	 */
+	protected logger :any;
 
 	/**
 	 * @constructor
 	 */
 	constructor() {
-		
+		this.logger = logger;
 	}
 
 
@@ -19,6 +26,7 @@ export class Service {
 	 * @param {any} body ボディデータ
 	 */
 	public createGetParams(body :any) :Object {
+		this.logger.system.debug('Service.createGetParams');
 		return {};
 	}
 
@@ -27,6 +35,7 @@ export class Service {
 	 * @param {any} body ボディデータ
 	 */
 	public createPostParams(body :any) :Object {
+		this.logger.system.debug('Service.createPostParams');
 		return {};
 	};
 
@@ -35,6 +44,7 @@ export class Service {
 	 * @param {any} body ボディデータ
 	 */
 	public createPutarams(body :any) :Object {
+		this.logger.system.debug('Service.createPutarams');
 		return {};
 	};
 
@@ -43,22 +53,24 @@ export class Service {
 	 * @param {any} body ボディデータ
 	 */
 	public createDeleteParams(body :any) :Object {
+		this.logger.system.debug('Service.createDeleteParams');
 		return {};
 	};
 
 	/**
 	 * 検索条件を付加する
 	 * @param keys
-	 * @param params 
+	 * @param params
 	 */
 	public addSearchParam(searchParams :Object, params :Object) :void {
+		this.logger.system.debug('Service.addSearchParam');
 		let keys = Object.keys(searchParams);
 		keys.forEach((key, index) => {
 			if(index < 1) {
 				params['sql'] += ' WHERE ' + key + ' = ?';
 			}
 			else {
-				params['sql'] += ' AND ' + key + ' = ?';				
+				params['sql'] += ' AND ' + key + ' = ?';
 			}
 			params['data'].push(searchParams[key]);
 		});
@@ -74,7 +86,10 @@ export class Service {
 	 * @return {any} 加工データ
 	 */
 	public createResultData(data :any) :void {
+		this.logger.system.debug('Service.createResultData');
 		return data;
 	}
+
+
 
 }

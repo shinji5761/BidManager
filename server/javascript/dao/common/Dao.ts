@@ -1,38 +1,46 @@
 import mysql = require('mysql2');
 import { DaoConst } from './DaoConst';
 
+// === Logger ===
+import logger = require('../../../LogSettings');
+
 /**
  * Dao共通クラス
  * @class {Dao} Dao
  */
-export class Dao {
+export abstract class Dao {
+	/**
+	 * ログ
+	 * @type {any}
+	 */
+	protected logger :any;
 	/**
 	 * HOST
 	 * @private
 	 * @type {string}
 	 */
-	private HOST: string = 'localhost';
+	private HOST :string = 'localhost';
 
 	/**
 	 * USER
 	 * @private
 	 * @type {string}
 	 */
-	private USER: string = 'admin';
+	private USER :string = 'admin';
 
 	/**
 	 * POSSWORD
 	 * @private
 	 * @type {string}
 	 */
-	private PASSWORD: string = 'admin';
+	private PASSWORD :string = 'admin';
 
 	/**
 	 * DATABASE
 	 * @private
 	 * @type {string}
 	 */
-	private DATABASE: string = 'bid_manager';
+	private DATABASE :string = 'bid_manager';
 
 	/**
 	 * Dao用 定数オブジェクト
@@ -43,7 +51,7 @@ export class Dao {
 
 	/**
 	 * MySQLコネクション
-	 * @protected 
+	 * @protected
 	 */
 	protected connection;
 
@@ -68,9 +76,10 @@ export class Dao {
 		);
 		this.const = new DaoConst();
 		this.service = new service();
+		this.logger = logger;
 	}
 
-	
+
 	/**
 	 * Getter(connection)
 	 * @public
@@ -82,12 +91,13 @@ export class Dao {
 
 	/**
 	 * ポートフォリオ Get
-	 * @param {Array<any>} body リクエストボディデータ 
-	 * @param {Function} onSuccess 
-	 * @param {Function} onFail 
+	 * @param {Array<any>} body リクエストボディデータ
+	 * @param {Function} onSuccess
+	 * @param {Function} onFail
 	 * @param {Object} caller
 	 */
 	public get(body, onSuccess, onFail, caller): void {
+		this.logger.system.debug('Dao.get: start');
 		// SQLパラメータの作成
 		let params = this.service.createGetParams(body);
 
@@ -115,11 +125,12 @@ export class Dao {
 	/**
 	 * Post
 	 * @param {Array<any>} params
-	 * @param {Function} onSuccess 
-	 * @param {Function} onFail 
+	 * @param {Function} onSuccess
+	 * @param {Function} onFail
 	 * @param {Object} caller
 	 */
 	public post(body, onSuccess, onFail, caller): void {
+		this.logger.system.debug('Dao.post: start');
 		// SQLパラメータの作成
 		let params = this.service.createPostParams(body);
 
@@ -141,12 +152,13 @@ export class Dao {
 
 	/**
 	 * Put
-	 * @param {Array<any>} body パラメータ 
-	 * @param {Function} onSuccess 
-	 * @param {Function} onFail 
+	 * @param {Array<any>} body パラメータ
+	 * @param {Function} onSuccess
+	 * @param {Function} onFail
 	 * @param {Object} caller
 	 */
 	public put(body, onSuccess, onFail, caller) :void {
+		this.logger.system.debug('Dao.put: start');
 		// SQLパラメータの作成
 		let params = this.service.createPutParams(body);
 
@@ -163,17 +175,18 @@ export class Dao {
 		.on('end', (result) => {
 			// 成功の場合
 			onSuccess.call(caller, data);
-		});		
+		});
 	}
 
 	/**
 	 * Delete
-	 * @param {Array<any>} body パラメータ 
-	 * @param {Function} onSuccess 
-	 * @param {Function} onFail 
+	 * @param {Array<any>} body パラメータ
+	 * @param {Function} onSuccess
+	 * @param {Function} onFail
 	 * @param {Object} caller
 	 */
 	public delete(body, onSuccess, onFail, caller) :void {
+		this.logger.system.debug('Dao.delete: start');
 		// SQLパラメータの作成
 		let params = this.service.createDeleteParams(body);
 

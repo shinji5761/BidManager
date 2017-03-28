@@ -1,8 +1,10 @@
 "use strict";
 exports.__esModule = true;
+// === ミドルウェア
 var express = require("express");
 var jsonp = require("jsonp-express");
 var bodyParser = require("body-parser");
+var logger = require("./LogSettings");
 // === API ===
 var PortfolioController_1 = require("./javascript/controller/portfolio/PortfolioController");
 var PurchasesController_1 = require("./javascript/controller/purchases/PurchasesController");
@@ -18,13 +20,12 @@ var Main = (function () {
     function Main() {
         // api
         this.controller = {};
+        logger.system.debug('Main - Constructor');
         this.app = express();
         // ミドルウェアの設定
         this.settingMiddleware();
         // コントローラの設定
-        this.controller['portfolio'] = new PortfolioController_1.PortfolioController();
-        this.controller['purchases'] = new PurchasesController_1.PurchasesController();
-        this.controller['brand'] = new BrandController_1.BrandController();
+        this.settingController();
         // APIの設定
         this.settingApi();
         // Server開始
@@ -33,8 +34,10 @@ var Main = (function () {
     /**
      * ミドルウェアの設定
      * @private
+     * @return {void}
      */
     Main.prototype.settingMiddleware = function () {
+        logger.system.debug('Main - settingMiddleware');
         this.app.use(function (req, res, next) {
             res.header("Access-Control-Allow-Origin", "*");
             res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -46,14 +49,23 @@ var Main = (function () {
     };
     ;
     /**
+     * コントローラの設定
+     * @private
+     * @return {void}
+     */
+    Main.prototype.settingController = function () {
+        logger.system.debug('Main - settingController');
+        this.controller['portfolio'] = new PortfolioController_1.PortfolioController();
+        this.controller['purchases'] = new PurchasesController_1.PurchasesController();
+        this.controller['brand'] = new BrandController_1.BrandController();
+    };
+    /**
      * APIの設定
      * @private
      */
     Main.prototype.settingApi = function () {
         var _this = this;
-        this.app.get('/', function (req, res) {
-            res.send('HelloWorld');
-        });
+        logger.system.debug('Main - settingApi');
         ///////////////////// Portfolio /////////////////////
         this.app.get(this.controller['portfolio'].getUrl(), function (req, res) { return _this.controller['portfolio'].beforeGet(req, res); });
         this.app.post(this.controller['portfolio'].getUrl(), function (req, res) { return _this.controller['portfolio'].beforePost(req, res); });
@@ -66,11 +78,14 @@ var Main = (function () {
     };
     /**
      * サーバーの開始
+     * @private
+     * @return {void}
      */
     Main.prototype.start = function () {
+        logger.system.debug('Main - start');
         // サーバーの開始
         this.app.listen('18456', function () {
-            console.log('listen ...');
+            logger.system.info('Main - ListenStart...');
         });
     };
     return Main;

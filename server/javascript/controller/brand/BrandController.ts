@@ -20,13 +20,17 @@ export class BrandController extends Controller {
 	}
 
 	/**
-	 * 
-	 * @param req 
-	 * @param res 
+	 *
+	 * @param req
+	 * @param res
 	 */
 	public get(req, res) :void {
+		this.logger.system.debug('BrandController.get: start');
+
 		let body = req.body;
 		body['code'] = req.params.code;
+		this.logger.system.info('BrandController.get: ' + JSON.stringify(body));
+
 		this.dao.get(
 			body,
 			(data) => {
@@ -37,5 +41,4 @@ export class BrandController extends Controller {
 			}
 		)
 	}
-
 }

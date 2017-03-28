@@ -14,10 +14,11 @@ export class BrandService extends Service {
 	}
 
 	/**
-	 * 
-	 * @param body 
+	 *
+	 * @param body
 	 */
 	public createGetParams(body :any) :any {
+		this.logger.system.debug('BrandService.createGetParams: start');
 		let param = {
 			'sql': 'SELECT code, DATE_FORMAT(targetDate, \'%Y年%m月%d日\') AS date, open, high, low, close, volume FROM one_day WHERE code = ? ORDER BY  targetDate DESC LIMIT 90',
 			'data': [Number(body.code)]

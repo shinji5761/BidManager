@@ -32,17 +32,20 @@ export class PortfolioController extends Controller {
 	 * Put後処理｡
 	 * 更新したポートフォリオの購入データをすべて削除する｡
 	 * @param req
-	 * @param res 
-	 * @param data 
+	 * @param res
+	 * @param data
 	 */
 	public afterPut(req, res, data) :void {
-		console.log('PortfolioController AfterPut');
+		this.logger.system.debug('PortfolioController.afterPut: start');
+
 		let body = req.body;
+		this.logger.system.info('PortfolioController.afterPut: ' + JSON.stringify(body));
+
 		this.purchasesDao.delete(
 			body,
 			(data) => {
 				res.status(200).send(data);
-			}, 
+			},
 			(error, status) => {
 				this.isError(error, status, res);
 			}, this

@@ -1,6 +1,8 @@
+// === ミドルウェア
 import express = require('express');
 import jsonp = require('jsonp-express');
 import bodyParser = require('body-parser');
+import logger = require('./LogSettings');
 
 // === API ===
 import { PortfolioController } from './javascript/controller/portfolio/PortfolioController';
@@ -23,14 +25,13 @@ class Main {
 	 * @constructor
 	 */
 	constructor() {
+		logger.system.debug('Main - Constructor');
 		this.app = express();
 		// ミドルウェアの設定
 		this.settingMiddleware();
 
 		// コントローラの設定
-		this.controller['portfolio'] = new PortfolioController();
-		this.controller['purchases'] = new PurchasesController();
-		this.controller['brand'] = new BrandController();
+		this.settingController();
 
 		// APIの設定
 		this.settingApi();
@@ -42,8 +43,10 @@ class Main {
 	/**
 	 * ミドルウェアの設定
 	 * @private
+	 * @return {void}
 	 */
 	private settingMiddleware() :void {
+		logger.system.debug('Main - settingMiddleware');
 		this.app.use(function(req, res, next) {
 			res.header("Access-Control-Allow-Origin", "*");
 			res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -55,14 +58,23 @@ class Main {
 	};
 
 	/**
+	 * コントローラの設定
+	 * @private
+	 * @return {void}
+	 */
+	private settingController() :void {
+		logger.system.debug('Main - settingController');
+		this.controller['portfolio'] = new PortfolioController();
+		this.controller['purchases'] = new PurchasesController();
+		this.controller['brand'] = new BrandController();
+	}
+
+	/**
 	 * APIの設定
 	 * @private
 	 */
 	private settingApi() :void {
-		this.app.get('/', function(req, res) {
-			res.send('HelloWorld');
-		});
-
+		logger.system.debug('Main - settingApi');
 		///////////////////// Portfolio /////////////////////
 		this.app.get(this.controller['portfolio'].getUrl(), (req, res) => this.controller['portfolio'].beforeGet(req, res));
 		this.app.post(this.controller['portfolio'].getUrl(), (req, res) => this.controller['portfolio'].beforePost(req, res));
@@ -79,11 +91,14 @@ class Main {
 
 	/**
 	 * サーバーの開始
+	 * @private
+	 * @return {void}
 	 */
-	start() :void {
+	private start() :void {
+		logger.system.debug('Main - start');
 		// サーバーの開始
 		this.app.listen('18456', function() {
-			console.log('listen ...');
+			logger.system.info('Main - ListenStart...');
 		});
 	}
 }

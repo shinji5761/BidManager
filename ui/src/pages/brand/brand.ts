@@ -18,32 +18,32 @@ export class BrandPage implements OnInit {
 
 	/**
 	 * ブランド情報
-	 * @private 
+	 * @private
 	 * @type {BrandEntity}
 	 */
 	private brand :BrandEntity;
 
 	/**
 	 * チャートデータ
-	 * @private 
+	 * @private
 	 * @type {ChartEntity}
 	 */
 	private bidChart :ChartEntity;
 
 	/**
 	 * API Service
-	 * @private 
+	 * @private
 	 * @type {BrandApiService}
 	 */
 	private api :BrandApiService;
 
 	/**
 	 * @constructor
-	 * @param _navCtrl 
-	 * @param _navParams 
+	 * @param _navCtrl
+	 * @param _navParams
 	 */
 	constructor(
-		public _navCtrl :NavController, 
+		public _navCtrl :NavController,
 		public _navParams :NavParams,
 		public _accessor :ApiAccessor
 	) {
@@ -83,21 +83,21 @@ export class BrandPage implements OnInit {
 
 	/**
 	 * createChart
-	 * @private 
+	 * @private
 	 * @param {Array<any>} data 銘柄データ
 	 */
 	private createChart(data :Array<any>) :void {
-			let closeArray :Array<number> = [];
-			let dateArray :Array<string> = [];
-			let dataset :Array<ChartDatasetEntity> = [];
-			for(let index in data) {
-				closeArray.push(data[index]['close']);
-				dateArray.push(data[index]['date']);
-			}
-			
-			dataset.push(new ChartDatasetEntity(closeArray, '5分足'));
+		let dataset :Array<ChartDatasetEntity> = [];
+		let closeArray :Array<number> = [];
+		let dateArray :Array<string> = [];
+		for(let index in data) {
+			closeArray.push(data[index]['close']);
+			dateArray.push(data[index]['date']);
+		}
 
-			this.bidChart.setLabels(dateArray);
-			this.bidChart.setDataset(dataset);
+		dataset.push(new ChartDatasetEntity(closeArray, '5分足'));
+
+		this.bidChart.setLabels(dateArray);
+		this.bidChart.setDataset(dataset);
 	}
 }
