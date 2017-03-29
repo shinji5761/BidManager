@@ -52,7 +52,7 @@ export class PurchasesController extends Controller {
 	 */
 	public post(req, res) :void {
 		this.logger.system.debug('PurchasesController.post: start');
-
+		// パラメータの取得
 		let body = req.body;
 		body['no'] = req.params.no;
 		this.logger.system.info('PurchasesController.post: ' + JSON.stringify(body));

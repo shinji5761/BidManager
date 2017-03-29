@@ -30,7 +30,7 @@ export class PortfolioService extends Service {
 	}
 
 	/**
-	 * 追加データ作成処理
+	 * 作成データ作成処理
 	 * @override
 	 * @param {any} body ボディデータ
 	 */
@@ -44,8 +44,8 @@ export class PortfolioService extends Service {
 	}
 
 	/**
-	 *
-	 * @param body
+	 * 更新データ作成処理
+	 * @param {any} body ボディデータ
 	 */
 	public createPutParams(body :any) :Object {
 		this.logger.system.debug('PortfolioService.createPutParams: start');
@@ -55,6 +55,22 @@ export class PortfolioService extends Service {
 		};
 		let searchParams = {};
 		searchParams['no'] = body.no;
+		this.addSearchParam(searchParams, params);
+		return params;
+	}
+
+	/**
+	 * 削除データ作成処理
+	 * @param {any} body ボディデータ
+	 */
+	public createDeleteParams(body :any) :Object {
+		this.logger.system.debug('PortfolioService.createDeleteParams: start');
+		let params = {
+			'sql': 'DELETE FROM portfolio',
+			'data': []
+		};
+		let searchParams = {};
+		searchParams['no'] = Number(body.no);
 		this.addSearchParam(searchParams, params);
 		return params;
 	}

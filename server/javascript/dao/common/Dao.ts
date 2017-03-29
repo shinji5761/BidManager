@@ -100,6 +100,7 @@ export abstract class Dao {
 		this.logger.system.debug('Dao.get: start');
 		// SQLパラメータの作成
 		let params = this.service.createGetParams(body);
+		this.logger.system.info('Dao.get: SQL=' + params.sql + ', data=' + JSON.stringify(params.data));
 
 		// サーバー接続
 		let rows = [];
@@ -133,6 +134,7 @@ export abstract class Dao {
 		this.logger.system.debug('Dao.post: start');
 		// SQLパラメータの作成
 		let params = this.service.createPostParams(body);
+		this.logger.system.info('Dao.post: SQL=' + params.sql + ', data=' + JSON.stringify(params.data));
 
 		// サーバー接続
 		let query = this.connection.query(params.sql, params.data);
@@ -161,6 +163,7 @@ export abstract class Dao {
 		this.logger.system.debug('Dao.put: start');
 		// SQLパラメータの作成
 		let params = this.service.createPutParams(body);
+		this.logger.system.info('Dao.put: SQL=' + params.sql + ', data=' + JSON.stringify(params.data));
 
 		// サーバー接続
 		let query = this.connection.query(params.sql, params.data);
@@ -189,6 +192,7 @@ export abstract class Dao {
 		this.logger.system.debug('Dao.delete: start');
 		// SQLパラメータの作成
 		let params = this.service.createDeleteParams(body);
+		this.logger.system.info('Dao.delete: SQL=' + params.sql + ', data=' + JSON.stringify(params.data));
 
 		// サーバー接続
 		let query = this.connection.query(params.sql, params.data);

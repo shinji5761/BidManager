@@ -31,4 +31,12 @@ export class ToastOptionEntity {
 		return this.option;
 	}
 
+	/**
+	 * Setter(message)
+	 * @param {string} message トースト表示メッセージ
+	 */
+	public setMessage(message :string) :void {
+		this.option['message'] = message;
+	}
+
 }

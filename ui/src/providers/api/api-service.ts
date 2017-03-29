@@ -16,14 +16,14 @@ export class ApiService {
 
 	/**
 	 * オプション
-	 * @private 
+	 * @private
 	 * @type {URLSearchParams}
 	 */
 	protected option :URLSearchParams;
 
 	/**
 	 * ヘッダー
-	 * @private 
+	 * @private
 	 * @type {Headers}
 	 */
 	protected headers: Headers;
@@ -51,7 +51,7 @@ export class ApiService {
 
 
 	/**
-	 * Portfolio GET
+	 * GET
 	 * @return {any}
 	 */
 	public query() :any {
@@ -59,7 +59,7 @@ export class ApiService {
 	}
 
 	/**
-	 * Portfolio POST
+	 * POST
 	 * @param {any} data POST Data
 	 */
 	public post(data :any) :any {
@@ -70,7 +70,7 @@ export class ApiService {
 	}
 
 	/**
-	 * Portfolio PUT
+	 * PUT
 	 * @param {any} data PUT Data
 	 */
 	public update(data :any) :any {
@@ -79,6 +79,14 @@ export class ApiService {
 		return this.http.put(this.url, params, options).map(res => res.json());
 	}
 
+	/**
+	 * Delete
+	 * @return {any}
+	 */
+	public delete() :any {
+		let options = new RequestOptions({'headers': this.headers});
+		return this.http.delete(this.url, options).map(res => res.json());
+	}
 
 	/**
 	 * オプション設定
@@ -97,6 +105,6 @@ export class ApiService {
 	public clearOption() :void {
 		this.option = new URLSearchParams();
 		this.option.set('callback', 'JSONP_CALLBACK');
-	} 
+	}
 
 }

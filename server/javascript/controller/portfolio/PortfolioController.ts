@@ -51,4 +51,30 @@ export class PortfolioController extends Controller {
 			}, this
 		)
 	}
+
+	/**
+	 * Delete
+	 * @param req
+	 * @param res
+	 * @return {void}
+	 */
+	public delete(req, res) :void {
+		this.logger.system.debug('Controller.delete: start');
+		// パラメータの取得
+		let body :Object = req.body;
+		body['no'] = req.params.no;
+		this.logger.system.info('Controller.delete: ' + JSON.stringify(body));
+
+		this.dao.delete(
+			body,
+			// コールバック(OK)
+			(data) => {
+				this.afterDelete(req, res, data);
+			},
+			// コールバック(NG)
+			(error, status) => {
+				this.isError(error, status, res);
+			}
+		)
+	}
 }

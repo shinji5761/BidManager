@@ -79,6 +79,7 @@ class Main {
 		this.app.get(this.controller['portfolio'].getUrl(), (req, res) => this.controller['portfolio'].beforeGet(req, res));
 		this.app.post(this.controller['portfolio'].getUrl(), (req, res) => this.controller['portfolio'].beforePost(req, res));
 		this.app.put(this.controller['portfolio'].getUrl(), (req, res) => this.controller['portfolio'].beforePut(req, res));
+		this.app.delete(this.controller['portfolio'].getUrl() + '/no/:no', (req, res) => this.controller['portfolio'].beforeDelete(req, res));
 
 		///////////////////// Purchases /////////////////////
 		this.app.get(this.controller['purchases'].getUrl(), (req, res) => this.controller['purchases'].beforeGet(req, res));

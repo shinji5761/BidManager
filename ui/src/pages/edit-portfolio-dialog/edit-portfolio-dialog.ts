@@ -88,6 +88,25 @@ export class EditPortfolioDialogPage implements OnInit {
 	}
 
 	/**
+	 * 購入情報 取得
+	 * @private
+	 * @return {void}
+	 */
+	private runGetPurchases() :void {
+		// ポートフォリオのIDがある場合
+		if(this.portfolio.getNo() != null) {
+			this.purchasesAccessor.setNo(this.portfolio.getNo());
+			this.purchasesAccessor.query().subscribe(
+				res => this.createBrand(res),
+				error => console.error(error)
+			);
+		} else {
+			// dummyを差し込む
+			this.portfolio.getBrand().push(new BrandEntity(null, null, 0, 0));
+		}
+	}
+
+	/**
 	 * ポートフォリオ 作成処理
 	 * @private 
 	 * @return {void}
@@ -112,25 +131,6 @@ export class EditPortfolioDialogPage implements OnInit {
 	}
 
 	/**
-	 * 購入情報 取得
-	 * @private
-	 * @return {void}
-	 */
-	private runGetPurchases() :void {
-		// ポートフォリオのIDがある場合
-		if(this.portfolio.getNo() != null) {
-			this.purchasesAccessor.setNo(this.portfolio.getNo());
-			this.purchasesAccessor.query().subscribe(
-				res => this.createBrand(res),
-				error => console.error(error)
-			);
-		} else {
-			// dummyを差し込む
-			this.portfolio.getBrand().push(new BrandEntity(null, null, 0, 0));
-		}
-	}
-
-	/**
 	 * 購入物 作成処理
 	 * @private 
 	 * @return {void}
@@ -138,16 +138,23 @@ export class EditPortfolioDialogPage implements OnInit {
 	private runPostPurchases(no) :void {
 		let postList : Array<any> = [];
 		this.purchasesAccessor.setNo(no);
+
 		// 銘柄の数だけ､POSTリクエストを送信する｡
 		for(let index in this.portfolio.getBrand()) {
 			let data :BrandEntity = this.portfolio.getBrand()[index];
 			postList.push(this.purchasesAccessor.post(data));
 		}
-		// 待ち合わせ
-		Observable.forkJoin(postList).subscribe(
-			res => this.onSuccessSave(res),
-			error => this.onFailSave(error)
-		);
+
+		if(postList.length) {
+			// 待ち合わせ
+			Observable.forkJoin(postList).subscribe(
+				res => this.onSuccessSave(res),
+				error => this.onFailSave(error)
+			);
+		}
+		else {
+			this.onSuccessSave(null);
+		}
 	}
 
 

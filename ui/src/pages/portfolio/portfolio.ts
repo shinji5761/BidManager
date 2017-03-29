@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, NavParams, ModalController, LoadingController } from 'ionic-angular';
+import { NavController, NavParams, ModalController, LoadingController, ToastController } from 'ionic-angular';
 
 // === Page ===
 import { BrandPage } from '../brand/brand';
@@ -10,6 +10,7 @@ import { EditPortfolioDialogPage } from '../edit-portfolio-dialog/edit-portfolio
 // === Entity ===
 import { PortfolioEntity } from '../../entity/PortfolioEntity';
 import { BrandEntity } from '../../entity/BrandEntity';
+import { ToastOptionEntity } from '../../entity/ToastOptionEntity';
 
 // === API ===
 import { ApiAccessor } from '../../providers/api/api-accessor';
@@ -46,7 +47,8 @@ export class PortfolioPage implements OnInit {
 		public _navCtrl :NavController,
 		public _navParams :NavParams,
 		public _modalCtrl :ModalController,
-		public _loadingCtrl : LoadingController,
+		public _loadingCtrl :LoadingController,
+		public _toastCtrl :ToastController,
 		private _accessor :ApiAccessor
 	) {
 		// APIの取得
@@ -72,8 +74,25 @@ export class PortfolioPage implements OnInit {
 		this.api.setNo(this.portfolio.getNo());
 		this.api.query().subscribe(
 			res => this.createPurchases(res),
-			error => console.error(error)
+			error => this.isError(error)
 		);
+	}
+
+	/**
+	 * ポートフォリオ 取得エラー
+	 * @param {any} error [description]
+	 */
+	public isError(error :any) :void {
+		let option :ToastOptionEntity;
+		option = new ToastOptionEntity('', 3000, 'top');
+		// 空配列の場合
+		if(error = []) {
+			option.setMessage('銘柄が登録されていません');
+		} else {
+			option.setMessage('システムエラー');
+		}
+		let toast = this._toastCtrl.create(option.getOption());
+		toast.present();
 	}
 
 	/**

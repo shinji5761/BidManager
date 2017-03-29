@@ -85,6 +85,7 @@ export abstract class Controller {
 	 */
 	public beforeGet(req, res) :void {
 		this.logger.system.debug('Controller.beforeGet: start');
+		this.logger.system.debug('Controller.beforeGet: url=' + this.url);
 		this.get(req, res);
 	}
 
@@ -219,11 +220,52 @@ export abstract class Controller {
 	}
 
 	/**
-	 * delete
+	 * Before Delete
+	 * Delete前処理
 	 * @param req
 	 * @param res
+	 * @return {void}
+	 */
+	public beforeDelete(req, res) :void {
+		this.logger.system.debug('Controller.beforeDelete: start');
+		this.delete(req, res);
+	}
+
+	/**
+	 * Delete
+	 * @param req
+	 * @param res
+	 * @return {void}
 	 */
 	public delete(req, res) :void {
 		this.logger.system.debug('Controller.delete: start');
+		// パラメータの取得
+		let body :Object = req.body;
+		this.logger.system.info('Controller.delete: ' + JSON.stringify(body));
+
+		this.dao.delete(
+			body,
+			// コールバック(OK)
+			(data) => {
+				this.afterDelete(req, res, data);
+			},
+			// コールバック(NG)
+			(error, status) => {
+				this.isError(error, status, res);
+			}
+		)
+	}
+
+	/**
+	 * Before Delete
+	 * Delete後処理
+	 * @param req
+	 * @param res
+	 * @param data
+	 * @return {void}
+	 */
+	public afterDelete(req, res, data) :void {
+		this.logger.system.debug('Controller.afterDelete: start');
+		res.status(200).send(data);
 	}
 }

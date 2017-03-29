@@ -19,7 +19,7 @@ CREATE TABLE bid_manager.brand(
 	code INT NOT NULL,
 	name VARCHAR(30),
 	PRIMARY KEY (no, code),
-	FOREIGN KEY (no) REFERENCES portfolio(no)
+	FOREIGN KEY (no) REFERENCES portfolio(no) ON DELETE CASCADE
 );
 
 -- CREATE STOCK TABLE
@@ -28,7 +28,7 @@ CREATE TABLE bid_manager.stock(
 	code INT NOT NULL,
 	price INT,
 	stock INT,
-	FOREIGN KEY (no, code) REFERENCES brand(no, code)
+	FOREIGN KEY (no, code) REFERENCES brand(no, code) ON DELETE CASCADE
 );
 
 -- CREATE ONE_DAY TABLE
@@ -39,7 +39,7 @@ CREATE TABLE bid_manager.one_day(
 	high FLOAT,
 	low FLOAT,
 	close FLOAT,
-	volume INT 
+	volume INT
 );
 
 -- CREATE PURCHASES VIEW
