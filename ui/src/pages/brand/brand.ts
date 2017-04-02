@@ -57,8 +57,12 @@ export class BrandPage implements OnInit {
 	 * @return {void}
 	 */
 	ngOnInit() :void {
+		// チャートオプション
+		let bidOptions = {
+			'scales': {'xAxes': [{'display': false}]}
+		};
 		// チャートデータの初期化
-		this.bidChart = new ChartEntity('line', [], []);
+		this.bidChart = new ChartEntity('line', [], [], bidOptions);
 
 		// チャートデータの取得
 		this.createBrand();
@@ -87,17 +91,17 @@ export class BrandPage implements OnInit {
 	 * @param {Array<any>} data 銘柄データ
 	 */
 	private createChart(data :Array<any>) :void {
-		let dataset :Array<ChartDatasetEntity> = [];
-		let closeArray :Array<number> = [];
 		let dateArray :Array<string> = [];
+		let chartData :Array<ChartDatasetEntity> = [];
+		let closeArray :Array<number> = [];
+
+		// 取得したデータの終値を抽出
 		for(let index in data) {
+            dateArray.push(data[index]['date']);
 			closeArray.push(data[index]['close']);
-			dateArray.push(data[index]['date']);
 		}
-
-		dataset.push(new ChartDatasetEntity(closeArray, '5分足'));
-
+		chartData.push(new ChartDatasetEntity(closeArray, '1日足'));
 		this.bidChart.setLabels(dateArray);
-		this.bidChart.setDataset(dataset);
+		this.bidChart.setDataset(chartData);
 	}
 }

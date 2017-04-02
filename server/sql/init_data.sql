@@ -46,7 +46,6 @@ INSERT INTO one_day(code, targetDate, open, high, low, close, volume) VALUES(675
 INSERT INTO one_day(code, targetDate, open, high, low, close, volume) VALUES(6752, '2017-03-28', 1200, 1300, 1000, 1440, 20000);
 INSERT INTO one_day(code, targetDate, open, high, low, close, volume) VALUES(6752, '2017-03-29', 1200, 1300, 1000, 1330, 20000);
 INSERT INTO one_day(code, targetDate, open, high, low, close, volume) VALUES(6752, '2017-03-30', 1200, 1300, 1000, 1230, 20000);
-INSERT INTO one_day(code, targetDate, open, high, low, close, volume) VALUES(6752, '2017-03-03', 1200, 1300, 1000, 1110, 20000);
 INSERT INTO one_day(code, targetDate, open, high, low, close, volume) VALUES(2193, '2017-03-01', 1200, 1300, 1000, 1100, 20000);
 INSERT INTO one_day(code, targetDate, open, high, low, close, volume) VALUES(2193, '2017-03-02', 1200, 1300, 1000, 1100, 20000);
 INSERT INTO one_day(code, targetDate, open, high, low, close, volume) VALUES(2193, '2017-03-03', 1200, 1300, 1000, 1100, 20000);

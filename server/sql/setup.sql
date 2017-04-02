@@ -6,7 +6,7 @@ CREATE DATABASE bid_manager;
 GRANT ALL ON bid_manager.* TO admin;
 
 
--- CREATE PORTFOLIO TABLE 
+-- CREATE PORTFOLIO TABLE
 CREATE TABLE bid_manager.portfolio(
 	no INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(30),
@@ -39,11 +39,17 @@ CREATE TABLE bid_manager.one_day(
 	high FLOAT,
 	low FLOAT,
 	close FLOAT,
-	volume INT
+	volume INT,
+	PRIMARY KEY (targetDate, code)
 );
 
 -- CREATE PURCHASES VIEW
-CREATE VIEW bid_manager.purchases as (
+CREATE VIEW bid_manager.purchases AS (
 	SELECT brand.no, brand.code, brand.name, stock.price, stock.stock FROM bid_manager.brand
 	INNER JOIN bid_manager.stock ON brand.no = stock.no && brand.code = stock.code
+);
+
+-- CREATE BRAND_LIST VIEW
+CREATE VIEW bid_manager.brand_list AS (
+	SELECT DISTINCT code FROM bid_manager.brand
 );

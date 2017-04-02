@@ -23,12 +23,19 @@ export class ChartEntity {
 	private dataset :Array<ChartDatasetEntity>;
 
 	/**
+	 * オプション
+	 * @type {Object}
+	 */
+	private options :Object;
+
+	/**
 	 * @constructor
 	 */
-	constructor(type :string, labels: Array<string>, dataset :Array<ChartDatasetEntity>) {
+	constructor(type :string, labels: Array<string>, dataset :Array<ChartDatasetEntity>, options :Object) {
 		this.type = type;
 		this.labels = labels;
 		this.dataset = dataset;
+		this.options = options;
 	}
 
 	/**

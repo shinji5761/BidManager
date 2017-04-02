@@ -9,11 +9,13 @@
 			<!-- チャート･グリッド -->
 			<ion-row>
 				<div style="width: 100%">
+					<!-- 終値 -->
 					<canvas baseChart
 						*ngIf="bidChart.getDataset() != 0"
 						[datasets]="bidChart.dataset"
 						[chartType]="bidChart.type"
 						[labels]="bidChart.labels"
+						[options]="bidChart.options"
 					>
 					</canvas>
 				</div>
