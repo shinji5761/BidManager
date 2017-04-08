@@ -24,7 +24,7 @@ class Main {
      * ログ
      * @type {any}
      */
-    protected logger :any;
+    private logger :any;
 
     /**
      * OneDayDao
@@ -125,29 +125,32 @@ class Main {
         this.logger.system.debug('Main.getBidInfo: start');
         for(let index in data) {
             // 銘柄コードのデータ取得
-            let result = (this.service.getFinanceInfo(new GoogleFinanceEntity(this.term, this.step, data.code, this.market)));
-            let body = {
-                'code': result.getCode(),
-                'targetDate': result.getTargetDate(),
-                'open': result.getOpen(),
-                'high': result.getHigh(),
-                'low': result.getLow(),
-                'close': result.getClose(),
-                'volume': result.getVolume()
-            };
-            this.oneDayDao.post(body,
-                // onSuccess
-                (data) => {
-                    this.logger.system.debug('Main.getBidInfo.onSuccess: start');
-                    this.logger.system.info('Main.getBidInfo.onSuccess: ' + JSON.stringify(data));
-                },
-                // onFail
-                (error) => {
-                    this.logger.system.debug('Main.run.onFail: start');
-                    this.logger.system.error('Main.run.onFail: ' + JSON.stringify(error));
-                },
-                this
-            );
+            let result = (this.service.getFinanceInfo(new GoogleFinanceEntity(this.term, this.step, data[index].code, this.market)));
+            // 90日分のデータをinsertする
+            for(let i in result) {
+                let body = {
+                    'code': result[i].getCode(),
+                    'targetDate': result[i].getTargetDate(),
+                    'open': result[i].getOpen(),
+                    'high': result[i].getHigh(),
+                    'low': result[i].getLow(),
+                    'close': result[i].getClose(),
+                    'volume': result[i].getVolume()
+                };
+                this.oneDayDao.post(body,
+                    // onSuccess
+                    (data) => {
+                        this.logger.system.debug('Main.getBidInfo.onSuccess: start');
+                        this.logger.system.info('Main.getBidInfo.onSuccess: ' + JSON.stringify(data));
+                    },
+                    // onFail
+                    (error) => {
+                        this.logger.system.debug('Main.run.onFail: start');
+                        this.logger.system.error('Main.run.onFail: ' + JSON.stringify(error));
+                    },
+                    this
+                );
+            }
         }
     }
 

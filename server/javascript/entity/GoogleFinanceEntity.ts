@@ -108,4 +108,17 @@ export class GoogleFinanceEntity {
     public setMarket(market :string) :void {
         this.market = market;
     }
+
+    /**
+     * GoogleFinance URL クエリパラメータ 作成処理
+     * @return {string} クエリパラメータ
+     */
+    public createQueryParams() :string {
+        let param = 'p=' + this.term + '&' +
+                    'i=' + this.step + '&' +
+                    'q=' + this.brandCode + '&' +
+                    'x=' + this.market + '&' +
+                    'f=d,c,h,l,o,v';
+        return param;
+    }
 }
