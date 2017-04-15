@@ -140,12 +140,10 @@ class Main {
                 this.oneDayDao.post(body,
                     // onSuccess
                     (data) => {
-                        this.logger.system.debug('Main.getBidInfo.onSuccess: start');
                         this.logger.system.info('Main.getBidInfo.onSuccess: ' + JSON.stringify(data));
                     },
                     // onFail
                     (error) => {
-                        this.logger.system.debug('Main.run.onFail: start');
                         this.logger.system.error('Main.run.onFail: ' + JSON.stringify(error));
                     },
                     this
