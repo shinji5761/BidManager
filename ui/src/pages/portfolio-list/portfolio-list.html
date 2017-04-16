@@ -15,11 +15,12 @@
 				損益:{{portfolio.profit | number}}円
 			</span>
 		</ion-item>
-		<!-- 追加ボタン -->
-		<ion-fab center>
-			<button ion-fab mini color="primary" (click)="addPortfolio()">
-				<ion-icon name="add"></ion-icon>
-			</button>
-		</ion-fab>
 	</ion-list>
+	<!-- 追加ボタン -->
+	<ion-fab bottom right>
+		<button ion-fab color="primary" (click)="addPortfolio()">
+			<ion-icon name="add"></ion-icon>
+		</button>
+	</ion-fab>
+
 </ion-content>

@@ -1,12 +1,6 @@
 <ion-header>
 	<ion-navbar>
 		<ion-title>{{portfolio.getName()}}</ion-title>
-		<ion-buttons end>
-			<!-- ポートフォリオ編集ボタン -->
-			<button ion-button icon-only (click)="editPortfolio()">
-				<ion-icon name="settings"></ion-icon>
-			</button>
-		</ion-buttons>
 	</ion-navbar>
 </ion-header>
 <ion-content padding>
@@ -66,5 +60,12 @@
 			</ion-grid>
 		</button>
 	</ion-list>
+
+	<!-- ポートフォリオ編集ボタン -->
+	<ion-fab bottom right>
+		<button ion-fab color="primary" (click)="editPortfolio()">
+			<ion-icon name="create"></ion-icon>
+		</button>
+	</ion-fab>
 
 </ion-content>
