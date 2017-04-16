@@ -10,11 +10,25 @@ import { ChartDatasetEntity } from '../../entity/ChartDatasetEntity';
 import { ApiAccessor } from '../../providers/api/api-accessor';
 import { BrandApiService } from '../../providers/api/BrandApiService';
 
+
 @Component({
 	selector: 'page-brand',
 	templateUrl: 'brand.html'
 })
 export class BrandPage implements OnInit {
+	// === 定数 ===
+	private static CHART_OPTION :Object = {
+		'scales': {
+			'xAxes': [
+				{'ticks': {'autoSkipPadding': 50, 'maxRotation': 0}}
+			],
+			'yAxes': [
+				{'ticks': {'autoSkipPadding': 50}}
+			]
+		}
+	};
+
+
 
 	/**
 	 * ブランド情報
@@ -58,9 +72,7 @@ export class BrandPage implements OnInit {
 	 */
 	ngOnInit() :void {
 		// チャートオプション
-		let bidOptions = {
-			'scales': {'xAxes': [{'display': false}]}
-		};
+		let bidOptions = BrandPage.CHART_OPTION;
 		// チャートデータの初期化
 		this.bidChart = new ChartEntity('line', [], [], bidOptions);
 
@@ -81,12 +93,16 @@ export class BrandPage implements OnInit {
 				this.createChart(result);
 				// this.createGrid(result);
 			},
-			(error) => console.error(error)
+			(error) => {
+				console.error(error);
+				// todo: データが無い旨を表示
+			}
 		);
 	}
 
 	/**
-	 * createChart
+	 * チャートの作成
+	 * 取得したデータの終値を抽出し､チャート用のデータに加工する｡
 	 * @private
 	 * @param {Array<any>} data 銘柄データ
 	 */
