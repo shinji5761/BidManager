@@ -1,5 +1,7 @@
 // === 銘柄コード ===
-$code-width: 80%;
+$code-width: 90%;
+// === 銘柄名 ===
+$name-width: 75%;
 // === 購入額 ===
 $price-width: 50%;
 // === 保有数===
@@ -10,12 +12,16 @@ page-edit-portfolio-dialog {
 	ion-content ion-list ion-item-sliding ion-item:nth-of-type(1) {
 		width: $code-width !important;
 	}
-	// 購入額
+	// 銘柄名
 	ion-content ion-list ion-item-sliding ion-item:nth-of-type(2) {
+		width: $name-width !important;
+	}
+	// 購入額
+	ion-content ion-list ion-item-sliding ion-item:nth-of-type(3) {
 		width: $price-width !important;
 	}
 	// 保有数
-	ion-content ion-list ion-item-sliding ion-item:nth-of-type(3) {
+	ion-content ion-list ion-item-sliding ion-item:nth-of-type(4) {
 		width: $stock-width !important;
 	}
 }

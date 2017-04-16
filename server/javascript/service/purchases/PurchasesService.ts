@@ -36,8 +36,8 @@ export class PurchasesService extends Service {
 	public createPostParams(body :any) :Object {
 		this.logger.system.debug('PurchasesService.createPostParams: start');
 		let params = {
-			'sql': 'SELECT func_create_purchases(?, ?, ?, ?)',
-			'data': [Number(body.no), Number(body.code), body.price, body.stock]
+			'sql': 'SELECT func_create_purchases(?, ?, ?, ?, ?)',
+			'data': [Number(body.no), Number(body.code), body.name, body.price, body.stock]
 		};
 		return params;
 	}
