@@ -22,7 +22,7 @@ export class PurchasesService extends Service {
 	public createGetParams(body :any) :any {
 		this.logger.system.debug('PurchasesService.createGetParams: start');
 		let params = {
-			'sql': 'SELECT code, name, price, stock FROM purchases WHERE no = ? ORDER BY code',
+			'sql': 'SELECT code, brand_no AS brandNo, name, price, stock FROM purchases WHERE no = ? ORDER BY brandNo',
 			'data': [Number(body.no)]
 		}
 		return params;
@@ -36,8 +36,8 @@ export class PurchasesService extends Service {
 	public createPostParams(body :any) :Object {
 		this.logger.system.debug('PurchasesService.createPostParams: start');
 		let params = {
-			'sql': 'SELECT func_create_purchases(?, ?, ?, ?, ?)',
-			'data': [Number(body.no), Number(body.code), body.name, body.price, body.stock]
+			'sql': 'SELECT func_create_purchases(?, ?, ?, ?, ?, ?)',
+			'data': [Number(body.no), Number(body.brandNo), Number(body.code), body.name, body.price, body.stock]
 		};
 		return params;
 	}

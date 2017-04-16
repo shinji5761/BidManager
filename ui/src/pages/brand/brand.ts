@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams, ToastController, LoadingController } from 'ionic-angular';
 
 // === Entity ===
 import { BrandEntity } from '../../entity/BrandEntity';
 import { ChartEntity } from '../../entity/ChartEntity';
 import { ChartDatasetEntity } from '../../entity/ChartDatasetEntity';
 
-// === Provider ===
+// === Library ===
+import { DialogLibrary } from '../../providers/library/DialogLibrary';
+
+// === Api ===
 import { ApiAccessor } from '../../providers/api/api-accessor';
 import { BrandApiService } from '../../providers/api/BrandApiService';
 
@@ -55,16 +58,23 @@ export class BrandPage implements OnInit {
 	 * @constructor
 	 * @param _navCtrl
 	 * @param _navParams
+	 * @param _toastCtrl
+	 * @param _loadingCtrl
+	 * @param _dialogLib
+	 * @param _accessor
 	 */
 	constructor(
 		public _navCtrl :NavController,
 		public _navParams :NavParams,
+		private _toastCtrl :ToastController,
+		private _loadingCtrl :LoadingController,
+		private _dialogLib :DialogLibrary,
 		public _accessor :ApiAccessor
 	) {
 		// APIの取得
 		this.api = this._accessor.getBrandApiService();
 		this.brand = this._navParams.get('brand');
-	}
+	};
 
 	/**
 	 * 初期化処理
@@ -78,7 +88,7 @@ export class BrandPage implements OnInit {
 
 		// チャートデータの取得
 		this.createBrand();
-	}
+	};
 
 
 	/**
@@ -87,8 +97,17 @@ export class BrandPage implements OnInit {
 	 * @return {void}
 	 */
 	private createBrand() :void {
+		// ローディングダイアログ 作成･開始
+        let loader = this._dialogLib.createGetDialog(this._loadingCtrl);
+        loader.present();
+
 		this.api.setCode(this.brand.getCode());
-		this.api.query().subscribe(
+		this.api.query()
+		.finally(() => {
+            // ローディングダイアログ 終了
+            loader.dismiss();
+        })
+		.subscribe(
 			(result) => {
 				this.createChart(result);
 				// this.createGrid(result);
@@ -98,7 +117,7 @@ export class BrandPage implements OnInit {
 				// todo: データが無い旨を表示
 			}
 		);
-	}
+	};
 
 	/**
 	 * チャートの作成
@@ -119,5 +138,5 @@ export class BrandPage implements OnInit {
 		chartData.push(new ChartDatasetEntity(closeArray, '1日足'));
 		this.bidChart.setLabels(dateArray);
 		this.bidChart.setDataset(chartData);
-	}
+	};
 }

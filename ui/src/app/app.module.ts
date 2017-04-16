@@ -13,6 +13,9 @@ import { BrandPage } from '../pages/brand/brand';
 // === Dialog ===
 import { EditPortfolioDialogPage } from '../pages/edit-portfolio-dialog/edit-portfolio-dialog';
 
+// === Library ===
+import { DialogLibrary } from '../providers/library/DialogLibrary';
+
 // === API ===
 import { ApiAccessor } from '../providers/api/api-accessor';
 
@@ -47,7 +50,7 @@ import '../../node_modules/chart.js/dist/Chart.min.js';
 		BrandPage,
 		EditPortfolioDialogPage,
 	],
-	providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, ApiAccessor],
+	providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, ApiAccessor, DialogLibrary],
 	schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule {}

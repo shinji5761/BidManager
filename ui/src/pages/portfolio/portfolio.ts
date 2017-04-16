@@ -12,6 +12,9 @@ import { PortfolioEntity } from '../../entity/PortfolioEntity';
 import { BrandEntity } from '../../entity/BrandEntity';
 import { ToastOptionEntity } from '../../entity/ToastOptionEntity';
 
+// === Library ===
+import { DialogLibrary } from '../../providers/library/DialogLibrary';
+
 // === API ===
 import { ApiAccessor } from '../../providers/api/api-accessor';
 import { PurchasesApiService } from '../../providers/api/PurchasesApiService';
@@ -22,17 +25,17 @@ import { PurchasesApiService } from '../../providers/api/PurchasesApiService';
   templateUrl: 'portfolio.html'
 })
 export class PortfolioPage implements OnInit {
-	
+
 	/**
 	 * ポートフォリオ
-	 * @private 
+	 * @private
 	 * @type {PortfolioEntity}
 	 */
 	private portfolio :PortfolioEntity;
 
 	/**
 	 * API Service
-	 * @private 
+	 * @private
 	 * @type {PurchasesApiService}
 	 */
 	private api :PurchasesApiService;
@@ -40,21 +43,26 @@ export class PortfolioPage implements OnInit {
 
 	/**
 	 * @constructor
-	 * @param _navCtrl 
-	 * @param _navParams 
+	 * @param _navCtrl
+	 * @param _navParams
+	 * @param _modalCtrl
+	 * @param _toastCtrl
+	 * @param _loadingCtrl
+	 * @param _dialogLib
+	 * @param _accessor
 	 */
 	constructor(
 		public _navCtrl :NavController,
 		public _navParams :NavParams,
 		public _modalCtrl :ModalController,
-		public _loadingCtrl :LoadingController,
 		public _toastCtrl :ToastController,
-		private _accessor :ApiAccessor
-	) {
+        public _loadingCtrl :LoadingController,
+        private _dialogLib :DialogLibrary,
+		private _accessor :ApiAccessor ) {
 		// APIの取得
 		this.api = this._accessor.getPurchasesApiService();
 		this.portfolio = this._navParams.get('portfolio');
-	}
+	};
 
 	/**
 	 * 初期化
@@ -62,7 +70,7 @@ export class PortfolioPage implements OnInit {
 	 */
 	ngOnInit() :void {
 		this.runGetPurchases();
-	}
+	};
 
 
 	/**
@@ -71,12 +79,21 @@ export class PortfolioPage implements OnInit {
 	 * @return {void}
 	 */
 	private runGetPurchases() :void {
+        // ローディングダイアログ 作成･開始
+        let loader = this._dialogLib.createGetDialog(this._loadingCtrl);
+        loader.present();
+
 		this.api.setNo(this.portfolio.getNo());
-		this.api.query().subscribe(
+		this.api.query()
+        .finally(() => {
+            // ローディングダイアログ 終了
+            loader.dismiss();
+        })
+        .subscribe(
 			res => this.createPurchases(res),
 			error => this.isError(error)
 		);
-	}
+	};
 
 	/**
 	 * ポートフォリオ 取得エラー
@@ -93,27 +110,27 @@ export class PortfolioPage implements OnInit {
 		}
 		let toast = this._toastCtrl.create(option.getOption());
 		toast.present();
-	}
+	};
 
 	/**
 	 * 銘柄情報を作成する
-	 * @private 
+	 * @private
 	 * @param {any} result 取得結果
 	 * @return {void}
 	 */
 	private createPurchases(result) :void {
 		let brandList :Array<BrandEntity> = [];
 		for(let index in result) {
-			let brand :BrandEntity = new BrandEntity(result[index].code, result[index].name, result[index].price, result[index].stock);
+			let brand :BrandEntity = new BrandEntity(result[index].brandNo, result[index].code, result[index].name, result[index].price, result[index].stock);
 			brandList.push(brand);
 		}
 		this.portfolio.setBrand(brandList);
-	}
+	};
 
-	
+
 	/**
 	 * ポートフォリオ編集
-	 * @private 
+	 * @private
 	 * @return {void}
 	 */
 	private editPortfolio() :void {
@@ -132,15 +149,15 @@ export class PortfolioPage implements OnInit {
 
 		// Dialog展開
 		modal.present();
-	}
+	};
 
 	/**
 	 * 銘柄情報表示
-	 * @private 
+	 * @private
 	 * @return {void}
 	 */
 	private showBrand(brand :BrandEntity) :void {
 		let inputData = {'brand': brand};
 		this._navCtrl.push(BrandPage, inputData);
-	}
+	};
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, NavParams, ViewController, ToastController } from 'ionic-angular';
+import { NavController, NavParams, ViewController, ToastController, LoadingController } from 'ionic-angular';
 import { Observable } from 'rxjs';
 
 // === Entity ===
@@ -7,6 +7,9 @@ import { PortfolioEntity } from '../../entity/PortfolioEntity';
 import { BrandEntity } from '../../entity/BrandEntity';
 import { ButtonEntity } from '../../entity/ButtonEntity';
 import { ToastOptionEntity } from '../../entity/ToastOptionEntity';
+
+// === Library ===
+import { DialogLibrary } from '../../providers/library/DialogLibrary';
 
 // === API ===
 import { ApiAccessor } from '../../providers/api/api-accessor';
@@ -32,10 +35,10 @@ export class EditPortfolioDialogPage implements OnInit {
 	 * @type {PortfolioEntity}
 	 */
 	private portfolio :PortfolioEntity;
-	
+
 	/**
 	 * PortfolioAPI
-	 * @private 
+	 * @private
 	 * @type {PortfolioApiService}
 	 */
 	private portfolioAccessor :PortfolioApiService;
@@ -46,7 +49,7 @@ export class EditPortfolioDialogPage implements OnInit {
 	 * @type {PurchasesApiService}
 	 */
 	private purchasesAccessor :PurchasesApiService;
-	
+
 
 	/**
 	 * ボタンオブジェクト
@@ -59,18 +62,23 @@ export class EditPortfolioDialogPage implements OnInit {
 
 	/**
 	 * @constructor
-	 * @param _navCtrl 
-	 * @param _navParams 
-	 * @param _viewCtrl 
-	 * @param _api 
+	 * @param _navCtrl
+	 * @param _navParams
+	 * @param _viewCtrl
+	 * @param _toastCtrl
+	 * @param _lodingCtrl
+	 * @param _lodingCtrl
+	 * @param _api
 	 */
 	constructor(
-		public _navCtrl: NavController,
-		public _navParams: NavParams,
-		private _viewCtrl: ViewController,
-		private _toastCtrl: ToastController,
-		private _accessor: ApiAccessor
-	) {}
+		public _navCtrl :NavController,
+		public _navParams :NavParams,
+		private _viewCtrl :ViewController,
+		private _toastCtrl :ToastController,
+		private _lodingCtrl :LoadingController,
+		private _dialogLib :DialogLibrary,
+		private _accessor :ApiAccessor
+	) {};
 
 	/**
 	 * 初期化
@@ -85,7 +93,7 @@ export class EditPortfolioDialogPage implements OnInit {
 
 		// 購入情報取得
 		this.runGetPurchases();
-	}
+	};
 
 	/**
 	 * 購入情報 取得
@@ -95,24 +103,42 @@ export class EditPortfolioDialogPage implements OnInit {
 	private runGetPurchases() :void {
 		// ポートフォリオのIDがある場合
 		if(this.portfolio.getNo() != null) {
+			// ローディングダイアログ 作成･開始
+			let loader = this._dialogLib.createGetDialog(this._lodingCtrl);
+			loader.present();
+
 			this.purchasesAccessor.setNo(this.portfolio.getNo());
-			this.purchasesAccessor.query().subscribe(
+			this.purchasesAccessor.query()
+			.finally(() => {
+				// ローディングダイアログ 終了
+				loader.dismiss();
+			})
+			.subscribe(
 				res => this.createBrand(res),
 				error => console.error(error)
 			);
 		} else {
 			// dummyを差し込む
-			this.portfolio.getBrand().push(new BrandEntity(null, null, 0, 0));
+			this.portfolio.getBrand().push(new BrandEntity(null, null, null, 0, 0));
 		}
-	}
+	};
 
 	/**
 	 * ポートフォリオ 作成処理
-	 * @private 
+	 * @private
 	 * @return {void}
 	 */
 	private runPostPortfolio() :void {
-		this.portfolioAccessor.post(this.portfolio).subscribe(
+		// ローディングダイアログ 作成･開始
+		let loader = this._dialogLib.createSaveDialog(this._lodingCtrl);
+		loader.present();
+
+		this.portfolioAccessor.post(this.portfolio)
+		.finally(() => {
+			// ローディングダイアログ 終了
+			loader.dismiss();
+		})
+		.subscribe(
 			res => this.runPostPurchases(res.insertId),
 			error => this.onFailSave(error)
 		);
@@ -120,11 +146,20 @@ export class EditPortfolioDialogPage implements OnInit {
 
 	/**
 	 * ポートフォリオ 更新処理
-	 * @private 
+	 * @private
 	 * @return {void}
 	 */
 	private runPutPortfolio() :void {
-		this.portfolioAccessor.update(this.portfolio).subscribe(
+		// ローディングダイアログ 作成･開始
+		let loader = this._dialogLib.createSaveDialog(this._lodingCtrl);
+		loader.present();
+
+		this.portfolioAccessor.update(this.portfolio)
+		.finally(() => {
+			// ローディングダイアログ 終了
+			loader.dismiss();
+		})
+		.subscribe(
 			res => this.runPostPurchases(this.portfolio.getNo()),
 			error => this.onFailSave(error)
 		);
@@ -132,7 +167,7 @@ export class EditPortfolioDialogPage implements OnInit {
 
 	/**
 	 * 購入物 作成処理
-	 * @private 
+	 * @private
 	 * @return {void}
 	 */
 	private runPostPurchases(no) :void {
@@ -146,8 +181,17 @@ export class EditPortfolioDialogPage implements OnInit {
 		}
 
 		if(postList.length) {
+			// ローディングダイアログ 作成･開始
+			let loader = this._dialogLib.createSaveDialog(this._lodingCtrl);
+			loader.present();
+
 			// 待ち合わせ
-			Observable.forkJoin(postList).subscribe(
+			Observable.forkJoin(postList)
+			.finally(() => {
+				// ローディングダイアログ 終了
+				loader.dismiss();
+			})
+			.subscribe(
 				res => this.onSuccessSave(res),
 				error => this.onFailSave(error)
 			);
@@ -160,7 +204,7 @@ export class EditPortfolioDialogPage implements OnInit {
 
 	/**
 	 * 保存成功後処理
-	 * @param res 
+	 * @param res
 	 */
 	private onSuccessSave(res :any) :void {
 		// toast
@@ -174,7 +218,7 @@ export class EditPortfolioDialogPage implements OnInit {
 
 	/**
 	 * 保存失敗後処理
-	 * @private 
+	 * @private
 	 * @param {any} error
 	 */
 	private onFailSave(error :any) :void {
@@ -187,11 +231,15 @@ export class EditPortfolioDialogPage implements OnInit {
 	/**
 	 * 購入情報 作成
 	 * @private
-	 * @param {any} res 取得結果 
+	 * @param {any} res 取得結果
 	 * @return {void}
 	 */
 	private createBrand(res :any) :void {
-		this.portfolio.setBrand(res);
+		let brandList :Array<BrandEntity> = [];
+		for(let index in res) {
+			brandList.push(new BrandEntity(res[index].brandNo, res[index].code, res[index].name, res[index].price, res[index].stock));
+		}
+		this.portfolio.setBrand(brandList);
 	}
 
 
@@ -201,6 +249,11 @@ export class EditPortfolioDialogPage implements OnInit {
 	 * @return {void}
 	 */
 	private save() :void {
+		// 表示順序を更新する
+		for( let index = 0; index < this.portfolio.getBrand().length; index++ ) {
+			this.portfolio.getBrand()[index].setBrandNo(index);
+		}
+
 		// Noが付いている場合はPUT,nullの場合はPOST
 		if(this.portfolio.getNo() != null) {
 			this.runPutPortfolio();
@@ -221,16 +274,16 @@ export class EditPortfolioDialogPage implements OnInit {
 
 	/**
 	 * ブランド追加
-	 * @private 
+	 * @private
 	 * @return {void}
 	 */
 	private addBrand() :void {
-		this.portfolio.getBrand().push(new BrandEntity(null, null, 0, 0));
+		this.portfolio.getBrand().push(new BrandEntity(null, null, null, 0, 0));
 	}
 
 	/**
 	 * ブランド削除
-	 * @private 
+	 * @private
 	 * @param {number} index
 	 * @return {void}
 	 */

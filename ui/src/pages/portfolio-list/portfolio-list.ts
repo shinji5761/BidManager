@@ -12,6 +12,9 @@ import { PortfolioEntity } from '../../entity/PortfolioEntity';
 import { BrandEntity } from '../../entity/BrandEntity';
 import { ToastOptionEntity } from '../../entity/ToastOptionEntity';
 
+// === Library ===
+import { DialogLibrary } from '../../providers/library/DialogLibrary';
+
 // === API ===
 import { ApiAccessor } from '../../providers/api/api-accessor';
 import { PortfolioApiService } from '../../providers/api/PortfolioApiService';
@@ -21,7 +24,7 @@ import { PortfolioApiService } from '../../providers/api/PortfolioApiService';
 	templateUrl: 'portfolio-list.html'
 })
 export class PortfolioListPage implements OnInit {
-
+	// === 定数 ===
 	/**
 	 * タイトル
 	 * @private
@@ -53,11 +56,12 @@ export class PortfolioListPage implements OnInit {
 		private _lodingCtrl :LoadingController,
 		private _toastCtrl :ToastController,
 		private _alertCtrl :AlertController,
+		private _dialogLib :DialogLibrary,
 		private _accessor :ApiAccessor
 	) {
 		// APIの取得
 		this.api = this._accessor.getPortfolioApiService();
-	}
+	};
 
 	/**
 	 * 初期化
@@ -65,19 +69,27 @@ export class PortfolioListPage implements OnInit {
 	 */
 	ngOnInit() :void {
 		this.runGetPortfolio();
-	}
+	};
 
 	/**
 	 * ポートフォリオ 取得処理
 	 * @return {void}
 	 */
 	public runGetPortfolio() :void {
+		// ローディングダイアログ 作成･開始
+		let loader = this._dialogLib.createGetDialog(this._lodingCtrl);
+		loader.present();
 		// ポートフォリオの取得
-		this.api.query().subscribe(
+		this.api.query()
+		.finally(() => {
+			// ローディングダイアログ 終了
+			loader.dismiss();
+		})
+		.subscribe(
 			res => this.createPortfolio(res),
 			error => this.onFailGet(error)
 		);
-	}
+	};
 
 	/**
 	 * ポートフォリオ 削除処理
@@ -86,13 +98,22 @@ export class PortfolioListPage implements OnInit {
 	 * @return {void}
 	 */
 	private runDeletePortfolio(no :number) :void {
+		// ローディングダイアログ 作成･開始
+		let loader = this._dialogLib.createDeleteDialog(this._lodingCtrl);
+		loader.present();
+
 		// ポートフォリオの削除
 		this.api.setNo(no);
-		this.api.delete().subscribe(
+		this.api.delete()
+		.finally(() => {
+			// ローディングダイアログ 終了
+			loader.dismiss();
+		})
+		.subscribe(
 			res => this.onSuccessDelete(res),
 			error => this.onFailDelete(error)
 		);
-	}
+	};
 
 	/**
 	 * ポートフォリオ 作成処理
@@ -106,7 +127,7 @@ export class PortfolioListPage implements OnInit {
 		for(let index in result) {
 			this.portfolioList.push(new PortfolioEntity(result[index].no, result[index].name, result[index].profit, new Array<BrandEntity>()));
 		}
-	}
+	};
 
 	/**
 	 * ポートフォリオ 取得エラー
@@ -123,7 +144,7 @@ export class PortfolioListPage implements OnInit {
 		}
 		let toast = this._toastCtrl.create(option.getOption());
 		toast.present();
-	}
+	};
 
 
 	/**
@@ -141,7 +162,7 @@ export class PortfolioListPage implements OnInit {
 
 		// 初期化する
 		this.ngOnInit();
-	}
+	};
 
 	/**
 	 * ポートフォリオ 削除失敗後処理
@@ -155,7 +176,7 @@ export class PortfolioListPage implements OnInit {
 		option.setMessage('削除に失敗しました');
 		let toast = this._toastCtrl.create(option.getOption());
 		toast.present();
-	}
+	};
 
 	/**
 	 * ポートフォリオ追加
@@ -178,7 +199,7 @@ export class PortfolioListPage implements OnInit {
 
 		// Dialog展開
 		modal.present();
-	}
+	};
 
 	/**
 	 * ポートフォリオ削除
@@ -198,7 +219,7 @@ export class PortfolioListPage implements OnInit {
 		// ダイアログ (OK､キャンセル)
 		let dialog = this._alertCtrl.create({'title': title, 'message': message, 'buttons': buttons});
 		dialog.present();
-	}
+	};
 
 	/**
 	 * ポートフォリオ表示
@@ -207,7 +228,7 @@ export class PortfolioListPage implements OnInit {
 	public showPortfolio(portfolio: PortfolioEntity) :void {
 		let inputData = {'portfolio': portfolio};
 		this._navCtrl.push(PortfolioPage, inputData);
-	}
+	};
 
 	/**
 	 * ポートフォリオ 色設定
@@ -216,5 +237,5 @@ export class PortfolioListPage implements OnInit {
 	 */
 	public settingsColor(portfolio: PortfolioEntity) :string {
 		return portfolio.getProfit() > 0 ? 'up' : 'down';
-	}
+	};
 }
