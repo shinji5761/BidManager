@@ -119,7 +119,7 @@ export class EditPortfolioDialogPage implements OnInit {
 			);
 		} else {
 			// dummyを差し込む
-			this.portfolio.getBrand().push(new BrandEntity(null, null, null, 0, 0));
+			this.portfolio.getBrand().push(new BrandEntity(null, null, null, null, null));
 		}
 	};
 
@@ -278,7 +278,7 @@ export class EditPortfolioDialogPage implements OnInit {
 	 * @return {void}
 	 */
 	private addBrand() :void {
-		this.portfolio.getBrand().push(new BrandEntity(null, null, null, 0, 0));
+		this.portfolio.getBrand().push(new BrandEntity(null, null, null, null, null));
 	}
 
 	/**

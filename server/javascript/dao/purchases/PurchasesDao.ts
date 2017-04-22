@@ -1,5 +1,5 @@
 /**
- * @fileoverview PortfolioDao.ts
+ * @fileoverview PurchasesDao.ts
  * @author shinji5761@gmail.com
  */
 import { Dao } from '../common/Dao';

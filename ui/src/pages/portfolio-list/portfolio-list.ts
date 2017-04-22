@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NavController, NavParams, ModalController, LoadingController, ToastController, AlertController } from 'ionic-angular';
 
 // === Page ===
@@ -23,7 +23,7 @@ import { PortfolioApiService } from '../../providers/api/PortfolioApiService';
 	selector: 'page-portfolio-list',
 	templateUrl: 'portfolio-list.html'
 })
-export class PortfolioListPage implements OnInit {
+export class PortfolioListPage implements OnInit, OnDestroy {
 	// === 定数 ===
 	/**
 	 * タイトル
@@ -34,12 +34,21 @@ export class PortfolioListPage implements OnInit {
 
 	/**
 	 * ポートフォリオリスト
+	 * @private
 	 * @type {Array<PortfolioEntity>}
 	 */
 	private portfolioList: Array<PortfolioEntity> = [];
 
 	/**
+	 * ロードダイアログ
+	 * @private
+	 * @type {any}
+	 */
+	private loader :any;
+
+	/**
 	 * API Service
+	 * @private
 	 * @type {PortfolioApiService}
 	 */
 	private api: PortfolioApiService;
@@ -72,18 +81,26 @@ export class PortfolioListPage implements OnInit {
 	};
 
 	/**
+	 * ページ終了処理
+	 */
+	ngOnDestroy() :void {
+		// ダイアログが残っている場合､解除する
+		this.loader.dismiss();
+	}
+
+	/**
 	 * ポートフォリオ 取得処理
 	 * @return {void}
 	 */
 	public runGetPortfolio() :void {
 		// ローディングダイアログ 作成･開始
-		let loader = this._dialogLib.createGetDialog(this._lodingCtrl);
-		loader.present();
+		this.loader = this._dialogLib.createGetDialog(this._lodingCtrl);
+		this.loader.present();
 		// ポートフォリオの取得
 		this.api.query()
 		.finally(() => {
 			// ローディングダイアログ 終了
-			loader.dismiss();
+			this.loader.dismiss();
 		})
 		.subscribe(
 			res => this.createPortfolio(res),
@@ -99,15 +116,15 @@ export class PortfolioListPage implements OnInit {
 	 */
 	private runDeletePortfolio(no :number) :void {
 		// ローディングダイアログ 作成･開始
-		let loader = this._dialogLib.createDeleteDialog(this._lodingCtrl);
-		loader.present();
+		this.loader = this._dialogLib.createDeleteDialog(this._lodingCtrl);
+		this.loader.present();
 
 		// ポートフォリオの削除
 		this.api.setNo(no);
 		this.api.delete()
 		.finally(() => {
 			// ローディングダイアログ 終了
-			loader.dismiss();
+			this.loader.dismiss();
 		})
 		.subscribe(
 			res => this.onSuccessDelete(res),

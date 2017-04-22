@@ -136,19 +136,26 @@ export abstract class Dao {
 		let params = this.service.createPostParams(body);
 		this.logger.system.info('Dao.post: SQL=' + params.sql + ', data=' + JSON.stringify(params.data));
 
-		// サーバー接続
-		let query = this.connection.query(params.sql, params.data);
-		let data;
-		query
-		.on('error', (error) => {
-			onFail.call(caller, error, this.const.ERROR_CODE_OTHER);
-		})
-		.on('result', (result) => {
-			data = result;
-		})
-		.on('end', (result) => {
-			// 成功の場合
-			onSuccess.call(caller, data);
+		// トランザクション開始
+		this.connection.beginTransaction( (tError) => {
+			if(tError) {
+				onFail.call(caller, tError, this.const.ERROR_CODE_OTHER);
+			}
+			// サーバー接続
+			let query = this.connection.query(params.sql, params.data);
+			let data;
+			query
+			.on('error', (error) => {
+				// ロールバック
+				this.runRollback(error, this.const.ERROR_CODE_OTHER, onFail, caller);
+			})
+			.on('result', (result) => {
+				data = result;
+			})
+			.on('end', (result) => {
+				// コミット
+				this.runCommit(data, onSuccess, onFail, caller);
+			});
 		});
 	}
 
@@ -165,19 +172,23 @@ export abstract class Dao {
 		let params = this.service.createPutParams(body);
 		this.logger.system.info('Dao.put: SQL=' + params.sql + ', data=' + JSON.stringify(params.data));
 
-		// サーバー接続
-		let query = this.connection.query(params.sql, params.data);
-		let data;
-		query
-		.on('error', (error) => {
-			onFail.call(caller, error, this.const.ERROR_CODE_OTHER);
-		})
-		.on('result', (result) => {
-			data = result;
-		})
-		.on('end', (result) => {
-			// 成功の場合
-			onSuccess.call(caller, data);
+		// トランザクション開始
+		this.connection.beginTransaction((tError) => {
+			// サーバー接続
+			let query = this.connection.query(params.sql, params.data);
+			let data;
+			query
+			.on('error', (error) => {
+				// ロールバック
+				this.runRollback(error, this.const.ERROR_CODE_OTHER, onFail, caller);
+			})
+			.on('result', (result) => {
+				data = result;
+			})
+			.on('end', (result) => {
+				// コミット
+				this.runCommit(data, onSuccess, onFail, caller);
+			});
 		});
 	}
 
@@ -194,19 +205,61 @@ export abstract class Dao {
 		let params = this.service.createDeleteParams(body);
 		this.logger.system.info('Dao.delete: SQL=' + params.sql + ', data=' + JSON.stringify(params.data));
 
-		// サーバー接続
-		let query = this.connection.query(params.sql, params.data);
-		let data;
-		query
-		.on('error', (error) => {
-			onFail.call(caller, error, this.const.ERROR_CODE_OTHER);
-		})
-		.on('result', (result) => {
-			data = result;
-		})
-		.on('end', (result) => {
-			// 成功の場合
+		// トランザクション開始
+		this.connection.beginTransaction((tError) => {
+			// サーバー接続
+			let query = this.connection.query(params.sql, params.data);
+			let data;
+			query
+			.on('error', (error) => {
+				// ロールバック
+				this.runRollback(error, this.const.ERROR_CODE_OTHER, onFail, caller);
+			})
+			.on('result', (result) => {
+				data = result;
+			})
+			.on('end', (result) => {
+				// コミット
+				this.runCommit(data, onSuccess, onFail, caller);
+			});
+		});
+	}
+
+	/**
+	 * コミット実行
+	 * 成功 : onSuccess
+	 * 失敗 : onFail
+	 * @param {any}      data     [description]
+	 * @param {Function} onSuccess [description]
+	 * @param {Function} onFail   [description]
+	 * @param {Object}   caller   [description]
+	 */
+	protected runCommit(data :any, onSuccess :Function, onFail :Function, caller :Object) :void {
+		// コミット
+		this.connection.commit((error) => {
+			if(error) {
+				// ロールバック
+				this.runRollback(error, this.const.ERROR_CODE_OTHER, onFail, caller);
+				onFail.call(caller, error);
+			}
+			this.logger.system.debug("Dao.runCommit : 結果にコミットしました｡")
 			onSuccess.call(caller, data);
 		});
 	}
+
+	/**
+	 * [runRollback description]
+	 * @param  {any}      error  [description]
+	 * @param  {number}   code   [description]
+	 * @param  {Function} onFail [description]
+	 * @param  {Object}   caller [description]
+	 * @return {[type]}          [description]
+	 */
+	protected runRollback(error :any, code :number, onFail :Function, caller :Object) {
+		// ロールバック
+		this.connection.rollback(() => {
+			onFail.call(caller, error, code);
+		})
+	}
+
 }

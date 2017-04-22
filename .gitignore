@@ -5,8 +5,6 @@ boostnote.json
 *.mdj
 *.vp
 /ui/resources
-/server/javascript/**/*.js
-/server/batch/**/*.js
-/server/server.js
 **/logs/
 **/typings/
+/server/build/

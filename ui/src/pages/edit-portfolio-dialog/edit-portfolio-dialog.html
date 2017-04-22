@@ -24,7 +24,7 @@
 			<ion-item>
 				<!-- 銘柄名 -->
 				<ion-label stacked>銘柄名</ion-label>
-				<ion-input type="text" [(ngModel)]="item.name"></ion-input>
+				<ion-input type="text" value="item.name" [(ngModel)]="item.name"></ion-input>
 			</ion-item>
 			<ion-item>
 				<ion-label stacked>購入額</ion-label>
@@ -32,7 +32,7 @@
 			</ion-item>
 			<ion-item>
 				<ion-label stacked>保有数</ion-label>
-				<ion-input type="tel" [(ngModel)]="item.stock"></ion-input>
+				<ion-input type="number" value="item.stock" [(ngModel)]="item.stock"></ion-input>
 			</ion-item>
 		</ion-item-sliding>
 		<!-- プラスボタン -->
