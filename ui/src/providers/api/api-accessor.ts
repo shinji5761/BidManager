@@ -3,8 +3,8 @@ import { Http } from '@angular/http';
 
 // === API Service ===
 import { PortfolioApiService } from './PortfolioApiService';
-import { PurchasesApiService } from './PurchasesApiService';
-import { BrandApiService } from './BrandApiService';
+import { PortfolioListApiService } from './PortfolioListApiService';
+import { OneDayApiService } from './OneDayApiService';
 
 @Injectable()
 export class ApiAccessor {
@@ -13,7 +13,8 @@ export class ApiAccessor {
 	 * URL(http://････)
 	 * @type {string}
 	 */
-	public host: string = 'http://192.168.33.101:18456/'
+	 public host: string = 'http://192.168.33.101:18456/'
+	//  public host: string = 'http://163.58.164.6:18456/'
 
 	constructor(
 		private _http: Http
@@ -26,23 +27,23 @@ export class ApiAccessor {
 	 * @return PortfolioApiService
 	 */
 	public getPortfolioApiService() :PortfolioApiService {
-		return new PortfolioApiService(this._http, this.host + 'portfolio/');
+		return new PortfolioApiService(this._http, this.host + 'portfolio/portfolioNo/');
 	}
 
 	/**
-	 * PurchasesApiService 取得
-	 * @return PurchasesApiService
+	 * PortfolioListApiService 取得
+	 * @return PortfolioListApiService
 	 */
-	public getPurchasesApiService() :PurchasesApiService {
-		return new PurchasesApiService(this._http, this.host + 'purchases/no/');
+	public getPortfolioListApiService() :PortfolioListApiService {
+		return new PortfolioListApiService(this._http, this.host + 'portfolioList/');
 	}
 
 	/**
-	 * BrandApiService 取得
-	 * @return BrandApiService
+	 * OneDayApiService 取得
+	 * @return OneDayApiService
 	 */
-	public getBrandApiService() :BrandApiService {
-		return new BrandApiService(this._http, this.host + 'brand/code/');
+	public getOneDayApiService() :OneDayApiService {
+		return new OneDayApiService(this._http, this.host + 'oneDay/brandCode/');
 	}
 
 }

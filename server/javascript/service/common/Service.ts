@@ -1,6 +1,9 @@
 // === Logger ===
 import logger = require('../../../LogSettings');
 
+// === Entity ===
+import { SQLParams } from '../../entity/SQLParams';
+
 /**
  * Service
  * @class
@@ -25,36 +28,36 @@ export abstract class Service {
 	 * 実行するSQLのパラメータを返却する｡
 	 * @param {any} body ボディデータ
 	 */
-	public createGetParams(body :any) :Object {
+	public createGetParams(body :any) :SQLParams {
 		this.logger.system.debug('Service.createGetParams');
-		return {};
+		return new SQLParams('',[]);
 	}
 
 	/**
 	 * 追加データ作成処理
 	 * @param {any} body ボディデータ
 	 */
-	public createPostParams(body :any) :Object {
+	public createPostParams(body :any) :SQLParams {
 		this.logger.system.debug('Service.createPostParams');
-		return {};
+		return new SQLParams('',[]);
 	};
 
 	/**
 	 * 追加データ作成処理
 	 * @param {any} body ボディデータ
 	 */
-	public createPutarams(body :any) :Object {
-		this.logger.system.debug('Service.createPutarams');
-		return {};
+	public createPutParams(body :any) :SQLParams {
+		this.logger.system.debug('Service.createPutParams');
+		return new SQLParams('',[]);
 	};
 
 	/**
 	 * 削除データ作成処理
 	 * @param {any} body ボディデータ
 	 */
-	public createDeleteParams(body :any) :Object {
+	public createDeleteParams(body :any) :SQLParams {
 		this.logger.system.debug('Service.createDeleteParams');
-		return {};
+		return new SQLParams('',[]);
 	};
 
 	/**
@@ -85,7 +88,7 @@ export abstract class Service {
 	 * @param {any} data 加工対象のデータ
 	 * @return {any} 加工データ
 	 */
-	public createResultData(data :any) :void {
+	public createResultData(data :any) :any {
 		this.logger.system.debug('Service.createResultData');
 		return data;
 	}

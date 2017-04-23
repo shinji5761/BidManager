@@ -7,13 +7,13 @@
 	<ion-list>
 		<ion-item>
 			<ion-label stacked>ポートフォリオ名</ion-label>
-			<ion-input type="text" [(ngModel)]="portfolio.name"></ion-input>
+			<ion-input type="text" [(ngModel)]="portfolio.portfolioName"></ion-input>
 		</ion-item>
 		<ion-item-sliding *ngFor="let item of portfolio.getBrand(); let i = index;">
 			<ion-item>
 				<!-- 銘柄コード -->
 				<ion-label stacked>銘柄コード{{i + 1}}</ion-label>
-				<ion-input type="tel" [(ngModel)]="item.code"></ion-input>
+				<ion-input type="tel" [(ngModel)]="item.brandCode"></ion-input>
 				<!-- 閉じるボタン -->
 				<ion-avater item-right>
 					<button ion-fab mini (click)="deleteBrand(i)">
@@ -24,7 +24,7 @@
 			<ion-item>
 				<!-- 銘柄名 -->
 				<ion-label stacked>銘柄名</ion-label>
-				<ion-input type="text" value="item.name" [(ngModel)]="item.name"></ion-input>
+				<ion-input type="text" [(ngModel)]="item.brandName"></ion-input>
 			</ion-item>
 			<ion-item>
 				<ion-label stacked>購入額</ion-label>

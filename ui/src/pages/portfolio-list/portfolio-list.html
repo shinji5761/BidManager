@@ -8,7 +8,7 @@
 		<ion-item *ngFor="let portfolio of portfolioList" (click)="showPortfolio(portfolio)" (press)="deletePortfolio(portfolio)">
 			<!-- ポートフォリオ名 -->
 			<span>
-				{{portfolio.name}}
+				{{portfolio.portfolioName}}
 			</span>
 			<!-- ポートフォリオ損得 -->
 			<span *ngIf="portfolio.profit">

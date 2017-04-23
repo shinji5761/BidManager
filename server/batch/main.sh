@@ -1,1 +1,1 @@
-node ./main.js 90d 86400 TYO
+node ./build/batch/main.js 90d 86400 TYO

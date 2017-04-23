@@ -15,14 +15,14 @@ export class BrandEntity {
 	 * @private
 	 * @type {number}
 	 */
-	private code :number;
+	private brandCode :number;
 
 	/**
 	 * 銘柄名
 	 * @private
 	 * @type {string}
 	 */
-	private name :string;
+	private brandName :string;
 
 	/**
 	 * 購入額
@@ -45,10 +45,10 @@ export class BrandEntity {
 	 * @param {number} price
 	 * @param {number} stock
 	 */
-	constructor(brandNo, code, name, price, stock) {
+	constructor(brandNo, brandCode, brandName, price, stock) {
 		this.brandNo = brandNo;
-		this.code = code;
-		this.name = name;
+		this.brandCode = brandCode;
+		this.brandName = brandName;
 		this.price = price;
 		this.stock = stock;
 	}
@@ -59,8 +59,8 @@ export class BrandEntity {
 	 * @public
 	 * @return {number} code
 	 */
-	public getCode() :number {
-		return this.code;
+	public getBrandCode() :number {
+		return this.brandCode;
 	};
 
 	/**

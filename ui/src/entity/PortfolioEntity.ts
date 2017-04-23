@@ -10,18 +10,18 @@ export class PortfolioEntity {
 	 * @private
 	 * @type {number}
 	 */
-	private no: number;
+	private portfolioNo: number;
 
 	/**
 	 * ポートフォリオ名
 	 * @private
 	 * @type {string}
 	 */
-	private name: string;
+	private portfolioName: string;
 
 	/**
 	 * 損益
-	 * @private 
+	 * @private
 	 * @type {number}
 	 */
 	private profit: number;
@@ -34,26 +34,26 @@ export class PortfolioEntity {
 
 	/**
 	 * @constructor
-	 * @param {number} id
+	 * @param {number} brandNo
 	 * @param {string} name
 	 * @param {number} profit
 	 * @param {Array<BrandEntity>}
 	 */
-	constructor(no: number, name: string, profit: number, brand) {
-		this.no = no;
-		this.name = name;
+	constructor(portfolioNo: number, portfolioName: string, profit: number, brand) {
+		this.portfolioNo = portfolioNo;
+		this.portfolioName = portfolioName;
 		this.profit = profit;
 		this.brand = brand;
 	}
 
 
 	/** Setter */
-	public setNo(no :number) :void {
-		this.no = no;
+	public setNo(portfolioNo :number) :void {
+		this.portfolioNo = portfolioNo;
 	}
 
-	public setName(name :string) :void {
-		this.name = name;
+	public setName(portfolioName :string) :void {
+		this.portfolioName = portfolioName;
 	}
 
 	public setProfit(profit :number) :void {
@@ -65,12 +65,12 @@ export class PortfolioEntity {
 	}
 
 	/** Getter */
-	public getNo() :number {
-		return this.no;
+	public getPortfolioNo() :number {
+		return this.portfolioNo;
 	}
 
-	public getName() :string {
-		return this.name;
+	public getPortfolioName() :string {
+		return this.portfolioName;
 	}
 
 	public getProfit() :number {

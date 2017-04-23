@@ -8,3 +8,5 @@ boostnote.json
 **/logs/
 **/typings/
 /server/build/
+/server/batch/build/
+/server/javascript/**/**/*.js
