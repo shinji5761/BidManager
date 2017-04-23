@@ -125,11 +125,11 @@ class Main {
         this.logger.system.debug('Main.getBidInfo: start');
         for(let index in data) {
             // 銘柄コードのデータ取得
-            let result = (this.service.getFinanceInfo(new GoogleFinanceEntity(this.term, this.step, data[index].code, this.market)));
+            let result = (this.service.getFinanceInfo(new GoogleFinanceEntity(this.term, this.step, data[index].brandCode, this.market)));
             // 90日分のデータをinsertする
             for(let i in result) {
                 let body = {
-                    'code': result[i].getCode(),
+                    'brandCode': result[i].getBrandCode(),
                     'targetDate': result[i].getTargetDate(),
                     'open': result[i].getOpen(),
                     'high': result[i].getHigh(),

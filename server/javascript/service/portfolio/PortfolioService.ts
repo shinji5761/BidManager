@@ -1,4 +1,9 @@
+// === Service ===
 import { Service } from '../common/Service';
+
+// === Entity ===
+import { SQLParams } from '../../entity/SQLParams';
+
 
 /**
  * PortfolioService
@@ -18,60 +23,92 @@ export class PortfolioService extends Service {
 	/**
 	 * 検索データ作成処理
 	 * @override
-	 * @param {any} params 条件
+	 * @public
+	 * @param {any} body リクエストボディ
+	 * @return {SQLParams} SQL実行パラメータ
 	 */
-	public createGetParams(body :any) :Object {
+	public createGetParams(body :any) :SQLParams {
 		this.logger.system.debug('PortfolioService.createGetParams: start');
-		let params = {
-			'sql': 'SELECT * FROM portfolio',
-			'data': []
-		}
+		let portfolioNo :number = body.portfolioNo;			// ポートフォリオ番号
+		let params = new SQLParams(
+			'SELECT portfolio_no AS portfolioNo, portfolio_name AS portfolioName, brand_code AS brandCode, brand_name AS brandName, price, stock FROM portfolio WHERE portfolio_no = ? ORDER BY brand_code',
+			[portfolioNo]
+		);
 		return params;
 	}
 
 	/**
 	 * 作成データ作成処理
 	 * @override
-	 * @param {any} body ボディデータ
+	 * @public
+	 * @param {any} body リクエストボディ
+	 * @return {SQLParams} SQL実行パラメータ
 	 */
-	public createPostParams(body :any) :Object {
+	public createPostParams(body :any) :SQLParams {
 		this.logger.system.debug('PortfolioService.createPostParams: start');
-		let params = {
-			'sql': 'INSERT INTO portfolio SET ?',
-			'data': {'name': body.name}
-		};
+		let portfolioNo :number = body.portfolioNo;			// ポートフォリオ番号
+		let portfolioName :string = body.portfolioName;		// ポートフォリオ名
+		let brand :Array<any> = body.brand;					// 銘柄情報
+		let sql = 'INSERT INTO portfolio VALUES(?, ?, ?, ?, ?, ?)';	// SQL
+		let data : Array<any>;
+		if(brand.length > 0) {
+			data = [portfolioNo, portfolioName, brand[0]['brandCode'], brand[0]['brandName'], brand[0]['price'], brand[0]['stock']]; // 一つ目のデータ
+			// 2つ目以降のデータがある場合
+			for(let index = 1; index < body.length; index++) {
+				sql += ', (?, ?, ?, ?, ?)';
+				data.push(portfolioNo);
+				data.push(portfolioName);
+				data.push(brand[index]['brandCode']);
+				data.push(brand[index]['brandName']);
+				data.push(brand[index]['price']);
+				data.push(brand[index]['stock']);
+			}
+		}
+
+		let params = new SQLParams(
+			sql, data
+		);
 		return params;
 	}
 
 	/**
 	 * 更新データ作成処理
-	 * @param {any} body ボディデータ
+	 * @override
+	 * @public
+	 * @param {any} body リクエストボディ
+	 * @return {SQLParams} SQL実行パラメータ
 	 */
-	public createPutParams(body :any) :Object {
+	public createPutParams(body :any) :SQLParams {
 		this.logger.system.debug('PortfolioService.createPutParams: start');
-		let params = {
-			'sql': 'UPDATE portfolio SET name = ?',
-			'data': [body.name]
-		};
-		let searchParams = {};
-		searchParams['no'] = body.no;
-		this.addSearchParam(searchParams, params);
+		let portfolioNo :number = body.portfolioNo;			// ポートフォリオ番号
+		let deleteSql = 'DELETE FROM portfolio WHERE portfolio_no = ?';	// SQL
+		let insertParam = this.createPostParams(body);
+		insertParam['data'].unshift(portfolioNo);
+
+		let params = new SQLParams(
+			deleteSql + ';' + insertParam['sql'],
+			insertParam['data']
+		);
 		return params;
 	}
 
+
 	/**
 	 * 削除データ作成処理
-	 * @param {any} body ボディデータ
+	 * @override
+	 * @public
+	 * @param {any} body リクエストボディ
+	 * @return {SQLParams} SQL実行パラメータ
 	 */
-	public createDeleteParams(body :any) :Object {
-		this.logger.system.debug('PortfolioService.createDeleteParams: start');
-		let params = {
-			'sql': 'DELETE FROM portfolio',
-			'data': []
-		};
-		let searchParams = {};
-		searchParams['no'] = Number(body.no);
-		this.addSearchParam(searchParams, params);
+	public createDeleteParams(body :any) :SQLParams {
+		this.logger.system.debug('PortfolioService.createPutParams: start');
+		let portfolioNo :number = body.portfolioNo;			// ポートフォリオ番号
+		let deleteSql = 'DELETE FROM portfolio WHERE portfolio_no = ?';	// SQL
+
+		let params = new SQLParams(
+			deleteSql,
+			[portfolioNo]
+		);
 		return params;
 	}
 }

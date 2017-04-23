@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NavController, NavParams, ToastController, LoadingController } from 'ionic-angular';
 
 // === Entity ===
@@ -11,14 +11,14 @@ import { DialogLibrary } from '../../providers/library/DialogLibrary';
 
 // === Api ===
 import { ApiAccessor } from '../../providers/api/api-accessor';
-import { BrandApiService } from '../../providers/api/BrandApiService';
+import { OneDayApiService } from '../../providers/api/OneDayApiService';
 
 
 @Component({
 	selector: 'page-brand',
 	templateUrl: 'brand.html'
 })
-export class BrandPage implements OnInit {
+export class BrandPage implements OnInit, OnDestroy {
 	// === 定数 ===
 	private static CHART_OPTION :Object = {
 		'scales': {
@@ -29,9 +29,7 @@ export class BrandPage implements OnInit {
 				{'ticks': {'autoSkipPadding': 50}}
 			]
 		}
-	};
-
-
+	}
 
 	/**
 	 * ブランド情報
@@ -48,11 +46,18 @@ export class BrandPage implements OnInit {
 	private bidChart :ChartEntity;
 
 	/**
+	 * ロードダイアログ
+	 * @private
+	 * @type {any}
+	 */
+	private loader :any;
+
+	/**
 	 * API Service
 	 * @private
-	 * @type {BrandApiService}
+	 * @type {OneDayApiService}
 	 */
-	private api :BrandApiService;
+	private api :OneDayApiService;
 
 	/**
 	 * @constructor
@@ -72,9 +77,9 @@ export class BrandPage implements OnInit {
 		public _accessor :ApiAccessor
 	) {
 		// APIの取得
-		this.api = this._accessor.getBrandApiService();
+		this.api = this._accessor.getOneDayApiService();
 		this.brand = this._navParams.get('brand');
-	};
+	}
 
 	/**
 	 * 初期化処理
@@ -88,7 +93,16 @@ export class BrandPage implements OnInit {
 
 		// チャートデータの取得
 		this.createBrand();
-	};
+	}
+
+
+	/**
+	 * ページ終了処理
+	 */
+	ngOnDestroy() :void {
+		// ダイアログが残っている場合､解除する
+		this.loader.dismiss();
+	}
 
 
 	/**
@@ -98,15 +112,11 @@ export class BrandPage implements OnInit {
 	 */
 	private createBrand() :void {
 		// ローディングダイアログ 作成･開始
-        let loader = this._dialogLib.createGetDialog(this._loadingCtrl);
-        loader.present();
+		this.loader = this._dialogLib.createGetDialog(this._loadingCtrl);
+		this.loader.present();
 
-		this.api.setCode(this.brand.getCode());
+		this.api.setBrandCode(this.brand.getBrandCode());
 		this.api.query()
-		.finally(() => {
-            // ローディングダイアログ 終了
-            loader.dismiss();
-        })
 		.subscribe(
 			(result) => {
 				this.createChart(result);
@@ -115,9 +125,10 @@ export class BrandPage implements OnInit {
 			(error) => {
 				console.error(error);
 				// todo: データが無い旨を表示
-			}
+			},
+			() => this.completion()
 		);
-	};
+	}
 
 	/**
 	 * チャートの作成
@@ -132,11 +143,19 @@ export class BrandPage implements OnInit {
 
 		// 取得したデータの終値を抽出
 		for(let index in data) {
-            dateArray.push(data[index]['date']);
+            dateArray.push(data[index]['targetDate']);
 			closeArray.push(data[index]['close']);
 		}
 		chartData.push(new ChartDatasetEntity(closeArray, '1日足'));
 		this.bidChart.setLabels(dateArray);
 		this.bidChart.setDataset(chartData);
-	};
+	}
+
+	/**
+	 * Http通信 終了後処理
+	 */
+	private completion() :void {
+		this.loader.dismiss();
+	}
+
 }

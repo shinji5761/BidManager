@@ -1,6 +1,6 @@
 <ion-header>
 	<ion-navbar>
-		<ion-title>{{portfolio.getName()}}</ion-title>
+		<ion-title>{{portfolio.getPortfolioName()}}</ion-title>
 	</ion-navbar>
 </ion-header>
 <ion-content padding>
@@ -14,13 +14,13 @@
 							<ion-row>
 								<!-- 銘柄コード -->
 								<ion-col>
-									{{brand.code}}
+									{{brand.brandCode}}
 								</ion-col>
 							</ion-row>
 							<ion-row>
 								<!-- 銘柄名 -->
 								<ion-col>
-									{{brand.name}}
+									{{brand.brandName}}
 								</ion-col>
 							</ion-row>
 						</ion-grid>

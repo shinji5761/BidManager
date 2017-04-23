@@ -19,7 +19,7 @@ export class BrandListService extends Service {
     public createGetParams(body :any) :Object {
         this.logger.system.debug('BrandListService.createGetParams: start');
         let params = {
-            'sql' : 'SELECT code FROM brand_list',
+            'sql' : 'SELECT brandCode FROM brand_list',
             'data': []
         };
         return params;

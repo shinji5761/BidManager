@@ -1,4 +1,6 @@
 import { Http, RequestOptions } from '@angular/http';
+
+// === Provider ===
 import { ApiService } from './api-service';
 
 /**
@@ -9,10 +11,10 @@ import { ApiService } from './api-service';
 export class PortfolioApiService extends ApiService {
 
 	/**
-	 * ポートフォリオナンバー
+	 * ポートフォリオ番号
 	 * @type {number}
 	 */
-	private no :number;
+	private portfolioNo :number;
 
 	/**
 	 * @constructor
@@ -27,21 +29,53 @@ export class PortfolioApiService extends ApiService {
 	}
 
 	/**
+	 * GET
+	 * @return {any}
+	 */
+	public query() :any {
+		let url = this.url + this.portfolioNo;
+		return this.http.get(url, {'search': this.option}).map(res => res.json());
+	}
+
+	/**
+	 * POST
+	 * @param {any} data POST Data
+	 */
+	public post(data :any) :any {
+		let url = this.url + this.portfolioNo;
+		let params = JSON.stringify(data);
+		let options = new RequestOptions({headers: this.headers});
+		console.log(params);
+		return this.http.post(url, params, options).map(res => res.json());
+	}
+
+	/**
+	 * PUT
+	 * @param {any} data PUT Data
+	 */
+	public update(data :any) :any {
+		let url = this.url + this.portfolioNo;
+		let params = JSON.stringify(data);
+		let options = new RequestOptions({headers: this.headers});
+		return this.http.put(url, params, options).map(res => res.json());
+	}
+
+	/**
 	 * Delete
 	 * @return {any}
 	 */
 	public delete() :any {
-		let url = this.url + 'no/' + this.no;
+		let url = this.url + this.portfolioNo;
 		let options = new RequestOptions({'headers': this.headers});
 		return this.http.delete(url, options).map(res => res.json());
 	}
 
 
 	/**
-	 * Setter(no)
-	 * @param {number} no
+	 * Setter(portfolioNo)
+	 * @param {number} portfolioNo
 	 */
-	public setNo(no :number) :void {
-		this.no = no;
+	public setPortfolioNo(portfolioNo :number) :void {
+		this.portfolioNo = portfolioNo;
 	}
 }

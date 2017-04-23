@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NavController, NavParams, ModalController, LoadingController, ToastController } from 'ionic-angular';
 
 // === Page ===
@@ -17,14 +17,13 @@ import { DialogLibrary } from '../../providers/library/DialogLibrary';
 
 // === API ===
 import { ApiAccessor } from '../../providers/api/api-accessor';
-import { PurchasesApiService } from '../../providers/api/PurchasesApiService';
-
+import { PortfolioApiService } from '../../providers/api/PortfolioApiService';
 
 @Component({
   selector: 'page-portfolio',
   templateUrl: 'portfolio.html'
 })
-export class PortfolioPage implements OnInit {
+export class PortfolioPage implements OnInit, OnDestroy {
 
 	/**
 	 * ポートフォリオ
@@ -34,11 +33,18 @@ export class PortfolioPage implements OnInit {
 	private portfolio :PortfolioEntity;
 
 	/**
+	 * ロードダイアログ
+	 * @private
+	 * @type {any}
+	 */
+	private loader :any;
+
+	/**
 	 * API Service
 	 * @private
-	 * @type {PurchasesApiService}
+	 * @type {PortfolioApiService}
 	 */
-	private api :PurchasesApiService;
+	private api :PortfolioApiService;
 
 
 	/**
@@ -60,7 +66,7 @@ export class PortfolioPage implements OnInit {
         private _dialogLib :DialogLibrary,
 		private _accessor :ApiAccessor ) {
 		// APIの取得
-		this.api = this._accessor.getPurchasesApiService();
+		this.api = this._accessor.getPortfolioApiService();
 		this.portfolio = this._navParams.get('portfolio');
 	};
 
@@ -72,6 +78,13 @@ export class PortfolioPage implements OnInit {
 		this.runGetPurchases();
 	};
 
+	/**
+	 * ページ終了処理
+	 */
+	ngOnDestroy() :void {
+		// ダイアログが残っている場合､解除する
+		this.loader.dismiss();
+	}
 
 	/**
 	 * ポートフォリオに登録している銘柄を取得する
@@ -79,19 +92,16 @@ export class PortfolioPage implements OnInit {
 	 * @return {void}
 	 */
 	private runGetPurchases() :void {
-        // ローディングダイアログ 作成･開始
-        let loader = this._dialogLib.createGetDialog(this._loadingCtrl);
-        loader.present();
+		// ローディングダイアログ 作成･開始
+		this.loader = this._dialogLib.createGetDialog(this._loadingCtrl);
+		this.loader.present();
 
-		this.api.setNo(this.portfolio.getNo());
+		this.api.setPortfolioNo(this.portfolio.getPortfolioNo());
 		this.api.query()
-        .finally(() => {
-            // ローディングダイアログ 終了
-            loader.dismiss();
-        })
-        .subscribe(
+		.subscribe(
 			res => this.createPurchases(res),
-			error => this.isError(error)
+			error => this.isError(error),
+			() => this.completion()
 		);
 	};
 
@@ -113,6 +123,13 @@ export class PortfolioPage implements OnInit {
 	};
 
 	/**
+	 * Http通信 終了後処理
+	 */
+	private completion() :void {
+		this.loader.dismiss();
+	}
+
+	/**
 	 * 銘柄情報を作成する
 	 * @private
 	 * @param {any} result 取得結果
@@ -121,7 +138,7 @@ export class PortfolioPage implements OnInit {
 	private createPurchases(result) :void {
 		let brandList :Array<BrandEntity> = [];
 		for(let index in result) {
-			let brand :BrandEntity = new BrandEntity(result[index].brandNo, result[index].code, result[index].name, result[index].price, result[index].stock);
+			let brand :BrandEntity = new BrandEntity(index, result[index].brandCode, result[index].brandName, result[index].price, result[index].stock);
 			brandList.push(brand);
 		}
 		this.portfolio.setBrand(brandList);
@@ -135,7 +152,7 @@ export class PortfolioPage implements OnInit {
 	 */
 	private editPortfolio() :void {
 		// パラメータの設定
-		let title = this.portfolio.getName() + 'の編集';
+		let title = this.portfolio.getPortfolioName() + 'の編集';
 		let inputData = {'portfolio': this.portfolio, 'title': title};
 
 		// ダイアログの設定

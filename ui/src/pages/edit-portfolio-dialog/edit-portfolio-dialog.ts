@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NavController, NavParams, ViewController, ToastController, LoadingController } from 'ionic-angular';
 import { Observable } from 'rxjs';
 
@@ -21,7 +21,7 @@ import { PurchasesApiService } from '../../providers/api/PurchasesApiService';
 	selector: 'page-edit-portfolio-dialog',
 	templateUrl: 'edit-portfolio-dialog.html'
 })
-export class EditPortfolioDialogPage implements OnInit {
+export class EditPortfolioDialogPage implements OnInit, OnDestroy {
 
 	/**
 	 * タイトル
@@ -37,18 +37,18 @@ export class EditPortfolioDialogPage implements OnInit {
 	private portfolio :PortfolioEntity;
 
 	/**
+	 * ロードダイアログ
+	 * @private
+	 * @type {any}
+	 */
+	private loader :any;
+
+	/**
 	 * PortfolioAPI
 	 * @private
 	 * @type {PortfolioApiService}
 	 */
-	private portfolioAccessor :PortfolioApiService;
-
-	/**
-	 * PurchasesAPI
-	 * @private
-	 * @type {PurchasesApiService}
-	 */
-	private purchasesAccessor :PurchasesApiService;
+	private portfolioApiService :PortfolioApiService;
 
 
 	/**
@@ -88,34 +88,39 @@ export class EditPortfolioDialogPage implements OnInit {
 	public ngOnInit() :void {
 		this.title = this._navParams.get('title');
 		this.portfolio = this._navParams.get('portfolio');
-		this.portfolioAccessor = this._accessor.getPortfolioApiService();
-		this.purchasesAccessor = this._accessor.getPurchasesApiService();
+		this.portfolioApiService = this._accessor.getPortfolioApiService();
 
 		// 購入情報取得
-		this.runGetPurchases();
+		this.runGetPortfolio();
 	};
 
 	/**
-	 * 購入情報 取得
+	 * ページ終了処理
+	 */
+	ngOnDestroy() :void {
+		// ダイアログが残っている場合､解除する
+		this.loader.dismiss();
+	}
+
+
+	/**
+	 * ポートフォィオ 取得
 	 * @private
 	 * @return {void}
 	 */
-	private runGetPurchases() :void {
+	private runGetPortfolio() :void {
 		// ポートフォリオのIDがある場合
-		if(this.portfolio.getNo() != null) {
+		if(this.portfolio.getPortfolioNo() != null) {
 			// ローディングダイアログ 作成･開始
-			let loader = this._dialogLib.createGetDialog(this._lodingCtrl);
-			loader.present();
+			this.loader = this._dialogLib.createGetDialog(this._lodingCtrl);
+			this.loader.present();
 
-			this.purchasesAccessor.setNo(this.portfolio.getNo());
-			this.purchasesAccessor.query()
-			.finally(() => {
-				// ローディングダイアログ 終了
-				loader.dismiss();
-			})
+			this.portfolioApiService.setPortfolioNo(this.portfolio.getPortfolioNo());
+			this.portfolioApiService.query()
 			.subscribe(
 				res => this.createBrand(res),
-				error => console.error(error)
+				error => console.error(error),
+				() => this.completion()
 			);
 		} else {
 			// dummyを差し込む
@@ -130,17 +135,14 @@ export class EditPortfolioDialogPage implements OnInit {
 	 */
 	private runPostPortfolio() :void {
 		// ローディングダイアログ 作成･開始
-		let loader = this._dialogLib.createSaveDialog(this._lodingCtrl);
-		loader.present();
+		this.loader = this._dialogLib.createSaveDialog(this._lodingCtrl);
+		this.loader.present();
 
-		this.portfolioAccessor.post(this.portfolio)
-		.finally(() => {
-			// ローディングダイアログ 終了
-			loader.dismiss();
-		})
+		this.portfolioApiService.post(this.portfolio)
 		.subscribe(
-			res => this.runPostPurchases(res.insertId),
-			error => this.onFailSave(error)
+			res => this.onSuccessSave(res),
+			error => this.onFailSave(error),
+			() => this.completion()
 		);
 	}
 
@@ -151,54 +153,15 @@ export class EditPortfolioDialogPage implements OnInit {
 	 */
 	private runPutPortfolio() :void {
 		// ローディングダイアログ 作成･開始
-		let loader = this._dialogLib.createSaveDialog(this._lodingCtrl);
-		loader.present();
+		this.loader = this._dialogLib.createSaveDialog(this._lodingCtrl);
+		this.loader.present();
 
-		this.portfolioAccessor.update(this.portfolio)
-		.finally(() => {
-			// ローディングダイアログ 終了
-			loader.dismiss();
-		})
+		this.portfolioApiService.update(this.portfolio)
 		.subscribe(
-			res => this.runPostPurchases(this.portfolio.getNo()),
-			error => this.onFailSave(error)
+			res => this.onSuccessSave(res),
+			error => this.onFailSave(error),
+			() => this.completion()
 		);
-	}
-
-	/**
-	 * 購入物 作成処理
-	 * @private
-	 * @return {void}
-	 */
-	private runPostPurchases(no) :void {
-		let postList : Array<any> = [];
-		this.purchasesAccessor.setNo(no);
-
-		// 銘柄の数だけ､POSTリクエストを送信する｡
-		for(let index in this.portfolio.getBrand()) {
-			let data :BrandEntity = this.portfolio.getBrand()[index];
-			postList.push(this.purchasesAccessor.post(data));
-		}
-
-		if(postList.length) {
-			// ローディングダイアログ 作成･開始
-			let loader = this._dialogLib.createSaveDialog(this._lodingCtrl);
-			loader.present();
-
-			// 待ち合わせ
-			Observable.forkJoin(postList)
-			.finally(() => {
-				// ローディングダイアログ 終了
-				loader.dismiss();
-			})
-			.subscribe(
-				res => this.onSuccessSave(res),
-				error => this.onFailSave(error)
-			);
-		}
-		else {
-			this.onSuccessSave(null);
-		}
 	}
 
 
@@ -229,6 +192,13 @@ export class EditPortfolioDialogPage implements OnInit {
 	}
 
 	/**
+	 * Http通信 終了後処理
+	 */
+	private completion() :void {
+		this.loader.dismiss();
+	}
+
+	/**
 	 * 購入情報 作成
 	 * @private
 	 * @param {any} res 取得結果
@@ -237,7 +207,7 @@ export class EditPortfolioDialogPage implements OnInit {
 	private createBrand(res :any) :void {
 		let brandList :Array<BrandEntity> = [];
 		for(let index in res) {
-			brandList.push(new BrandEntity(res[index].brandNo, res[index].code, res[index].name, res[index].price, res[index].stock));
+			brandList.push(new BrandEntity(index, res[index].brandCode, res[index].brandName, res[index].price, res[index].stock));
 		}
 		this.portfolio.setBrand(brandList);
 	}
@@ -255,7 +225,7 @@ export class EditPortfolioDialogPage implements OnInit {
 		}
 
 		// Noが付いている場合はPUT,nullの場合はPOST
-		if(this.portfolio.getNo() != null) {
+		if(this.portfolio.getPortfolioNo() != null) {
 			this.runPutPortfolio();
 		} else {
 			this.runPostPortfolio();

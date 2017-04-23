@@ -18,6 +18,7 @@ import { DialogLibrary } from '../../providers/library/DialogLibrary';
 // === API ===
 import { ApiAccessor } from '../../providers/api/api-accessor';
 import { PortfolioApiService } from '../../providers/api/PortfolioApiService';
+import { PortfolioListApiService } from '../../providers/api/PortfolioListApiService';
 
 @Component({
 	selector: 'page-portfolio-list',
@@ -47,11 +48,18 @@ export class PortfolioListPage implements OnInit, OnDestroy {
 	private loader :any;
 
 	/**
-	 * API Service
+	 * PortfolioApiService
 	 * @private
 	 * @type {PortfolioApiService}
 	 */
-	private api: PortfolioApiService;
+	private portfolioApi :PortfolioApiService;
+
+	/**
+	 * PortfolioListApiService
+	 * @private
+	 * @type {PortfolioListApiService}
+	 */
+	private portfolioListApi :PortfolioListApiService;
 
 	/**
 	 * @constructor
@@ -69,7 +77,8 @@ export class PortfolioListPage implements OnInit, OnDestroy {
 		private _accessor :ApiAccessor
 	) {
 		// APIの取得
-		this.api = this._accessor.getPortfolioApiService();
+		this.portfolioApi = this._accessor.getPortfolioApiService();
+		this.portfolioListApi = this._accessor.getPortfolioListApiService();
 	};
 
 	/**
@@ -97,14 +106,12 @@ export class PortfolioListPage implements OnInit, OnDestroy {
 		this.loader = this._dialogLib.createGetDialog(this._lodingCtrl);
 		this.loader.present();
 		// ポートフォリオの取得
-		this.api.query()
-		.finally(() => {
-			// ローディングダイアログ 終了
-			this.loader.dismiss();
-		})
+		this.portfolioListApi.query()
+		.finally(() => console.log('finally'))
 		.subscribe(
 			res => this.createPortfolio(res),
-			error => this.onFailGet(error)
+			error => this.onFailGet(error),
+			() => this.completion()
 		);
 	};
 
@@ -120,15 +127,12 @@ export class PortfolioListPage implements OnInit, OnDestroy {
 		this.loader.present();
 
 		// ポートフォリオの削除
-		this.api.setNo(no);
-		this.api.delete()
-		.finally(() => {
-			// ローディングダイアログ 終了
-			this.loader.dismiss();
-		})
+		this.portfolioApi.setPortfolioNo(no);
+		this.portfolioApi.delete()
 		.subscribe(
 			res => this.onSuccessDelete(res),
-			error => this.onFailDelete(error)
+			error => this.onFailDelete(error),
+			() => this.completion()
 		);
 	};
 
@@ -137,12 +141,13 @@ export class PortfolioListPage implements OnInit, OnDestroy {
 	 * @param {Array<Object>} result api取得結果
 	 */
 	public createPortfolio(result) :void {
+		console.log('createPortfolio');
 		// ポートフォリオリストの初期化
 		this.portfolioList = [];
 
 		// ポートフォリオの設定(Brandは空)
 		for(let index in result) {
-			this.portfolioList.push(new PortfolioEntity(result[index].no, result[index].name, result[index].profit, new Array<BrandEntity>()));
+			this.portfolioList.push(new PortfolioEntity(result[index].portfolioNo, result[index].portfolioName, null, new Array<BrandEntity>()));
 		}
 	};
 
@@ -151,6 +156,8 @@ export class PortfolioListPage implements OnInit, OnDestroy {
 	 * @param {any} error [description]
 	 */
 	public onFailGet(error :any) :void {
+		console.log('onFailGet');
+
 		let option :ToastOptionEntity;
 		option = new ToastOptionEntity('', 3000, 'top');
 		// 空配列の場合
@@ -171,6 +178,7 @@ export class PortfolioListPage implements OnInit, OnDestroy {
 	 * @return {void}
 	 */
 	private onSuccessDelete(res :any) :void {
+		console.log('onSuccessDelete');
 		let option :ToastOptionEntity;
 		option = new ToastOptionEntity('', 3000, 'top');
 		option.setMessage('削除しました');
@@ -194,6 +202,15 @@ export class PortfolioListPage implements OnInit, OnDestroy {
 		let toast = this._toastCtrl.create(option.getOption());
 		toast.present();
 	};
+
+
+	/**
+	 * Http通信 終了後処理
+	 */
+	private completion() :void {
+		console.log('completion');
+		this.loader.dismiss();
+	}
 
 	/**
 	 * ポートフォリオ追加
@@ -229,7 +246,7 @@ export class PortfolioListPage implements OnInit, OnDestroy {
 		let title :string = '確認';
 		let message :string = 'ポートフォリオを削除します｡\nよろしいですか?';
 		let buttons :Array<Object> = [
-			{'text': 'OK', 'handler': () => this.runDeletePortfolio(portfolio.getNo())},
+			{'text': 'OK', 'handler': () => this.runDeletePortfolio(portfolio.getPortfolioNo())},
 			{'text': 'CANCEL', 'handler': () => console.log('cancel')},
 		];
 
