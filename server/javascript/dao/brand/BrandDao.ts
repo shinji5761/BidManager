@@ -25,7 +25,7 @@ export class BrandDao extends Dao {
 	};
 
 	/**
-	 * Post
+	 * Posts
 	 * @param {Object}		key			[description]
 	 * @param {Object}		body		[description]
 	 * @param {Function}	onSuccess	[description]
@@ -50,6 +50,5 @@ export class BrandDao extends Dao {
 		.on('end', (result) => {
 			onSuccess.call(caller, data);
 		});
-
 	}
 }

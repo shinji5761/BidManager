@@ -15,6 +15,8 @@ import { OneDayEntity } from '../javascript/entity/OneDayEntity';
 // === Logger ===
 import logger = require('../LogSettings');
 
+import Promise = require('promise');
+
 
 /**
  * バッチ メインクラス
@@ -129,9 +131,13 @@ class Main {
 	 */
 	private getBidInfo(data) :void {
 		this.logger.system.debug('Main.getBidInfo: start');
+		var requestList :Array<any> = [];
+
 		for(let index in data) {
 			// 銘柄コードのデータ取得
 			let result = (this.service.getFinanceInfo(new GoogleFinanceEntity(this.term, this.step, data[index].brandCode, this.market)));
+			this.logger.system.info('Main.getBidInfo: result=' + JSON.stringify(result));
+
 			// 90日分のデータをinsertする
 			for(let i in result) {
 				let key = {
@@ -146,20 +152,44 @@ class Main {
 					'close': result[i].getClose(),
 					'volume': result[i].getVolume()
 				};
-				this.oneDayDao.post(key, body,
-					// onSuccess
-					(data) => {
-						this.logger.system.info('Main.getBidInfo.onSuccess: ' + JSON.stringify(data));
-					},
-					// onFail
-					(error) => {
-						this.logger.system.error('Main.run.onFail: ' + JSON.stringify(error));
-					},
-					this
-				);
+				requestList.push(this.postBidInfo(key, body));
 			}
 		}
+		this.logger.system.info('Main.getBidInfo: requestList=' + JSON.stringify(requestList));
+		Promise.all(requestList)
+		.then((res) => {
+			this.logger.system.debug('main.getBidInfo: 終了---');
+			this.exit();
+		});
 	}
+
+	/**
+	 * 
+	 * @param key 
+	 * @param body 
+	 */
+	private postBidInfo(key :Object, body :Object) :any {
+		this.logger.system.debug('Main.postBidInfo: key=' + JSON.stringify(key));
+		this.logger.system.debug('Main.postBidInfo: body=' + JSON.stringify(body));
+
+		return new Promise((resolve, reject) => {
+			this.logger.system.debug('Main.Observable.create: start');
+			this.oneDayDao.post(key, body,
+				// onSuccess
+				(data) => {
+					this.logger.system.info('Main.postBidInfo.onSuccess: ' + JSON.stringify(data));
+					resolve();
+				},
+				// onFail
+				(error) => {
+					this.logger.system.error('Main.postBidInfo.onFail: ' + JSON.stringify(error));
+					reject();
+				},
+				this
+			);
+		});
+	}
+
 
 	/**
 	 * node.js 終了処理

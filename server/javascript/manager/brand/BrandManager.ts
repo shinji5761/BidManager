@@ -109,7 +109,7 @@ export class BrandManager extends Manager {
 		for(let index in brandList) {
 			(index == '0') ? values['sql'] += '(?,?,?,?,?,?)' : values['sql'] += ',(?,?,?,?,?,?)';
 			values['value'].push(key.portfolioNo);
-			values['value'].push(brandList[index].brandNo;
+			values['value'].push(brandList[index].brandNo);
 			values['value'].push(brandList[index].brandCode);
 			values['value'].push(brandList[index].brandName);
 			values['value'].push(brandList[index].price);
