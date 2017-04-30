@@ -37,10 +37,26 @@ export class SQLParams {
 	}
 
 	/**
-	 * Getter(sql)
-	 * @return {string} SQL実行文
+	 * Getter(data)
+	 * @return {any}
 	 */
 	public getData() :any {
 		return this.data;
 	};
+
+	/**
+	 * Setter(data)
+	 * @param {any}
+	 */
+	public setData(data) :void {
+		this.data = data;
+	}
+	/**
+	 * Setter(sql)
+	 * @param {string}
+	 */
+	public setSQL(sql) :void {
+		this.sql = sql;
+	}
+
 }

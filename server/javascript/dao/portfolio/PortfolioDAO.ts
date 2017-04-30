@@ -4,8 +4,9 @@
  */
 import { Dao } from '../common/Dao';
 
-// === Service ===
-import { PortfolioService } from '../../service/portfolio/PortfolioService';
+// === Manager ===
+import { PortfolioManager } from '../../manager/portfolio/PortfolioManager';
+
 
 /**
  * PortfolioDao
@@ -16,8 +17,8 @@ export class PortfolioDao extends Dao {
 	/**
 	 * @constructor
 	 */
-	constructor(){
-		super(PortfolioService);
+	constructor(connection){
+		super(connection, PortfolioManager);
 	};
 
 }

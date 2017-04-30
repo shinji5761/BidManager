@@ -1,9 +1,7 @@
 // === Service ===
 import { Service } from '../common/Service';
 
-// === Entity ===
-import { SQLParams } from '../../entity/SQLParams';
-
+import { DBDaoCreater } from '../../daoCreater/db/DBDaoCreater';
 
 /**
  * PortfolioService
@@ -11,7 +9,6 @@ import { SQLParams } from '../../entity/SQLParams';
  * @extends Service
  */
 export class PortfolioService extends Service {
-
 	/**
 	 * @constructor
 	 */
@@ -19,96 +16,195 @@ export class PortfolioService extends Service {
 		super();
 	}
 
-
 	/**
-	 * 検索データ作成処理
-	 * @override
+	 * Get
 	 * @public
-	 * @param {any} body リクエストボディ
-	 * @return {SQLParams} SQL実行パラメータ
+	 * @param {Object}		key
+	 * @param {Object}		body
+	 * @param {Function}	onSuccess	コールバック関数(OK)
+	 * @param {Function}	onFail		コールバック関数(NG)
+	 * @param {Object}		caller		呼び元
 	 */
-	public createGetParams(body :any) :SQLParams {
-		this.logger.system.debug('PortfolioService.createGetParams: start');
-		let portfolioNo :number = body.portfolioNo;			// ポートフォリオ番号
-		let params = new SQLParams(
-			'SELECT portfolio_no AS portfolioNo, portfolio_name AS portfolioName, brand_code AS brandCode, brand_name AS brandName, price, stock FROM portfolio WHERE portfolio_no = ? ORDER BY brand_code',
-			[portfolioNo]
+	public get(key :Object, body :Object, query :Object, onSuccess :Function, onFail :Function, caller :Object) :void {
+		this.logger.system.debug('PortfolioService.get: start');
+		let dao = this.daoCreater.getPortfolioDao();
+		dao.get(key, body, query,
+			(result) => {
+				onSuccess.call(caller, result);
+			},
+			(error, status) => {
+				onFail.call(caller, error, status);
+			},
+			this
 		);
-		return params;
 	}
 
 	/**
-	 * 作成データ作成処理
-	 * @override
-	 * @public
-	 * @param {any} body リクエストボディ
-	 * @return {SQLParams} SQL実行パラメータ
+	 * Query
+	 * @param {Object}   key       [description]
+	 * @param {Object}   body      [description]
+	 * @param {Function} onSuccess [description]
+	 * @param {Function} onFail    [description]
+	 * @param {Object}   caller    [description]
 	 */
-	public createPostParams(body :any) :SQLParams {
-		this.logger.system.debug('PortfolioService.createPostParams: start');
-		let portfolioNo :number = body.portfolioNo;			// ポートフォリオ番号
-		let portfolioName :string = body.portfolioName;		// ポートフォリオ名
-		let brand :Array<any> = body.brand;					// 銘柄情報
-		let sql = 'INSERT INTO portfolio VALUES(?, ?, ?, ?, ?, ?)';	// SQL
-		let data : Array<any>;
-		if(brand.length > 0) {
-			data = [portfolioNo, portfolioName, brand[0]['brandCode'], brand[0]['brandName'], brand[0]['price'], brand[0]['stock']]; // 一つ目のデータ
-			// 2つ目以降のデータがある場合
-			for(let index = 1; index < body.length; index++) {
-				sql += ', (?, ?, ?, ?, ?)';
-				data.push(portfolioNo);
-				data.push(portfolioName);
-				data.push(brand[index]['brandCode']);
-				data.push(brand[index]['brandName']);
-				data.push(brand[index]['price']);
-				data.push(brand[index]['stock']);
+	public query(key :Object, body :Object, query :Object, onSuccess :Function, onFail :Function, caller :Object) :void {
+		this.logger.system.debug('PortfolioService.query: start');
+		let dao = this.daoCreater.getPortfolioDao();
+		dao.query(key, body, query,
+			(result) => {
+				onSuccess.call(caller, result);
+			},
+			(error, status) => {
+				onFail.call(caller, error, status);
+			},
+			this
+		);
+	}
+
+	/**
+	 * Post
+	 * @public
+	 * @param {Object}		key
+	 * @param {Object}		body
+	 * @param {Function}	onSuccess	コールバック関数(OK)
+	 * @param {Function}	onFail		コールバック関数(NG)
+	 * @param {Object}		caller		呼び元
+	 */
+	public post(key :Object, body :Object, onSuccess :Function, onFail :Function, caller :Object) :void {
+		this.logger.system.debug('PortfolioService.post: start');
+		let connection = this.daoCreater.getConnection();
+		connection.beginTransaction((tError) => {
+			if(tError) {
+				this.runRollback(connection, tError, DBDaoCreater.TRANSACTION_ERROR, onFail, caller);
 			}
-		}
-
-		let params = new SQLParams(
-			sql, data
-		);
-		return params;
+			// ポートフォリオ Post処理
+			this.postPortfolio(connection, key, body, onSuccess, onFail, caller);
+		});
 	}
 
 	/**
-	 * 更新データ作成処理
-	 * @override
+	 * Put
 	 * @public
-	 * @param {any} body リクエストボディ
-	 * @return {SQLParams} SQL実行パラメータ
+	 * @param {Object}		key
+	 * @param {Object}		body
+	 * @param {Function}	onSuccess	コールバック関数(OK)
+	 * @param {Function}	onFail		コールバック関数(NG)
+	 * @param {Object}		caller		呼び元
 	 */
-	public createPutParams(body :any) :SQLParams {
-		this.logger.system.debug('PortfolioService.createPutParams: start');
-		let portfolioNo :number = body.portfolioNo;			// ポートフォリオ番号
-		let deleteSql = 'DELETE FROM portfolio WHERE portfolio_no = ?';	// SQL
-		let insertParam = this.createPostParams(body);
-		insertParam['data'].unshift(portfolioNo);
-
-		let params = new SQLParams(
-			deleteSql + ';' + insertParam['sql'],
-			insertParam['data']
-		);
-		return params;
+	public put(key :Object, body :Object, onSuccess :Function, onFail :Function, caller :Object) :void {
+		this.logger.system.debug('PortfolioService.put: start');
+		let connection = this.daoCreater.getConnection();
+		connection.beginTransaction((tError) => {
+			if(tError) {
+				this.runRollback(connection, tError, DBDaoCreater.TRANSACTION_ERROR, onFail, caller);
+			}
+			// ポートフォリオ削除処理
+			this.deletePortfolio(connection, key, body, onSuccess, onFail, caller);
+		});	}
+	/**
+	 * Delete
+	 * @public
+	 * @param {Object}		key
+	 * @param {Object}		body
+	 * @param {Function}	onSuccess	コールバック関数(OK)
+	 * @param {Function}	onFail		コールバック関数(NG)
+	 * @param {Object}		caller		呼び元
+	 */
+	public delete(key :Object, body :Object, onSuccess :Function, onFail :Function, caller :Object) :void {
+		this.logger.system.debug('PortfolioService.delete: start');
+		let connection = this.daoCreater.getConnection();
+		connection.beginTransaction((tError) => {
+			if(tError) {
+				this.runRollback(connection, tError, DBDaoCreater.TRANSACTION_ERROR, onFail, caller);
+			}
+			let dao = this.daoCreater.getPortfolioDao();
+			dao.delete(key, body,
+				(result) => {
+					this.runCommit(connection, result, onSuccess, onFail, caller);
+				},
+				(error, status) => {
+					this.runRollback(connection, error, status, onFail, caller);
+				},
+				this
+			);
+		});
 	}
-
 
 	/**
-	 * 削除データ作成処理
-	 * @override
-	 * @public
-	 * @param {any} body リクエストボディ
-	 * @return {SQLParams} SQL実行パラメータ
+	 * ポートフォリオ 削除処理
+	 * @param {Object}		connection
+	 * @param {Object}		key
+	 * @param {Object}		body
+	 * @param {Function}	onSuccess	コールバック関数(OK)
+	 * @param {Function}	onFail		コールバック関数(NG)
+	 * @param {Object}		caller		呼び元
 	 */
-	public createDeleteParams(body :any) :SQLParams {
-		this.logger.system.debug('PortfolioService.createPutParams: start');
-		let portfolioNo :number = body.portfolioNo;			// ポートフォリオ番号
-		let deleteSql = 'DELETE FROM portfolio WHERE portfolio_no = ?';	// SQL
-
-		let params = new SQLParams(
-			deleteSql,
-			[portfolioNo]
+	private deletePortfolio(connection, key, body, onSuccess, onFail, caller) :void {
+		this.logger.system.debug('PortfolioService.deletePortfolio: start');
+		let dao = this.daoCreater.getPortfolioDao();
+		dao.delete(key, body,
+			(result) => {
+				// ポートフォリオ Post処理
+				this.postPortfolio(connection, key, body, onSuccess, onFail, caller);
+			},
+			(error, status) => {
+				this.runRollback(connection, error, status, onFail, caller);
+			},
+			this
 		);
-		return params;
 	}
+
+	/**
+	 * ポートフォリオ 追加処理
+	 * @param {Object}		connection
+	 * @param {Object}		key
+	 * @param {Object}		body
+	 * @param {Function}	onSuccess	コールバック関数(OK)
+	 * @param {Function}	onFail		コールバック関数(NG)
+	 * @param {Object}		caller		呼び元
+	 */
+	private postPortfolio(connection, key, body, onSuccess, onFail, caller) :void {
+		this.logger.system.debug('PortfolioService.postPortfolio: start');
+		let dao = this.daoCreater.getPortfolioDao();
+		dao.post(key, body,
+			(result) => {
+				// 追加したポートフォリオの番号
+				this.logger.system.info("PortfolioService.postPortfolio: result=" + JSON.stringify(result));
+				key.portfolioNo = result.insertId;
+				// 銘柄ポスト処理
+				this.postBrand(connection, key, body, onSuccess, onFail, caller);
+			},
+			(error, status) => {
+				this.runRollback(connection, error, status, onFail, caller);
+			},
+			this
+		);
+	}
+
+	/**
+	 * 銘柄 追加処理
+	 * @param {Object}		connection
+	 * @param {Object}		key
+	 * @param {Object}		body
+	 * @param {Function}	onSuccess	コールバック関数(OK)
+	 * @param {Function}	onFail		コールバック関数(NG)
+	 * @param {Object}		caller		呼び元
+	 */
+	private postBrand(connection, key, body, onSuccess, onFail, caller) :void {
+		this.logger.system.debug('PortfolioService.postBrand: start');
+		let dao = this.daoCreater.getBrandDao();
+		dao.posts(key, body,
+			(result) => {
+				this.runCommit(connection, result, onSuccess, onFail, caller);
+			},
+			(error, status) => {
+				this.runRollback(connection, error, status, onFail, caller);
+			},
+			this
+		);
+
+	}
+
+
+
 }

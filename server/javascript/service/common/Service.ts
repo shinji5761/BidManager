@@ -1,12 +1,13 @@
 // === Logger ===
 import logger = require('../../../LogSettings');
 
-// === Entity ===
-import { SQLParams } from '../../entity/SQLParams';
+// === Dao ===
+import { DBDaoCreater } from '../../daoCreater/db/DBDaoCreater';
 
 /**
  * Service
- * @class
+ * @class Service
+ * @abstract
  */
 export abstract class Service {
 	/**
@@ -16,83 +17,112 @@ export abstract class Service {
 	protected logger :any;
 
 	/**
+	 * Dao
+	 * @private
+	 * @type {DBDaoCreater}
+	 */
+	protected daoCreater :DBDaoCreater;
+
+	/**
 	 * @constructor
 	 */
 	constructor() {
 		this.logger = logger;
-	}
-
-
-	/**
-	 * 検索条件作成処理 
-	 * 実行するSQLのパラメータを返却する｡
-	 * @param {any} body ボディデータ
-	 */
-	public createGetParams(body :any) :SQLParams {
-		this.logger.system.debug('Service.createGetParams');
-		return new SQLParams('',[]);
+		this.daoCreater = new DBDaoCreater();
 	}
 
 	/**
-	 * 追加データ作成処理
-	 * @param {any} body ボディデータ
+	 * Get
+	 * @public
+	 * @param {Object}		key
+	 * @param {Object}		body
+	 * @param {Object}		query
+	 * @param {Function}	onSuccess	コールバック関数(OK)
+	 * @param {Function}	onFail		コールバック関数(NG)
+	 * @param {Object}		caller		呼び元
 	 */
-	public createPostParams(body :any) :SQLParams {
-		this.logger.system.debug('Service.createPostParams');
-		return new SQLParams('',[]);
-	};
+	public abstract get(key :Object, body :Object, query :Object, onSuccess :Function, onFail :Function, caller :Object) :void;
 
 	/**
-	 * 追加データ作成処理
-	 * @param {any} body ボディデータ
+	 * Query
+	 * @public
+	 * @param {Object}		key
+	 * @param {Object}		body
+	 * @param {Object}		query
+	 * @param {Function}	onSuccess	コールバック関数(OK)
+	 * @param {Function}	onFail		コールバック関数(NG)
+	 * @param {Object}		caller		呼び元
 	 */
-	public createPutParams(body :any) :SQLParams {
-		this.logger.system.debug('Service.createPutParams');
-		return new SQLParams('',[]);
-	};
+	public abstract query(key :Object, body :Object, query :Object, onSuccess :Function, onFail :Function, caller :Object) :void;
 
 	/**
-	 * 削除データ作成処理
-	 * @param {any} body ボディデータ
+	 * Post
+	 * @public
+	 * @param {Object}		key
+	 * @param {Object}		body
+	 * @param {Function}	onSuccess	コールバック関数(OK)
+	 * @param {Function}	onFail		コールバック関数(NG)
+	 * @param {Object}		caller		呼び元
 	 */
-	public createDeleteParams(body :any) :SQLParams {
-		this.logger.system.debug('Service.createDeleteParams');
-		return new SQLParams('',[]);
-	};
+	public abstract post(key :Object, body :Object, onSuccess :Function, onFail :Function, caller :Object) :void;
+
 
 	/**
-	 * 検索条件を付加する
-	 * @param keys
-	 * @param params
+	 * Put
+	 * @public
+	 * @param {Object}		key
+	 * @param {Object}		body
+	 * @param {Function}	onSuccess	コールバック関数(OK)
+	 * @param {Function}	onFail		コールバック関数(NG)
+	 * @param {Object}		caller		呼び元
 	 */
-	public addSearchParam(searchParams :Object, params :Object) :void {
-		this.logger.system.debug('Service.addSearchParam');
-		let keys = Object.keys(searchParams);
-		keys.forEach((key, index) => {
-			if(index < 1) {
-				params['sql'] += ' WHERE ' + key + ' = ?';
+	public abstract put(key :Object, body :Object, onSuccess :Function, onFail :Function, caller :Object) :void;
+
+	/**
+	 * Delete
+	 * @public
+	 * @param {Object}		key
+	 * @param {Object}		body
+	 * @param {Function}	onSuccess	コールバック関数(OK)
+	 * @param {Function}	onFail		コールバック関数(NG)
+	 * @param {Object}		caller		呼び元
+	 */
+	public abstract delete(key :Object, body :Object, onSuccess :Function, onFail :Function, caller :Object) :void;
+
+	/**
+	 * コミット実行
+	 * 成功 : onSuccess
+	 * 失敗 : onFail
+	 * @param {any}      data     [description]
+	 * @param {Function} onSuccess [description]
+	 * @param {Function} onFail   [description]
+	 * @param {Object}   caller   [description]
+	 */
+	protected runCommit(connection, data :any, onSuccess :Function, onFail :Function, caller :Object) :void {
+		// コミット
+		connection.commit((error) => {
+			if(error) {
+				// ロールバック
+				this.runRollback(connection, error, 500, onFail, caller);
+				onFail.call(caller, error);
 			}
-			else {
-				params['sql'] += ' AND ' + key + ' = ?';
-			}
-			params['data'].push(searchParams[key]);
+			this.logger.system.debug("Dao.runCommit : 結果にコミットしました｡")
+			onSuccess.call(caller, data);
 		});
 	}
 
-
 	/**
-	 * 検索結果加工処理
-	 * 加工しない場合はそのままリターン
-	 * 加工する場合はオーバーライドで処理を記述する｡
-	 * @public
-	 * @param {any} data 加工対象のデータ
-	 * @return {any} 加工データ
+	 * [runRollback description]
+	 * @param  {any}      error  [description]
+	 * @param  {number}   code   [description]
+	 * @param  {Function} onFail [description]
+	 * @param  {Object}   caller [description]
+	 * @return {[type]}          [description]
 	 */
-	public createResultData(data :any) :any {
-		this.logger.system.debug('Service.createResultData');
-		return data;
+	protected runRollback(connection, error :any, code :number, onFail :Function, caller :Object) {
+		// ロールバック
+		connection.rollback(() => {
+			onFail.call(caller, error, code);
+		})
 	}
-
-
-
 }

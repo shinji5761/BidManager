@@ -1,12 +1,15 @@
 // === Dao ===
 import { Dao } from '../common/Dao';
 
-// === Service ===,
-import { OneDayService } from '../../service/one_day/OneDayService';
+// === Manager ===
+import { OneDayManager } from '../../manager/one_day/OneDayManager';
 
 export class OneDayDao extends Dao {
 
-    constructor() {
-        super(OneDayService);
-    }
+	/**
+	 * @constructor
+	 */
+	constructor(connection) {
+		super(connection, OneDayManager);
+	}
 }

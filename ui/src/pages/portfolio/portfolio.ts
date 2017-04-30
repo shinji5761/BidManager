@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NavController, NavParams, ModalController, LoadingController, ToastController } from 'ionic-angular';
+import 'rxjs/add/operator/finally';
 
 // === Page ===
 import { BrandPage } from '../brand/brand';
@@ -17,7 +18,7 @@ import { DialogLibrary } from '../../providers/library/DialogLibrary';
 
 // === API ===
 import { ApiAccessor } from '../../providers/api/api-accessor';
-import { PortfolioApiService } from '../../providers/api/PortfolioApiService';
+import { BrandApiService } from '../../providers/api/BrandApiService';
 
 @Component({
   selector: 'page-portfolio',
@@ -42,9 +43,9 @@ export class PortfolioPage implements OnInit, OnDestroy {
 	/**
 	 * API Service
 	 * @private
-	 * @type {PortfolioApiService}
+	 * @type {BrandApiService}
 	 */
-	private api :PortfolioApiService;
+	private api :BrandApiService;
 
 
 	/**
@@ -66,7 +67,7 @@ export class PortfolioPage implements OnInit, OnDestroy {
         private _dialogLib :DialogLibrary,
 		private _accessor :ApiAccessor ) {
 		// APIの取得
-		this.api = this._accessor.getPortfolioApiService();
+		this.api = this._accessor.getBrandApiService();
 		this.portfolio = this._navParams.get('portfolio');
 	};
 
@@ -95,13 +96,16 @@ export class PortfolioPage implements OnInit, OnDestroy {
 		// ローディングダイアログ 作成･開始
 		this.loader = this._dialogLib.createGetDialog(this._loadingCtrl);
 		this.loader.present();
-
-		this.api.setPortfolioNo(this.portfolio.getPortfolioNo());
+		// 指定したポートフォリオ番号を取得する
+		let option = {
+			'portfolioNo': this.portfolio.getPortfolioNo()
+		};
+		this.api.setOption(option);
 		this.api.query()
+		.finally(() => this.completion())
 		.subscribe(
 			res => this.createPurchases(res),
-			error => this.isError(error),
-			() => this.completion()
+			error => this.isError(error)
 		);
 	};
 

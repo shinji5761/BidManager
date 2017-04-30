@@ -9,13 +9,15 @@ echo 'データベースを作成しました'
 ######  テーブルの作成
 echo 'テーブルを作成します...'
 mysql -u admin -padmin bid_manager < ./sql/table/table_portfolio.sql
+mysql -u admin -padmin bid_manager < ./sql/table/table_brand.sql
 mysql -u admin -padmin bid_manager < ./sql/table/table_one_day.sql
 echo 'テーブルを作成しました'
 
 
 ##### ビューの作成
 echo 'ビューを作成します...'
-mysql -u admin -padmin bid_manager < ./sql/view/portfolio_list.sql
+# mysql -u admin -padmin bid_manager < ./sql/view/portfolio_list.sql
+mysql -u admin -padmin bid_manager < ./sql/view/brand_list.sql
 echo 'ビューを作成しました'
 
 ###### 初回データの登録

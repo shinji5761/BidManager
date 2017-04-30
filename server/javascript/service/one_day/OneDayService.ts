@@ -1,6 +1,9 @@
 // === Service ===
 import { Service } from '../common/Service';
 
+// === DaoManager ===
+import { DBDaoCreater } from '../../daoCreater/db/DBDaoCreater';
+
 // === Entity ===
 import { SQLParams } from '../../entity/SQLParams';
 
@@ -11,34 +14,56 @@ import { SQLParams } from '../../entity/SQLParams';
 export class OneDayService extends Service {
 
 	/**
-	 * 検索データ作成処理
-	 * @override
-	 * @public
-	 * @param {any} body リクエストボディ
-	 * @return {SQLParams} SQL実行パラメータ
+	 * @constructor
 	 */
-	public createGetParams(body :any) :SQLParams {
-		this.logger.system.debug('OneDayService.createGetParams: start');
-		let brandCode :number = body.brandCode;			// 銘柄番号
-		let params = new SQLParams(
-			'SELECT brand_code AS brandCode, DATE_FORMAT(target_date, \'%y/%m/%d\') AS targetDate, open, high, low, close, volume FROM one_day WHERE brand_code = ? ORDER BY target_date LIMIT 90',
-			[brandCode]
-		);
-		return params;
+	constructor() {
+		super();
 	}
 
-
-    /**
-     * [createPostParams description]
-     * @override
-	 * @param {any} body ボディデータ
-     */
-    public createPostParams(body :any) :SQLParams {
-        this.logger.system.debug('OneDayService.cratePostParams: start');
-		let params = new SQLParams(
-			'INSERT INTO bid_manager.one_day(brand_code, target_date, open, high, low, close, volume)  VALUES(?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE high=?, low=?, close=?, volume=?',
-			[body.brandCode, body.targetDate, body.open, body.high, body.low,  body.close, body.volume, body.open, body.high, body.low,  body.close, body.volume]
+	/**
+	 * Get
+	 * @param {[type]} key       [description]
+	 * @param {[type]} body      [description]
+	 * @param {[type]} query     [description]
+	 * @param {[type]} onSuccess [description]
+	 * @param {[type]} onFail    [description]
+	 * @param {[type]} caller    [description]
+	 */
+	public get(key, body, query, onSuccess, onFail, caller) :void {
+		this.logger.system.debug('OneDayService.get: start');
+		let dao = this.daoCreater.getOneDayDao();
+		dao.get(key, body, query,
+			(result) => {
+				onSuccess.call(caller, result);
+			},
+			(error, status) => {
+				onFail.call(caller, error, status);
+			},
+			this
 		);
-        return params;
-    }
+	}
+
+	/**
+	 * Query
+	 * @param {[type]} key       [description]
+	 * @param {[type]} body      [description]
+	 * @param {[type]} query     [description]
+	 * @param {[type]} onSuccess [description]
+	 * @param {[type]} onFail    [description]
+	 * @param {[type]} caller    [description]
+	 */
+	public query(key, body, query, onSuccess, onFail, caller) :void {
+		this.logger.system.debug('OneDayService.query: start');
+		let dao = this.daoCreater.getOneDayDao();
+		dao.query(key, body, query,
+			(result) => {
+				onSuccess.call(caller, result);
+			},
+			(error, status) => {
+				onFail.call(caller, error, status);
+			},
+			this
+		);
+	}
+
 }

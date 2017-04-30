@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NavController, NavParams, ViewController, ToastController, LoadingController } from 'ionic-angular';
 import { Observable } from 'rxjs';
+import 'rxjs/add/operator/finally';
 
 // === Entity ===
 import { PortfolioEntity } from '../../entity/PortfolioEntity';
@@ -14,7 +15,7 @@ import { DialogLibrary } from '../../providers/library/DialogLibrary';
 // === API ===
 import { ApiAccessor } from '../../providers/api/api-accessor';
 import { PortfolioApiService } from '../../providers/api/PortfolioApiService';
-import { PurchasesApiService } from '../../providers/api/PurchasesApiService';
+import { BrandApiService } from '../../providers/api/BrandApiService';
 
 
 @Component({
@@ -49,6 +50,13 @@ export class EditPortfolioDialogPage implements OnInit, OnDestroy {
 	 * @type {PortfolioApiService}
 	 */
 	private portfolioApiService :PortfolioApiService;
+
+	/**
+	 * brandApiService
+	 * @private
+	 * @type {brandApiService}
+	 */
+	private brandApiService :BrandApiService;
 
 
 	/**
@@ -89,6 +97,7 @@ export class EditPortfolioDialogPage implements OnInit, OnDestroy {
 		this.title = this._navParams.get('title');
 		this.portfolio = this._navParams.get('portfolio');
 		this.portfolioApiService = this._accessor.getPortfolioApiService();
+		this.brandApiService = this._accessor.getBrandApiService();
 
 		// 購入情報取得
 		this.runGetPortfolio();
@@ -99,7 +108,8 @@ export class EditPortfolioDialogPage implements OnInit, OnDestroy {
 	 */
 	ngOnDestroy() :void {
 		// ダイアログが残っている場合､解除する
-		this.loader.dismiss();
+		if(this.loader)
+			this.loader.dismiss();
 	}
 
 
@@ -114,13 +124,13 @@ export class EditPortfolioDialogPage implements OnInit, OnDestroy {
 			// ローディングダイアログ 作成･開始
 			this.loader = this._dialogLib.createGetDialog(this._lodingCtrl);
 			this.loader.present();
-
-			this.portfolioApiService.setPortfolioNo(this.portfolio.getPortfolioNo());
-			this.portfolioApiService.query()
+			let option = {'portfolioNo' : this.portfolio.getPortfolioNo()};
+			this.brandApiService.setOption(option);
+			this.brandApiService.query()
+			.finally(() => this.completion())
 			.subscribe(
 				res => this.createBrand(res),
-				error => console.error(error),
-				() => this.completion()
+				error => console.error(error)
 			);
 		} else {
 			// dummyを差し込む
@@ -137,12 +147,12 @@ export class EditPortfolioDialogPage implements OnInit, OnDestroy {
 		// ローディングダイアログ 作成･開始
 		this.loader = this._dialogLib.createSaveDialog(this._lodingCtrl);
 		this.loader.present();
-
+		this.portfolioApiService.setPortfolioNo(null);
 		this.portfolioApiService.post(this.portfolio)
+		.finally(() => this.completion())
 		.subscribe(
 			res => this.onSuccessSave(res),
-			error => this.onFailSave(error),
-			() => this.completion()
+			error => this.onFailSave(error)
 		);
 	}
 
@@ -155,12 +165,12 @@ export class EditPortfolioDialogPage implements OnInit, OnDestroy {
 		// ローディングダイアログ 作成･開始
 		this.loader = this._dialogLib.createSaveDialog(this._lodingCtrl);
 		this.loader.present();
-
+		this.portfolioApiService.setPortfolioNo(this.portfolio.getPortfolioNo());
 		this.portfolioApiService.update(this.portfolio)
+		.finally(() => this.completion())
 		.subscribe(
 			res => this.onSuccessSave(res),
-			error => this.onFailSave(error),
-			() => this.completion()
+			error => this.onFailSave(error)
 		);
 	}
 

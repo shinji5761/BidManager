@@ -3,7 +3,7 @@ import { Http } from '@angular/http';
 
 // === API Service ===
 import { PortfolioApiService } from './PortfolioApiService';
-import { PortfolioListApiService } from './PortfolioListApiService';
+import { BrandApiService } from './BrandApiService';
 import { OneDayApiService } from './OneDayApiService';
 
 @Injectable()
@@ -27,15 +27,15 @@ export class ApiAccessor {
 	 * @return PortfolioApiService
 	 */
 	public getPortfolioApiService() :PortfolioApiService {
-		return new PortfolioApiService(this._http, this.host + 'portfolio/portfolioNo/');
+		return new PortfolioApiService(this._http, this.host + 'portfolio/');
 	}
 
 	/**
-	 * PortfolioListApiService 取得
-	 * @return PortfolioListApiService
+	 * BrandApiService 取得
+	 * @return {BrandApiService} [description]
 	 */
-	public getPortfolioListApiService() :PortfolioListApiService {
-		return new PortfolioListApiService(this._http, this.host + 'portfolioList/');
+	public getBrandApiService() :BrandApiService {
+		return new BrandApiService(this._http, this.host + 'brand/')
 	}
 
 	/**
@@ -43,7 +43,7 @@ export class ApiAccessor {
 	 * @return OneDayApiService
 	 */
 	public getOneDayApiService() :OneDayApiService {
-		return new OneDayApiService(this._http, this.host + 'oneDay/brandCode/');
+		return new OneDayApiService(this._http, this.host + 'oneDay/');
 	}
 
 }

@@ -29,24 +29,12 @@ export class PortfolioApiService extends ApiService {
 	}
 
 	/**
-	 * GET
+	 * Get
 	 * @return {any}
 	 */
-	public query() :any {
+	public get() :any {
 		let url = this.url + this.portfolioNo;
 		return this.http.get(url, {'search': this.option}).map(res => res.json());
-	}
-
-	/**
-	 * POST
-	 * @param {any} data POST Data
-	 */
-	public post(data :any) :any {
-		let url = this.url + this.portfolioNo;
-		let params = JSON.stringify(data);
-		let options = new RequestOptions({headers: this.headers});
-		console.log(params);
-		return this.http.post(url, params, options).map(res => res.json());
 	}
 
 	/**

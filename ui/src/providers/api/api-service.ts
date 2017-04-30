@@ -5,7 +5,7 @@ import 'rxjs/add/operator/map';
  * ApiService
  * API取得サービス
  */
-export class ApiService {
+export abstract class ApiService {
 
 	/**
 	 * URL
@@ -47,6 +47,14 @@ export class ApiService {
 
 		// オプションの初期化
 		this.clearOption();
+	}
+
+	/**
+	 * Get
+	 * @return {any}
+	 */
+	public get() :any {
+		return this.http.get(this.url, {'search': this.option}).map(res => res.json());
 	}
 
 

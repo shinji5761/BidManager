@@ -1,8 +1,8 @@
 // === Dao ===
 import { Dao } from '../common/Dao';
 
-// === Service ===
-import { BrandListService } from '../../service/brand_list/BrandListService';
+// === Manager ===
+import { BrandListManager } from '../../manager/brand_list/BrandListManager';
 
 /**
  * @class BrandListDao
@@ -10,10 +10,10 @@ import { BrandListService } from '../../service/brand_list/BrandListService';
  */
 export class BrandListDao extends Dao {
 
-    /**
-     * @constructor
-     */
-    constructor() {
-        super(BrandListService);
-    }
+	/**
+	 * @constructor
+	 */
+	constructor(connection) {
+		super(connection, BrandListManager);
+	}
 }

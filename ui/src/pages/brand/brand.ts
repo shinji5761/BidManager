@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NavController, NavParams, ToastController, LoadingController } from 'ionic-angular';
+import 'rxjs/add/operator/finally';
 
 // === Entity ===
 import { BrandEntity } from '../../entity/BrandEntity';
@@ -114,9 +115,12 @@ export class BrandPage implements OnInit, OnDestroy {
 		// ローディングダイアログ 作成･開始
 		this.loader = this._dialogLib.createGetDialog(this._loadingCtrl);
 		this.loader.present();
+		let option = {'limit': 90};
 
 		this.api.setBrandCode(this.brand.getBrandCode());
+		this.api.setOption(option);
 		this.api.query()
+		.finally(() => this.completion())
 		.subscribe(
 			(result) => {
 				this.createChart(result);
@@ -125,8 +129,7 @@ export class BrandPage implements OnInit, OnDestroy {
 			(error) => {
 				console.error(error);
 				// todo: データが無い旨を表示
-			},
-			() => this.completion()
+			}
 		);
 	}
 

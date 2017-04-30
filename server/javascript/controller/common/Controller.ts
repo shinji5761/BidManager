@@ -19,13 +19,6 @@ export abstract class Controller {
 	protected url :string = '';
 
 	/**
-	 * dao
-	 * @private
-	 * @type {any}
-	 */
-	protected dao :any;
-
-	/**
 	 * service
 	 * @private
 	 * @type {any}
@@ -36,9 +29,8 @@ export abstract class Controller {
 	 * @constructor
 	 * @param {string} url
 	 */
-	constructor(url :string, dao :any, service :any) {
+	constructor(url :string, service :any) {
 		this.url = url;
-		this.dao = new dao(service);
 		this.service = new service();
 		this.logger = logger;
 	}
@@ -49,14 +41,6 @@ export abstract class Controller {
 	 */
 	public getUrl() :string {
 		return this.url;
-	}
-
-	/**
-	 * Getter(dao)
-	 * @return {any} dao
-	 */
-	public getDao() :any {
-		return this.dao;
 	}
 
 	/**
@@ -85,16 +69,19 @@ export abstract class Controller {
 	public get(req, res) :void {
 		this.logger.system.debug('Controller.get: start');
 		// パラメータの取得
+		let key :Object = req.params;
 		let body :Object = req.body;
-		// パラメータを加工する
-		this.createBody(body, req);
-		this.logger.system.info('Controller.get: body - ' + JSON.stringify(body));
+		let query : Object = req.query;
+		this.logger.system.info('Controller.get: key=' + JSON.stringify(key));
+		this.logger.system.info('Controller.get: body=' + JSON.stringify(body));
+		this.logger.system.info('Controller.get: query=' + JSON.stringify(query));
 
-		this.dao.get(
+		this.service.get(
+			key,
 			body,
+			query,
 			// コールバック(OK)
-			(data) => {
-				let result = this.service.createResultData(data);
+			(result) => {
 				this.logger.system.info(JSON.stringify(result));
 				res.status(200).send(result);
 			},
@@ -106,6 +93,38 @@ export abstract class Controller {
 	}
 
 	/**
+	 * Query
+	 * @param req
+	 * @param res
+	 */
+	public query(req, res) :void {
+		this.logger.system.debug('Controller.get: start');
+		// パラメータの取得
+		let key :Object = req.params;
+		let body :Object = req.body;
+		let query : Object = req.query;
+		this.logger.system.info('Controller.query: key=' + JSON.stringify(key));
+		this.logger.system.info('Controller.query: body=' + JSON.stringify(body));
+		this.logger.system.info('Controller.query: query=' + JSON.stringify(query));
+
+		this.service.query(
+			key,
+			body,
+			query,
+			// コールバック(OK)
+			(result) => {
+				this.logger.system.info(JSON.stringify(result));
+				res.status(200).send(result);
+			},
+			// コールバック(NG)
+			(error, status) => {
+				this.isError(error, status, res);
+			},this
+		);
+	}
+
+
+	/**
 	 * Post
 	 * @param req
 	 * @param res
@@ -113,11 +132,12 @@ export abstract class Controller {
 	public post(req, res) :void {
 		this.logger.system.debug('Controller.post: start');
 		// パラメータの取得
+		let key :Object = req.params;
 		let body :Object = req.body;
-		// パラメータを加工する
-		this.createBody(body, req);
-		this.logger.system.info('Controller.post: ' + JSON.stringify(body));
-		this.dao.post(
+		this.logger.system.info('Controller.post: key=' + JSON.stringify(key));
+		this.logger.system.info('Controller.post: body=' + JSON.stringify(body));
+		this.service.post(
+			key,
 			body,
 			(data) => {
 				res.status(200).send(data);
@@ -136,12 +156,13 @@ export abstract class Controller {
 	public put(req, res) :void {
 		this.logger.system.debug('Controller.put: start');
 		// パラメータの取得
+		let key :Object = req.params;
 		let body :Object = req.body;
-		// パラメータを加工する
-		this.createBody(body, req);
-		this.logger.system.info('Controller.put: ' + JSON.stringify(body));
+		this.logger.system.info('Controller.put: key=' + JSON.stringify(key));
+		this.logger.system.info('Controller.put: body=' + JSON.stringify(body));
 
-		this.dao.put(
+		this.service.put(
+			key,
 			body,
 			// コールバック(OK)
 			(data) => {
@@ -164,11 +185,12 @@ export abstract class Controller {
 	public delete(req, res) :void {
 		this.logger.system.debug('Controller.delete: start');
 		// パラメータの取得
+		let key :Object = req.params;
 		let body :Object = req.body;
-		// パラメータを加工する
-		this.createBody(body, req);
-		this.logger.system.info('Controller.delete: ' + JSON.stringify(body));
-		this.dao.delete(
+		this.logger.system.info('Controller.delete: key=' + JSON.stringify(key));
+		this.logger.system.info('Controller.delete: body=' + JSON.stringify(body));
+		this.service.delete(
+			key,
 			body,
 			// コールバック(OK)
 			(data) => {
@@ -179,14 +201,5 @@ export abstract class Controller {
 				this.isError(error, status, res);
 			}
 		)
-	}
-
-	/**
-	 * リクエストボディ 加工処理
-	 * @param body
-	 * @param req
-	 */
-	protected createBody(body, req) :void {
-
 	}
 }

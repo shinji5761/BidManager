@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NavController, NavParams, ModalController, LoadingController, ToastController, AlertController } from 'ionic-angular';
+import 'rxjs/add/operator/finally';
 
 // === Page ===
 import { PortfolioPage } from '../portfolio/portfolio';
@@ -18,7 +19,6 @@ import { DialogLibrary } from '../../providers/library/DialogLibrary';
 // === API ===
 import { ApiAccessor } from '../../providers/api/api-accessor';
 import { PortfolioApiService } from '../../providers/api/PortfolioApiService';
-import { PortfolioListApiService } from '../../providers/api/PortfolioListApiService';
 
 @Component({
 	selector: 'page-portfolio-list',
@@ -52,14 +52,8 @@ export class PortfolioListPage implements OnInit, OnDestroy {
 	 * @private
 	 * @type {PortfolioApiService}
 	 */
-	private portfolioApi :PortfolioApiService;
+	private api :PortfolioApiService;
 
-	/**
-	 * PortfolioListApiService
-	 * @private
-	 * @type {PortfolioListApiService}
-	 */
-	private portfolioListApi :PortfolioListApiService;
 
 	/**
 	 * @constructor
@@ -77,8 +71,7 @@ export class PortfolioListPage implements OnInit, OnDestroy {
 		private _accessor :ApiAccessor
 	) {
 		// APIの取得
-		this.portfolioApi = this._accessor.getPortfolioApiService();
-		this.portfolioListApi = this._accessor.getPortfolioListApiService();
+		this.api = this._accessor.getPortfolioApiService();
 	};
 
 	/**
@@ -106,12 +99,11 @@ export class PortfolioListPage implements OnInit, OnDestroy {
 		this.loader = this._dialogLib.createGetDialog(this._lodingCtrl);
 		this.loader.present();
 		// ポートフォリオの取得
-		this.portfolioListApi.query()
-		.finally(() => console.log('finally'))
+		this.api.query()
+		.finally(() => this.completion())
 		.subscribe(
 			res => this.createPortfolio(res),
-			error => this.onFailGet(error),
-			() => this.completion()
+			error => this.onFailGet(error)
 		);
 	};
 
@@ -127,12 +119,12 @@ export class PortfolioListPage implements OnInit, OnDestroy {
 		this.loader.present();
 
 		// ポートフォリオの削除
-		this.portfolioApi.setPortfolioNo(no);
-		this.portfolioApi.delete()
+		this.api.setPortfolioNo(no);
+		this.api.delete()
+		.finally(() => this.completion())
 		.subscribe(
 			res => this.onSuccessDelete(res),
-			error => this.onFailDelete(error),
-			() => this.completion()
+			error => this.onFailDelete(error)
 		);
 	};
 

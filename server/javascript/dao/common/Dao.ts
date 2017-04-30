@@ -1,6 +1,12 @@
 import mysql = require('mysql2');
 import { DaoConst } from './DaoConst';
 
+// === DaoManager ===
+import { Manager } from '../../manager/common/Manager';
+
+// === Entity ===
+import { SQLParams } from '../../entity/SQLParams';
+
 // === Logger ===
 import logger = require('../../../LogSettings');
 
@@ -14,33 +20,7 @@ export abstract class Dao {
 	 * @type {any}
 	 */
 	protected logger :any;
-	/**
-	 * HOST
-	 * @private
-	 * @type {string}
-	 */
-	private HOST :string = 'localhost';
 
-	/**
-	 * USER
-	 * @private
-	 * @type {string}
-	 */
-	private USER :string = 'admin';
-
-	/**
-	 * POSSWORD
-	 * @private
-	 * @type {string}
-	 */
-	private PASSWORD :string = 'admin';
-
-	/**
-	 * DATABASE
-	 * @private
-	 * @type {string}
-	 */
-	private DATABASE :string = 'bid_manager';
 
 	/**
 	 * Dao用 定数オブジェクト
@@ -56,26 +36,19 @@ export abstract class Dao {
 	protected connection;
 
 	/**
-	 * Serviceクラス
+	 * Managerクラス
 	 * @protected
 	 */
-	protected service :any;
+	protected manager :any;
 
 	/**
 	 * @constructor
 	 */
-	constructor(service :any) {
+	constructor(connection, manager) {
 		// MySQL 接続
-		this.connection = mysql.createConnection(
-			{
-				'host': this.HOST,
-				'user': this.USER,
-				'password': this.PASSWORD,
-				'database': this.DATABASE,
-			}
-		);
+		this.connection = connection;
 		this.const = new DaoConst();
-		this.service = new service();
+		this.manager = new manager();
 		this.logger = logger;
 	}
 
@@ -90,106 +63,103 @@ export abstract class Dao {
 	}
 
 	/**
-	 * ポートフォリオ Get
-	 * @param {Array<any>} body リクエストボディデータ
+	 * Get
+	 * @param {Object} key
+	 * @param {Object} body
+	 * @param {Object} query
 	 * @param {Function} onSuccess
 	 * @param {Function} onFail
 	 * @param {Object} caller
 	 */
-	public get(body, onSuccess, onFail, caller): void {
+	public get(key, body, query, onSuccess, onFail, caller): void {
 		this.logger.system.debug('Dao.get: start');
 		// SQLパラメータの作成
-		let params = this.service.createGetParams(body);
-		this.logger.system.info('Dao.get: SQL=' + params.sql + ', data=' + JSON.stringify(params.data));
-
+		let params :SQLParams = this.manager.createGetParams(key, body, query);
 		// サーバー接続
-		let rows = [];
-		let query = this.connection.query(params.sql, params.data);
-		query
+		let request = this.connection.query(params.getSQL(), params.getData());
+		this.logger.system.info('Dao.get: params=' + params.getSQL() + ', data=' + JSON.stringify(params.getData()));
+		this.logger.system.info('Dao.get: SQL=' + request.sql);
+		let data;
+		request
 		.on('error', (error) => {
 			onFail.call(caller, error, this.const.ERROR_CODE_OTHER);
 		})
-		.on('result', (row) => {
-			rows.push(row);
+		.on('result', (result) => {
+			data = result;
 		})
 		.on('end', () => {
-			// レコードが空の場合
-			if(rows.length == 0) {
-				onFail.call(caller, rows, this.const.ERROR_CODE_NOT_FOUND);
-				return;
-			}
 			// 成功の場合
-			onSuccess.call(caller, rows);
+			onSuccess.call(caller, data);
+		});
+	}
+
+	/**
+	 * Query
+	 * @param {Object} key
+	 * @param {Object} body
+	 * @param {Object} query
+	 * @param {Function} onSuccess
+	 * @param {Function} onFail
+	 * @param {Object} caller
+	 */
+	public query(key :Object, body :Object, query :Object, onSuccess :Function, onFail :Function, caller :Object) :void {
+		this.logger.system.debug('Dao.query: start');
+		// SQLパラメータの作成
+		let params :SQLParams = this.manager.createQueryParams(key, body, query);
+		// サーバー接続
+		let request = this.connection.query(params.getSQL(), params.getData());
+		this.logger.system.info('Dao.query: params=' + params.getSQL() + ', data=' + JSON.stringify(params.getData()));
+		this.logger.system.info('Dao.query: SQL=' + request.sql);
+		let data :Array<any> = [];
+		request
+		.on('error', (error) => {
+			onFail.call(caller, error, this.const.ERROR_CODE_OTHER);
+		})
+		.on('result', (result) => {
+			data.push(result);
+		})
+		.on('end', () => {
+			// 成功の場合
+			onSuccess.call(caller, data);
 		});
 	}
 
 	/**
 	 * Post
-	 * @param {Array<any>} params
-	 * @param {Function} onSuccess
-	 * @param {Function} onFail
-	 * @param {Object} caller
+	 * @param {Object}		key			[description]
+	 * @param {Object}		body		[description]
+	 * @param {Function}	onSuccess	[description]
+	 * @param {Function}	onFail		[description]
+	 * @param {Object}		caller		[description]
 	 */
-	public post(body, onSuccess, onFail, caller): void {
-		this.logger.system.debug('Dao.post: start');
-		// SQLパラメータの作成
-		let params = this.service.createPostParams(body);
-		this.logger.system.info('Dao.post: SQL=' + params.sql + ', data=' + JSON.stringify(params.data));
-
-		// トランザクション開始
-		this.connection.beginTransaction( (tError) => {
-			if(tError) {
-				onFail.call(caller, tError, this.const.ERROR_CODE_OTHER);
-			}
-			// サーバー接続
-			let query = this.connection.query(params.sql, params.data);
-			let data;
-			query
-			.on('error', (error) => {
-				// ロールバック
-				this.runRollback(error, this.const.ERROR_CODE_OTHER, onFail, caller);
-			})
-			.on('result', (result) => {
-				data = result;
-			})
-			.on('end', (result) => {
-				// コミット
-				this.runCommit(data, onSuccess, onFail, caller);
-			});
+	 public post(key :Object, body :Object, onSuccess :Function, onFail :Function, caller :Object) :void {
+		// DaoManagerからSQL､Dataを取得する
+		let params :SQLParams = this.manager.createPostParams(key, body);
+		let request = this.connection.query(params.getSQL(), params.getData());
+		let data;
+		this.logger.system.info('Dao.post: params=' + params.getSQL() + ', data=' + JSON.stringify(params.getData()));
+		this.logger.system.info('Dao.post: SQL=' + request.sql);
+		request
+		.on('error', (error) => {
+			onFail.call(caller, error, this.const.ERROR_CODE_OTHER);
+		})
+		.on('result', (result) => {
+			data = result;
+		})
+		.on('end', (result) => {
+			onSuccess.call(caller, data);
 		});
 	}
 
 	/**
 	 * Put
-	 * @param {Array<any>} body パラメータ
-	 * @param {Function} onSuccess
-	 * @param {Function} onFail
-	 * @param {Object} caller
+	 * @param {Object}		key			[description]
+	 * @param {Object}		body		[description]
+	 * @param {Function}	onSuccess	[description]
+	 * @param {Function}	onFail		[description]
+	 * @param {Object}		caller		[description]
 	 */
-	public put(body, onSuccess, onFail, caller) :void {
-		this.logger.system.debug('Dao.put: start');
-		// SQLパラメータの作成
-		let params = this.service.createPutParams(body);
-		this.logger.system.info('Dao.put: SQL=' + params.sql + ', data=' + JSON.stringify(params.data));
-
-		// トランザクション開始
-		this.connection.beginTransaction((tError) => {
-			// サーバー接続
-			let query = this.connection.query(params.sql, params.data);
-			let data;
-			query
-			.on('error', (error) => {
-				// ロールバック
-				this.runRollback(error, this.const.ERROR_CODE_OTHER, onFail, caller);
-			})
-			.on('result', (result) => {
-				data = result;
-			})
-			.on('end', (result) => {
-				// コミット
-				this.runCommit(data, onSuccess, onFail, caller);
-			});
-		});
+	 public put(key :Object, body :Object, onSuccess :Function, onFail :Function, caller :Object) :void {
 	}
 
 	/**
@@ -199,67 +169,22 @@ export abstract class Dao {
 	 * @param {Function} onFail
 	 * @param {Object} caller
 	 */
-	public delete(body, onSuccess, onFail, caller) :void {
-		this.logger.system.debug('Dao.delete: start');
-		// SQLパラメータの作成
-		let params = this.service.createDeleteParams(body);
-		this.logger.system.info('Dao.delete: SQL=' + params.sql + ', data=' + JSON.stringify(params.data));
-
-		// トランザクション開始
-		this.connection.beginTransaction((tError) => {
-			// サーバー接続
-			let query = this.connection.query(params.sql, params.data);
-			let data;
-			query
-			.on('error', (error) => {
-				// ロールバック
-				this.runRollback(error, this.const.ERROR_CODE_OTHER, onFail, caller);
-			})
-			.on('result', (result) => {
-				data = result;
-			})
-			.on('end', (result) => {
-				// コミット
-				this.runCommit(data, onSuccess, onFail, caller);
-			});
-		});
-	}
-
-	/**
-	 * コミット実行
-	 * 成功 : onSuccess
-	 * 失敗 : onFail
-	 * @param {any}      data     [description]
-	 * @param {Function} onSuccess [description]
-	 * @param {Function} onFail   [description]
-	 * @param {Object}   caller   [description]
-	 */
-	protected runCommit(data :any, onSuccess :Function, onFail :Function, caller :Object) :void {
-		// コミット
-		this.connection.commit((error) => {
-			if(error) {
-				// ロールバック
-				this.runRollback(error, this.const.ERROR_CODE_OTHER, onFail, caller);
-				onFail.call(caller, error);
-			}
-			this.logger.system.debug("Dao.runCommit : 結果にコミットしました｡")
+	public delete(key, body, onSuccess, onFail, caller) :void {
+		// DaoManagerからSQL､Dataを取得する
+		let params :SQLParams = this.manager.createDeleteParams(key, body);
+		let request = this.connection.query(params.getSQL(), params.getData());
+		let data;
+		this.logger.system.info('Dao.post: params=' + params.getSQL() + ', data=' + JSON.stringify(params.getData()));
+		this.logger.system.info('Dao.post: SQL=' + request.sql);
+		request
+		.on('error', (error) => {
+			onFail.call(caller, error, this.const.ERROR_CODE_OTHER);
+		})
+		.on('result', (result) => {
+			data = result;
+		})
+		.on('end', (result) => {
 			onSuccess.call(caller, data);
 		});
 	}
-
-	/**
-	 * [runRollback description]
-	 * @param  {any}      error  [description]
-	 * @param  {number}   code   [description]
-	 * @param  {Function} onFail [description]
-	 * @param  {Object}   caller [description]
-	 * @return {[type]}          [description]
-	 */
-	protected runRollback(error :any, code :number, onFail :Function, caller :Object) {
-		// ロールバック
-		this.connection.rollback(() => {
-			onFail.call(caller, error, code);
-		})
-	}
-
 }

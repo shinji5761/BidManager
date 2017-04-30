@@ -5,8 +5,8 @@ import bodyParser = require('body-parser');
 import logger = require('./LogSettings');
 
 // === API ===
-import { PortfolioListController } from './javascript/controller/portfolio_list/PortfolioListController';
 import { PortfolioController } from './javascript/controller/portfolio/PortfolioController';
+import { BrandController } from './javascript/controller/brand/BrandController';
 import { OneDayController } from './javascript/controller/one_day/OneDayController';
 
 /**
@@ -65,7 +65,7 @@ class Server {
 	private settingController() :void {
 		logger.system.debug('Main - settingController');
 		this.controller['portfolio'] = new PortfolioController();
-		this.controller['portfolioList'] = new PortfolioListController();
+		this.controller['brand'] = new BrandController();
 		this.controller['oneDay'] = new OneDayController();
 	}
 
@@ -75,17 +75,20 @@ class Server {
 	 */
 	private settingApi() :void {
 		logger.system.debug('Main - settingApi');
-		///////////////////// PortfolioList /////////////////////
-		this.app.get(this.controller['portfolioList'].getUrl(), (req, res) => this.controller['portfolioList'].get(req, res));
 
 		///////////////////// Portfolio /////////////////////
-		this.app.get(this.controller['portfolio'].getUrl(), (req, res) => this.controller['portfolio'].get(req, res));
-		this.app.post(this.controller['portfolio'].getUrl(), (req, res) => this.controller['portfolio'].post(req, res));
-		this.app.put(this.controller['portfolio'].getUrl(), (req, res) => this.controller['portfolio'].put(req, res));
-		this.app.delete(this.controller['portfolio'].getUrl() + '/no/:no', (req, res) => this.controller['portfolio'].delete(req, res));
+		this.app.get(this.controller['portfolio'].getUrl() + '/:portfolioNo', (req, res) => this.controller['portfolio'].get(req, res));		// GET(単一)
+		this.app.get(this.controller['portfolio'].getUrl(), (req, res) => this.controller['portfolio'].query(req, res));						// GET(複数)
+		this.app.post(this.controller['portfolio'].getUrl(), (req, res) => this.controller['portfolio'].post(req, res));						// POST
+		this.app.put(this.controller['portfolio'].getUrl() + '/:portfolioNo', (req, res) => this.controller['portfolio'].put(req, res));		// PUT
+		this.app.delete(this.controller['portfolio'].getUrl() + '/:portfolioNo', (req, res) => this.controller['portfolio'].delete(req, res));	// DELETE
+
+		///////////////////// Brand /////////////////////
+		this.app.get(this.controller['brand'].getUrl() + '/:brandNo', (req, res)=> this.controller['brand'].get(req, res));		// Get(単一)
+		this.app.get(this.controller['brand'].getUrl(), (req, res)=> this.controller['brand'].query(req, res));					// Get(複数)
 
 		///////////////////// OneDay /////////////////////
-		this.app.get(this.controller['oneDay'].getUrl(), (req, res) => this.controller['oneDay'].get(req, res));
+		this.app.get(this.controller['oneDay'].getUrl() + '/:brandCode', (req, res) => this.controller['oneDay'].query(req, res));
 	}
 
 
