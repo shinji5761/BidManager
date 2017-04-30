@@ -108,8 +108,7 @@ export class EditPortfolioDialogPage implements OnInit, OnDestroy {
 	 */
 	ngOnDestroy() :void {
 		// ダイアログが残っている場合､解除する
-		if(this.loader)
-			this.loader.dismiss();
+		this.completion();
 	}
 
 
@@ -205,7 +204,10 @@ export class EditPortfolioDialogPage implements OnInit, OnDestroy {
 	 * Http通信 終了後処理
 	 */
 	private completion() :void {
-		this.loader.dismiss();
+		if(this.loader) {
+			this.loader.dismiss();
+			delete this.loader;
+		}
 	}
 
 	/**

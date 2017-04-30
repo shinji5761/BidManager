@@ -59,17 +59,16 @@ export class PortfolioManager extends Manager {
 	* @return {SQLParams}      [description]
 	*/
 	public createPostParams(key :Object, body :Object) :SQLParams {
+		let item = {'portfolio_name': body.portfolioName};
+		if(key.portfolioNo) {
+			item['portfolio_no'] = key.portfolioNo;
+		}
 		return new SQLParams(
 			`
 			INSERT INTO
-				portfolio(
-					portfolio_name
-				)
-			VALUES (
-				?
-			)
+				portfolio SET ?
 			`,
-			[body.portfolioName]
+			[item]
 		);
 	}
 

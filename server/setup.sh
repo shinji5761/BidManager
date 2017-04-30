@@ -3,7 +3,7 @@
 ####### データベースの構築
 ## adminユーザーは前もって作っておくこと
 echo 'データベースを作成します.....'
-mysql -u root < ./sql/setup.sql
+mysql -u root -pinfinite33 < ./sql/setup.sql
 echo 'データベースを作成しました'
 
 ######  テーブルの作成

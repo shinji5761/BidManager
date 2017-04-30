@@ -63,9 +63,10 @@ export class PortfolioPage implements OnInit, OnDestroy {
 		public _navParams :NavParams,
 		public _modalCtrl :ModalController,
 		public _toastCtrl :ToastController,
-        public _loadingCtrl :LoadingController,
-        private _dialogLib :DialogLibrary,
+		public _loadingCtrl :LoadingController,
+		private _dialogLib :DialogLibrary,
 		private _accessor :ApiAccessor ) {
+		console.log('Portfolio.constructor: start');
 		// APIの取得
 		this.api = this._accessor.getBrandApiService();
 		this.portfolio = this._navParams.get('portfolio');
@@ -76,6 +77,7 @@ export class PortfolioPage implements OnInit, OnDestroy {
 	 * @return {void}
 	 */
 	ngOnInit() :void {
+		console.log('Portfolio.ngOnInit: start');
 		this.runGetPurchases();
 	};
 
@@ -83,8 +85,7 @@ export class PortfolioPage implements OnInit, OnDestroy {
 	 * ページ終了処理
 	 */
 	ngOnDestroy() :void {
-		// ダイアログが残っている場合､解除する
-		this.loader.dismiss();
+		this.completion();
 	}
 
 	/**
@@ -93,6 +94,7 @@ export class PortfolioPage implements OnInit, OnDestroy {
 	 * @return {void}
 	 */
 	private runGetPurchases() :void {
+		console.log('Portfolio.runGetPurchases: start');
 		// ローディングダイアログ 作成･開始
 		this.loader = this._dialogLib.createGetDialog(this._loadingCtrl);
 		this.loader.present();
@@ -114,6 +116,7 @@ export class PortfolioPage implements OnInit, OnDestroy {
 	 * @param {any} error [description]
 	 */
 	public isError(error :any) :void {
+		console.log('Portfolio.constructor: isError');
 		let option :ToastOptionEntity;
 		option = new ToastOptionEntity('', 3000, 'top');
 		// 空配列の場合
@@ -130,7 +133,11 @@ export class PortfolioPage implements OnInit, OnDestroy {
 	 * Http通信 終了後処理
 	 */
 	private completion() :void {
-		this.loader.dismiss();
+		console.log('Portfolio.completion: start');
+		if(this.loader){
+			this.loader.dismiss();
+			delete this.loader;
+		}
 	}
 
 	/**
@@ -140,6 +147,7 @@ export class PortfolioPage implements OnInit, OnDestroy {
 	 * @return {void}
 	 */
 	private createPurchases(result) :void {
+		console.log('Portfolio.createPurchases: start');
 		let brandList :Array<BrandEntity> = [];
 		for(let index in result) {
 			let brand :BrandEntity = new BrandEntity(index, result[index].brandCode, result[index].brandName, result[index].price, result[index].stock);
@@ -155,6 +163,7 @@ export class PortfolioPage implements OnInit, OnDestroy {
 	 * @return {void}
 	 */
 	private editPortfolio() :void {
+		console.log('Portfolio.editPortfolio: start');
 		// パラメータの設定
 		let title = this.portfolio.getPortfolioName() + 'の編集';
 		let inputData = {'portfolio': this.portfolio, 'title': title};
@@ -164,6 +173,7 @@ export class PortfolioPage implements OnInit, OnDestroy {
 
 		// ダイアログ終了イベントの設定
 		modal.onDidDismiss((data) => {
+			console.log('Portfolio.onDidDismiss: start');
 			// ポートフォリオを初期化
 			this.ngOnInit();
 		});
@@ -178,6 +188,7 @@ export class PortfolioPage implements OnInit, OnDestroy {
 	 * @return {void}
 	 */
 	private showBrand(brand :BrandEntity) :void {
+		console.log('Portfolio.showBrand: start');
 		let inputData = {'brand': brand};
 		this._navCtrl.push(BrandPage, inputData);
 	};

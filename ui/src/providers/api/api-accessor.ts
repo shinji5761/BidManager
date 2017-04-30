@@ -13,8 +13,7 @@ export class ApiAccessor {
 	 * URL(http://････)
 	 * @type {string}
 	 */
-	 public host: string = 'http://192.168.33.101:18456/'
-	//  public host: string = 'http://163.58.164.6:18456/'
+	public host: string = 'http://192.168.33.101:18456/'
 
 	constructor(
 		private _http: Http
