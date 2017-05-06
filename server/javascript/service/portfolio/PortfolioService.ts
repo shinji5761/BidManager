@@ -1,7 +1,11 @@
 // === Service ===
 import { Service } from '../common/Service';
 
+// === DaoCreater ===
 import { DBDaoCreater } from '../../daoCreater/db/DBDaoCreater';
+
+// === Entity ===
+import {PortfolioEntity} from '../../entity/portfolio/PortfolioEntity';
 
 /**
  * PortfolioService
@@ -29,7 +33,7 @@ export class PortfolioService extends Service {
 		this.logger.system.debug('PortfolioService.get: start');
 		let dao = this.daoCreater.getPortfolioDao();
 		dao.get(key, body, query,
-			(result) => {
+			(result :PortfolioEntity) => {
 				onSuccess.call(caller, result);
 			},
 			(error, status) => {
@@ -51,7 +55,7 @@ export class PortfolioService extends Service {
 		this.logger.system.debug('PortfolioService.query: start');
 		let dao = this.daoCreater.getPortfolioDao();
 		dao.query(key, body, query,
-			(result) => {
+			(result :Array<PortfolioEntity>) => {
 				onSuccess.call(caller, result);
 			},
 			(error, status) => {

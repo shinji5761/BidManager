@@ -5,6 +5,7 @@ import { Service } from '../common/Service';
 import { DBDaoCreater } from '../../daoCreater/db/DBDaoCreater';
 
 // === Entity ===
+import {OneDayEntity} from '../../entity/one_day/OneDayEntity';
 import { SQLParams } from '../../entity/SQLParams';
 
 /**
@@ -33,7 +34,7 @@ export class OneDayService extends Service {
 		this.logger.system.debug('OneDayService.get: start');
 		let dao = this.daoCreater.getOneDayDao();
 		dao.get(key, body, query,
-			(result) => {
+			(result :OneDayEntity) => {
 				onSuccess.call(caller, result);
 			},
 			(error, status) => {
@@ -56,7 +57,7 @@ export class OneDayService extends Service {
 		this.logger.system.debug('OneDayService.query: start');
 		let dao = this.daoCreater.getOneDayDao();
 		dao.query(key, body, query,
-			(result) => {
+			(result :Array<OneDayEntity>) => {
 				onSuccess.call(caller, result);
 			},
 			(error, status) => {
@@ -65,5 +66,10 @@ export class OneDayService extends Service {
 			this
 		);
 	}
+
+
+	public post(){};
+	public put(){};
+	public delete(){};
 
 }

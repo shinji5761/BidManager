@@ -4,6 +4,9 @@ import { Service } from '../common/Service';
 // === DaoCreater ===
 import { DBDaoCreater } from '../../daoCreater/db/DBDaoCreater';
 
+// === Entity ===
+import {BrandEntity} from '../../entity/brand/BrandEntity';
+
 /**
  * @class BrandService
  * @extends Service
@@ -29,7 +32,7 @@ export class BrandService extends Service {
 		this.logger.system.debug('BrandService.get: start');
 		let dao = this.daoCreater.getBrandDao();
 		dao.get(key, body, query,
-			(result) => {
+			(result :BrandEntity) => {
 				onSuccess.call(caller, result);
 			},
 			(error, status) => {
@@ -51,7 +54,7 @@ export class BrandService extends Service {
 		this.logger.system.debug('BrandService.query: start');
 		let dao = this.daoCreater.getBrandDao();
 		dao.query(key, body, query, 
-			(result) => {
+			(result :Array<BrandEntity>) => {
 				onSuccess.call(caller, result);
 			},
 			(error, status) => {
