@@ -37,6 +37,12 @@ export class BrandEntity {
 	 */
 	private stock :number;
 
+	/**
+	 * 市場価格
+	 * @type {number}
+	 */
+	private marketPrice :number;
+
 
 	/**
 	 * @constructor
@@ -45,12 +51,13 @@ export class BrandEntity {
 	 * @param {number} price
 	 * @param {number} stock
 	 */
-	constructor(brandNo, brandCode, brandName, price, stock) {
+	constructor(brandNo, brandCode, brandName, price, stock, marketPrice) {
 		this.brandNo = brandNo;
 		this.brandCode = brandCode;
 		this.brandName = brandName;
 		this.price = price;
 		this.stock = stock;
+		this.marketPrice = marketPrice;
 	}
 
 

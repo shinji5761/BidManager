@@ -5,51 +5,45 @@
 </ion-header>
 <ion-content padding>
 	<ion-list>
-		<button ion-item *ngFor="let brand of portfolio.getBrand()" (click)="showBrand(brand)">
+		<button class="portfolio-button" [ngClass]="checkProfit(brand.price, brand.marketPrice)" ion-item *ngFor="let brand of portfolio.getBrand()" (click)="showBrand(brand)">
 			<ion-grid>
-				<!-- 銘柄情報 -->
 				<ion-row>
-					<ion-col width-33>
-						<ion-grid>
-							<ion-row>
-								<!-- 銘柄コード -->
-								<ion-col>
-									{{brand.brandCode}}
-								</ion-col>
-							</ion-row>
-							<ion-row>
-								<!-- 銘柄名 -->
-								<ion-col>
-									{{brand.brandName}}
-								</ion-col>
-							</ion-row>
-						</ion-grid>
-					</ion-col>
-					<ion-col width-67>
-						<ion-grid>
-							<ion-row>
-								<!-- 購入額 -->
-								<ion-col width-50>
-										購入額 : {{brand.price | number}}
-								</ion-col>
-								<!-- 損益 -->
-								<ion-col width-50>
-										損益 : XXXX
-								</ion-col>
-							</ion-row>
-							<ion-row>
-								<!-- 保有数 -->
-								<ion-col width-50>
-										保有数 : {{brand.stock}}
-								</ion-col>
-								<!-- 損益 -->
-								<ion-col width-50>
-										市場価格 : XXXX.X
-								</ion-col>
-							</ion-row>
-						</ion-grid>
+					<ion-col>
+						<!-- 銘柄コード -->
+						{{brand.brandCode}}
 					</ion-col>
 				</ion-row>
+				<ion-row>
+					<!-- 銘柄名 -->
+					<ion-col width-50>
+						{{ brand.brandName }}						
+					</ion-col>
+					<!-- 市場価格 -->
+					<ion-col width-50>
+						{{ brand.marketPrice }}						
+					</ion-col>
+				</ion-row>
+				<ion-row>
+					<!-- 購入額 -->
+					<ion-col width-50>
+						購入額 : {{ brand.price }}
+					</ion-col>
+					<!-- 20% -->
+					<ion-col width-50>
+						20% : {{ brand.price * 1.2 }}
+					</ion-col>
+				</ion-row>
+				<ion-row>
+					<!-- 保有数 -->
+					<ion-col width-50>
+						保有数 : {{ brand.stock }}
+					</ion-col>
+					<!-- -8% -->
+					<ion-col width-50>
+						-8% : {{ brand.price * 0.92 }}
+					</ion-col>
+				</ion-row>
+
 				<!-- チャート -->
 				<ion-row>
 					<ion-row>

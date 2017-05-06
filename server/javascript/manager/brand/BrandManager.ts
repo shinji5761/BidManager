@@ -37,13 +37,13 @@ export class BrandManager extends Manager {
 			`
 			SELECT
 				brand_no AS brandNo,
-				Brand_no AS BrandNo,
 				brand_code AS brandCode,
 				brand_name AS brandName,
 				price,
-				stock
+				stock,
+				market_price AS marketPrice
 			FROM
-				brand
+				brand_view
 			WHERE
 				portfolio_no = ?
 			ORDER BY

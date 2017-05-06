@@ -150,7 +150,7 @@ export class PortfolioPage implements OnInit, OnDestroy {
 		console.log('Portfolio.createPurchases: start');
 		let brandList :Array<BrandEntity> = [];
 		for(let index in result) {
-			let brand :BrandEntity = new BrandEntity(index, result[index].brandCode, result[index].brandName, result[index].price, result[index].stock);
+			let brand :BrandEntity = new BrandEntity(index, result[index].brandCode, result[index].brandName, result[index].price, result[index].stock, result[index].marketPrice);
 			brandList.push(brand);
 		}
 		this.portfolio.setBrand(brandList);
@@ -192,4 +192,23 @@ export class PortfolioPage implements OnInit, OnDestroy {
 		let inputData = {'brand': brand};
 		this._navCtrl.push(BrandPage, inputData);
 	};
+
+	/**
+	 * 損益確認処理
+	 * @param {number} price 購入額
+	 * @param {number} marketPrice 市場価格
+	 * @return {string}
+	 */
+	private checkProfit(price :number, marketPrice :number) :string {
+		console.log('Portfolio.checkProfit: start');
+		// 購入額 = 市場価格 = even
+		if(price == marketPrice) {
+			return 'even-profit';
+		}
+		// 購入額 < 市場価格 = over
+		// 購入額 > 市場価格 = under
+		return price < marketPrice ? 'over-profit' : 'under-profit';
+	}
+
+
 }

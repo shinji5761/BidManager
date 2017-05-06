@@ -1,22 +1,74 @@
 $brand-info-title-align: center;
 $brand-info-number-align: right;
 
-page-portfolio {
-	// 銘柄情報(左側)
-	ion-content ion-list button ion-grid ion-row ion-col:nth-of-type(1) ion-grid {
-		text-align: left;
-		// 銘柄コード
-		ion-row:nth-of-type(1) ion-col {
-			font-size: 10px;
-		}
-		//  銘柄名
-		ion-row:nth-of-type(2) ion-col {
-			font-size: 12px;
-		}		
-	}	
-	// 銘柄情報(右側)
-	ion-content ion-list button ion-grid ion-row ion-col:nth-of-type(2) ion-grid ion-row ion-col {
-		text-align: left;
-		font-size: 11px;
+// 銘柄コード
+$brand-code-color :gray;
+$brand-code-font-size :8px;
+$brand-code-opacity :0.8;
+
+// 銘柄コード
+$brand-name-font-size :16px;
+
+// 市場価格
+$market-price-font-size :14px;
+
+// 購入額､保有数､20%,-8%
+$other-font-size :12px;
+
+
+.portfolio-button ion-grid {
+	// 銘柄コード
+	ion-row:nth-of-type(1) ion-col:nth-of-type(1) {
+		color :$brand-code-color;
+		opacity :$brand-code-opacity;
+		font-size :$brand-code-font-size;
 	}
+
+	ion-row:nth-of-type(2) {
+		// 銘柄名
+		ion-col:nth-of-type(1) {
+			font-size :$brand-name-font-size;
+		}
+		// 市場価格
+		ion-col:nth-of-type(2) {
+			font-size :$market-price-font-size;
+			text-align :right;
+		}
+	}
+	
+	// その他
+	ion-row:nth-of-type(3) ion-col {
+		font-size :$other-font-size;
+	}
+
+	ion-row:nth-of-type(4) ion-col {
+		font-size :$other-font-size;
+	}
+
+	// 右側
+	ion-row:nth-of-type(3) ion-col:nth-of-type(2) {
+		text-align :right;
+	}
+	ion-row:nth-of-type(4) ion-col:nth-of-type(2) {
+		text-align :right;
+	}
+}
+
+.portfolio-button div {
+	border :0px !important;
+}
+
+.portfolio-button ion-grid {
+	border-radius: 10px;
+}
+
+.over-profit ion-grid {
+	background-color:rgba(20,150,240, 0.5);
+}
+.under-profit ion-grid {
+	background-color:rgba(240,50,30, 0.5);
+}
+
+.even-profit ion-grid {
+	background-color:rgba(180,220, 150, 0.5);
 }

@@ -133,7 +133,7 @@ export class EditPortfolioDialogPage implements OnInit, OnDestroy {
 			);
 		} else {
 			// dummyを差し込む
-			this.portfolio.getBrand().push(new BrandEntity(null, null, null, null, null));
+			this.portfolio.getBrand().push(new BrandEntity(null, null, null, null, null, null));
 		}
 	};
 
@@ -219,7 +219,7 @@ export class EditPortfolioDialogPage implements OnInit, OnDestroy {
 	private createBrand(res :any) :void {
 		let brandList :Array<BrandEntity> = [];
 		for(let index in res) {
-			brandList.push(new BrandEntity(index, res[index].brandCode, res[index].brandName, res[index].price, res[index].stock));
+			brandList.push(new BrandEntity(index, res[index].brandCode, res[index].brandName, res[index].price, res[index].stock, res[index].marketPrice));
 		}
 		this.portfolio.setBrand(brandList);
 	}
@@ -260,7 +260,7 @@ export class EditPortfolioDialogPage implements OnInit, OnDestroy {
 	 * @return {void}
 	 */
 	private addBrand() :void {
-		this.portfolio.getBrand().push(new BrandEntity(null, null, null, null, null));
+		this.portfolio.getBrand().push(new BrandEntity(null, null, null, null, null, null));
 	}
 
 	/**

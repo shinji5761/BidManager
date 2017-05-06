@@ -18,6 +18,8 @@ echo 'テーブルを作成しました'
 echo 'ビューを作成します...'
 # mysql -u admin -padmin bid_manager < ./sql/view/portfolio_list.sql
 mysql -u admin -padmin bid_manager < ./sql/view/brand_list.sql
+mysql -u admin -padmin bid_manager < ./sql/view/market_price.sql
+mysql -u admin -padmin bid_manager < ./sql/view/brand_view.sql
 echo 'ビューを作成しました'
 
 ###### 初回データの登録
