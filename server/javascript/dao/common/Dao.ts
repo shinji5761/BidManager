@@ -1,4 +1,4 @@
-import mysql = require('mysql2');
+import mysql = require('mysql');
 import { DaoConst } from './DaoConst';
 
 // === DaoManager ===
