@@ -36,19 +36,15 @@ export class BrandDao extends Dao {
 		let brandList :Array<any> = body.brand;
 		let params :SQLParams = this.manager.createPostsParams(key, brandList);
 
-		let query = this.connection.query(params.getSQL(), params.getData());
-		let data;
-		this.logger.system.info('BrandDao.post: params=' + params.getSQL() + ', data=' + JSON.stringify(params.getData()));
-		this.logger.system.info('BrandDao.post: SQL=' + query.sql);
-		query
-		.on('error', (error) => {
-			onFail.call(caller, error, this.const.ERROR_CODE_OTHER);
-		})
-		.on('result', (result) => {
-			data = result;
-		})
-		.on('end', (result) => {
-			onSuccess.call(caller, data);
+		// サーバー接続
+		let request = this.connection.query(params.getSQL(), params.getData(), (error, result) => {
+			if(error) {
+				onFail.call(caller, error, this.const.ERROR_CODE_OTHER);
+			}
+			// 成功の場合
+			onSuccess.call(caller, result);
 		});
+		this.logger.system.info('BrandDao.post: params=' + params.getSQL() + ', data=' + JSON.stringify(params.getData()));
+		this.logger.system.info('BrandDao.post: SQL=' + request.sql);
 	}
 }

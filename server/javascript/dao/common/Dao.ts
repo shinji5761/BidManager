@@ -1,4 +1,3 @@
-import mysql = require('mysql');
 import { DaoConst } from './DaoConst';
 
 // === DaoManager ===
@@ -76,21 +75,15 @@ export abstract class Dao {
 		// SQLパラメータの作成
 		let params :SQLParams = this.manager.createGetParams(key, body, query);
 		// サーバー接続
-		let request = this.connection.query(params.getSQL(), params.getData());
+		let request = this.connection.query(params.getSQL(), params.getData(), (error, result) => {
+			if(error) {
+				onFail.call(caller, error, this.const.ERROR_CODE_OTHER);
+			}
+			// 成功の場合
+			onSuccess.call(caller, result);
+		});
 		this.logger.system.info('Dao.get: params=' + params.getSQL() + ', data=' + JSON.stringify(params.getData()));
 		this.logger.system.info('Dao.get: SQL=' + request.sql);
-		let data;
-		request
-		.on('error', (error) => {
-			onFail.call(caller, error, this.const.ERROR_CODE_OTHER);
-		})
-		.on('result', (result) => {
-			data = result;
-		})
-		.on('end', () => {
-			// 成功の場合
-			onSuccess.call(caller, data);
-		});
 	}
 
 	/**
@@ -107,21 +100,15 @@ export abstract class Dao {
 		// SQLパラメータの作成
 		let params :SQLParams = this.manager.createQueryParams(key, body, query);
 		// サーバー接続
-		let request = this.connection.query(params.getSQL(), params.getData());
+		let request = this.connection.query(params.getSQL(), params.getData(), (error, result) => {
+			if(error) {
+				onFail.call(caller, error, this.const.ERROR_CODE_OTHER);
+			}
+			// 成功の場合
+			onSuccess.call(caller, result);
+		});
 		this.logger.system.info('Dao.query: params=' + params.getSQL() + ', data=' + JSON.stringify(params.getData()));
 		this.logger.system.info('Dao.query: SQL=' + request.sql);
-		let data :Array<any> = [];
-		request
-		.on('error', (error) => {
-			onFail.call(caller, error, this.const.ERROR_CODE_OTHER);
-		})
-		.on('result', (result) => {
-			data.push(result);
-		})
-		.on('end', () => {
-			// 成功の場合
-			onSuccess.call(caller, data);
-		});
 	}
 
 	/**
@@ -135,20 +122,16 @@ export abstract class Dao {
 	 public post(key :Object, body :Object, onSuccess :Function, onFail :Function, caller :Object) :void {
 		// DaoManagerからSQL､Dataを取得する
 		let params :SQLParams = this.manager.createPostParams(key, body);
-		let request = this.connection.query(params.getSQL(), params.getData());
-		let data;
+		// サーバー接続
+		let request = this.connection.query(params.getSQL(), params.getData(), (error, result) => {
+			if(error) {
+				onFail.call(caller, error, this.const.ERROR_CODE_OTHER);
+			}
+			// 成功の場合
+			onSuccess.call(caller, result);
+		});
 		this.logger.system.info('Dao.post: params=' + params.getSQL() + ', data=' + JSON.stringify(params.getData()));
 		this.logger.system.info('Dao.post: SQL=' + request.sql);
-		request
-		.on('error', (error) => {
-			onFail.call(caller, error, this.const.ERROR_CODE_OTHER);
-		})
-		.on('result', (result) => {
-			data = result;
-		})
-		.on('end', (result) => {
-			onSuccess.call(caller, data);
-		});
 	}
 
 	/**
@@ -172,19 +155,15 @@ export abstract class Dao {
 	public delete(key, body, onSuccess, onFail, caller) :void {
 		// DaoManagerからSQL､Dataを取得する
 		let params :SQLParams = this.manager.createDeleteParams(key, body);
-		let request = this.connection.query(params.getSQL(), params.getData());
-		let data;
+		// サーバー接続
+		let request = this.connection.query(params.getSQL(), params.getData(), (error, result) => {
+			if(error) {
+				onFail.call(caller, error, this.const.ERROR_CODE_OTHER);
+			}
+			// 成功の場合
+			onSuccess.call(caller, result);
+		});
 		this.logger.system.info('Dao.post: params=' + params.getSQL() + ', data=' + JSON.stringify(params.getData()));
 		this.logger.system.info('Dao.post: SQL=' + request.sql);
-		request
-		.on('error', (error) => {
-			onFail.call(caller, error, this.const.ERROR_CODE_OTHER);
-		})
-		.on('result', (result) => {
-			data = result;
-		})
-		.on('end', (result) => {
-			onSuccess.call(caller, data);
-		});
 	}
 }

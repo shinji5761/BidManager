@@ -8,7 +8,7 @@ import { BrandListDao } from '../../dao/brand_list/BrandListDao';
 import { OneDayDao } from '../../dao/one_day/OneDayDao';
 
 // === mysql ===
-import mysql = require('mysql2');
+import mysql = require('mysql');
 
 
 export class DBDaoCreater implements DaoCreater {
