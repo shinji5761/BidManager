@@ -43,6 +43,11 @@ export class BrandEntity {
 	 */
 	private marketPrice :number;
 
+	/**
+	 * 最新日時
+	 * @type {Date}
+	 */
+	private latestDate :Date;
 
 	/**
 	 * @constructor
@@ -51,13 +56,14 @@ export class BrandEntity {
 	 * @param {number} price
 	 * @param {number} stock
 	 */
-	constructor(brandNo, brandCode, brandName, price, stock, marketPrice) {
+	constructor(brandNo, brandCode, brandName, price, stock, marketPrice, latestDate) {
 		this.brandNo = brandNo;
 		this.brandCode = brandCode;
 		this.brandName = brandName;
 		this.price = price;
 		this.stock = stock;
 		this.marketPrice = marketPrice;
+		this.latestDate = latestDate;
 	}
 
 

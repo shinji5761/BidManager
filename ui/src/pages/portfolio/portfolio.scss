@@ -12,7 +12,7 @@ $brand-name-font-size :16px;
 // 市場価格
 $market-price-font-size :14px;
 
-// 購入額､保有数､20%,-8%
+// 購入額､保有数､損益､20%,-8%
 $other-font-size :12px;
 
 
@@ -35,13 +35,15 @@ $other-font-size :12px;
 			text-align :right;
 		}
 	}
-	
+
 	// その他
 	ion-row:nth-of-type(3) ion-col {
 		font-size :$other-font-size;
 	}
-
 	ion-row:nth-of-type(4) ion-col {
+		font-size :$other-font-size;
+	}
+	ion-row:nth-of-type(5) ion-col {
 		font-size :$other-font-size;
 	}
 
@@ -54,21 +56,10 @@ $other-font-size :12px;
 	}
 }
 
-.portfolio-button div {
-	border :0px !important;
+.over-profit {
+	color : blue;
 }
 
-.portfolio-button ion-grid {
-	border-radius: 10px;
-}
-
-.over-profit ion-grid {
-	background-color:rgba(20,150,240, 0.5);
-}
-.under-profit ion-grid {
-	background-color:rgba(240,50,30, 0.5);
-}
-
-.even-profit ion-grid {
-	background-color:rgba(180,220, 150, 0.5);
+.under-profit {
+	color : red;
 }

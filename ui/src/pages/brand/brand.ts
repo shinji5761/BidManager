@@ -47,6 +47,13 @@ export class BrandPage implements OnInit, OnDestroy {
 	private bidChart :ChartEntity;
 
 	/**
+	 * 市場データ
+	 * @private
+	 * @type {any}
+	 */
+	private marketInfo :any;
+
+	/**
 	 * ロードダイアログ
 	 * @private
 	 * @type {any}
@@ -91,6 +98,9 @@ export class BrandPage implements OnInit, OnDestroy {
 		let bidOptions = BrandPage.CHART_OPTION;
 		// チャートデータの初期化
 		this.bidChart = new ChartEntity('line', [], [], bidOptions);
+
+		// 市場情報の初期化
+		this.marketInfo = {};
 
 		// チャートデータの取得
 		this.createBrand();
@@ -144,14 +154,29 @@ export class BrandPage implements OnInit, OnDestroy {
 		let chartData :Array<ChartDatasetEntity> = [];
 		let closeArray :Array<number> = [];
 
+		this.createMarketInfo(data);
+
 		// 取得したデータの終値を抽出
 		for(let index in data) {
-            dateArray.push(data[index]['targetDate']);
+			dateArray.push(data[index]['targetDate']);
 			closeArray.push(data[index]['close']);
 		}
 		chartData.push(new ChartDatasetEntity(closeArray, '1日足'));
 		this.bidChart.setLabels(dateArray);
 		this.bidChart.setDataset(chartData);
+	}
+
+	/**
+	 * 市場情報データ作成
+	 * @param {Array<any>} data [description]
+	 */
+	private createMarketInfo(data :Array<any>) :void {
+		let length = data.length - 1;
+		this.marketInfo['open'] = data[length]['open'];
+		this.marketInfo['high'] = data[length]['high'];
+		this.marketInfo['low'] = data[length]['low'];
+		this.marketInfo['close'] = data[length]['close'];
+		this.marketInfo['volume'] = data[length]['volume'];
 	}
 
 	/**

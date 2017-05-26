@@ -5,7 +5,7 @@
 </ion-header>
 <ion-content padding>
 	<ion-list>
-		<button class="portfolio-button" [ngClass]="checkProfit(brand.price, brand.marketPrice)" ion-item *ngFor="let brand of portfolio.getBrand()" (click)="showBrand(brand)">
+		<button ion-item class="portfolio-button" *ngFor="let brand of portfolio.getBrand()" (click)="showBrand(brand)">
 			<ion-grid>
 				<ion-row>
 					<ion-col>
@@ -16,11 +16,11 @@
 				<ion-row>
 					<!-- 銘柄名 -->
 					<ion-col width-50>
-						{{ brand.brandName }}						
+						{{ brand.brandName }}
 					</ion-col>
 					<!-- 市場価格 -->
 					<ion-col width-50>
-						{{ brand.marketPrice }}						
+						{{ brand.marketPrice }}
 					</ion-col>
 				</ion-row>
 				<ion-row>
@@ -30,7 +30,9 @@
 					</ion-col>
 					<!-- 20% -->
 					<ion-col width-50>
-						20% : {{ brand.price * 1.2 }}
+						<span style="color : blue">
+							20% : {{ brand.price * 1.2 | number:'.1-1' }}
+						</span>
 					</ion-col>
 				</ion-row>
 				<ion-row>
@@ -40,16 +42,17 @@
 					</ion-col>
 					<!-- -8% -->
 					<ion-col width-50>
-						-8% : {{ brand.price * 0.92 }}
+						<span style="color : red">
+							-8% : {{ brand.price * 0.92 | number:'.1-1' }}
+						</span>
 					</ion-col>
 				</ion-row>
-
-				<!-- チャート -->
 				<ion-row>
-					<ion-row>
-						<ion-col width-100>
-						</ion-col>
-					</ion-row>
+					<ion-col>
+						<span [ngClass]="checkProfit(brand.price, brand.marketPrice)">
+							損益 : {{ ( brand.marketPrice - brand.price ) * brand.stock | number:'.1-2' }}
+						</span>
+					</ion-col>
 				</ion-row>
 			</ion-grid>
 		</button>

@@ -41,7 +41,8 @@ export class BrandManager extends Manager {
 				brand_name AS brandName,
 				price,
 				stock,
-				market_price AS marketPrice
+				market_price AS marketPrice,
+				target_date AS latestDate
 			FROM
 				brand_view
 			WHERE

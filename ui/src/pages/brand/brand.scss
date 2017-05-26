@@ -1,3 +1,16 @@
+$latest-date-color: gray;
+$latest-date-font-size: 8px;
+$latest-date-opacity: 0.8;
+
 page-brand {
+	ion-content {
+		ion-title {
+			span {
+				color :$latest-date-color;
+				opacity :$latest-date-opacity;
+				font-size :$latest-date-font-size;
+			}
+		}
+	}
 
 }

@@ -10,3 +10,4 @@ boostnote.json
 /server/build/
 /server/batch/build/
 /server/javascript/**/**/*.js
+/python/

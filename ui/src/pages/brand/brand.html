@@ -4,12 +4,60 @@
 	</ion-navbar>
 </ion-header>
 <ion-content padding>
+	<ion-title>
+		{{ brand.marketPrice | number }}
+		<span>
+			{{ brand.latestDate | date:'yy/MM/dd' }}
+		</span>
+	</ion-title>
+
 	<ion-list>
 		<ion-grid>
-			<!-- チャート･グリッド -->
+			<!-- チャート -->
+			<ion-row>
+				<!-- 始値 -->
+				<ion-col width-50>
+					<ion-item>
+						<ion-label stacked>始値</ion-label>
+						<div item-content>
+							{{ marketInfo.open | number }}
+						</div>
+					</ion-item>
+				</ion-col>
+				<!-- 終値 -->
+				<ion-col width-50>
+					<ion-item>
+						<ion-label stacked>出来高</ion-label>
+						<div item-content>
+							{{ marketInfo.volume | number }}
+						</div>
+					</ion-item>
+				</ion-col>
+			</ion-row>
+			<ion-row>
+				<!-- 高値 -->
+				<ion-col width-50>
+					<ion-item>
+						<ion-label stacked>高値</ion-label>
+						<div item-content>
+							{{ marketInfo.high | number }}
+						</div>
+					</ion-item>
+				</ion-col>
+				<!-- 安値 -->
+				<ion-col width-50>
+					<ion-item>
+						<ion-label stacked>安値</ion-label>
+						<div item-content>
+							{{ marketInfo.low | number }}
+						</div>
+					</ion-item>
+				</ion-col>
+			</ion-row>
+
+
 			<ion-row>
 				<div style="width: 100%">
-					<!-- 終値 -->
 					<canvas baseChart
 						*ngIf="bidChart.getDataset() != 0"
 						[datasets]="bidChart.dataset"
@@ -19,26 +67,6 @@
 					>
 					</canvas>
 				</div>
-			</ion-row>
-			<ion-row>
-				<!-- 購入額-->
-				<ion-col width-50>
-					購入額: {{brand.price | number}}
-				</ion-col>
-				<!-- 損益 -->
-				<ion-col width-50>
-					損益: XXXX.X
-				</ion-col>
-			</ion-row>
-			<ion-row>
-				<!-- 保有数 -->
-				<ion-col width-50>
-					保有数: {{brand.stock | number}}
-				</ion-col>
-				<!-- 市場価格 -->
-				<ion-col width-50>
-					市場価格: XXXX.X
-				</ion-col>
 			</ion-row>
 		</ion-grid>
 	</ion-list>

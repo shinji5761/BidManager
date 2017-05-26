@@ -150,7 +150,7 @@ export class PortfolioPage implements OnInit, OnDestroy {
 		console.log('Portfolio.createPurchases: start');
 		let brandList :Array<BrandEntity> = [];
 		for(let index in result) {
-			let brand :BrandEntity = new BrandEntity(index, result[index].brandCode, result[index].brandName, result[index].price, result[index].stock, result[index].marketPrice);
+			let brand :BrandEntity = new BrandEntity(index, result[index].brandCode, result[index].brandName, result[index].price, result[index].stock, result[index].marketPrice, result[index].latestDate);
 			brandList.push(brand);
 		}
 		this.portfolio.setBrand(brandList);
