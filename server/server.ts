@@ -53,7 +53,8 @@ class Server {
 			res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
 			next();
 		});
-		this.app.use(bodyParser());
+		this.app.use(bodyParser.json());
+		this.app.use(bodyParser.urlencoded({ extended: false }));
 		this.app.use(jsonp);
 	};
 
@@ -100,9 +101,10 @@ class Server {
 	private start() :void {
 		logger.system.debug('Main - start');
 		// サーバーの開始
-		this.app.listen('18456', function() {
-			logger.system.info('Main - ListenStart...');
-		});
+		this.app.listen('18456');
+		// this.app.listen('18456', function() {
+		// 	logger.system.info('Main - ListenStart...');
+		// });
 	}
 }
 
