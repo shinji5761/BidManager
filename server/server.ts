@@ -8,6 +8,7 @@ import logger = require('./LogSettings');
 import { PortfolioController } from './javascript/controller/portfolio/PortfolioController';
 import { BrandController } from './javascript/controller/brand/BrandController';
 import { OneDayController } from './javascript/controller/one_day/OneDayController';
+import { MarketInfoController } from './javascript/controller/market_info/MarketInfoController';
 
 /**
  * メインクラス
@@ -68,6 +69,7 @@ class Server {
 		this.controller['portfolio'] = new PortfolioController();
 		this.controller['brand'] = new BrandController();
 		this.controller['oneDay'] = new OneDayController();
+		this.controller['marketInfo'] = new MarketInfoController();
 	}
 
 	/**
@@ -90,6 +92,9 @@ class Server {
 
 		///////////////////// OneDay /////////////////////
 		this.app.get(this.controller['oneDay'].getUrl() + '/:brandCode', (req, res) => this.controller['oneDay'].query(req, res));
+
+		///////////////////// MarketInfo /////////////////////
+		this.app.get(this.controller['marketInfo'].getUrl() + '/:brandCode', (req, res) => this.controller['marketInfo'].query(req, res));		// GET(複数)
 	}
 
 

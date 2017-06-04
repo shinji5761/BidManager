@@ -9,11 +9,12 @@ import { ChartDatasetEntity } from '../../entity/ChartDatasetEntity';
 
 // === Library ===
 import { DialogLibrary } from '../../providers/library/DialogLibrary';
+import { DateLibrary }	from '../../providers/library/DateLibrary';
 
 // === Api ===
 import { ApiAccessor } from '../../providers/api/api-accessor';
+import { MarketInfoApiService } from '../../providers/api/MarketInfoApiService';
 import { OneDayApiService } from '../../providers/api/OneDayApiService';
-
 
 @Component({
 	selector: 'page-brand',
@@ -54,6 +55,12 @@ export class BrandPage implements OnInit, OnDestroy {
 	private marketInfo :any;
 
 	/**
+	 * 表示期間
+	 * @type {string}
+	 */
+	private selectedTerm : string;
+
+	/**
 	 * ロードダイアログ
 	 * @private
 	 * @type {any}
@@ -63,9 +70,9 @@ export class BrandPage implements OnInit, OnDestroy {
 	/**
 	 * API Service
 	 * @private
-	 * @type {OneDayApiService}
+	 * @type {MarketInfoApiService}
 	 */
-	private api :OneDayApiService;
+	private api :MarketInfoApiService;
 
 	/**
 	 * @constructor
@@ -82,11 +89,13 @@ export class BrandPage implements OnInit, OnDestroy {
 		private _toastCtrl :ToastController,
 		private _loadingCtrl :LoadingController,
 		private _dialogLib :DialogLibrary,
+		private _dateLib :DateLibrary,
 		public _accessor :ApiAccessor
 	) {
 		// APIの取得
-		this.api = this._accessor.getOneDayApiService();
+		this.api = this._accessor.getMarketInfoApiService();
 		this.brand = this._navParams.get('brand');
+		this.selectedTerm = '5min';
 	}
 
 	/**
@@ -125,10 +134,10 @@ export class BrandPage implements OnInit, OnDestroy {
 		// ローディングダイアログ 作成･開始
 		this.loader = this._dialogLib.createGetDialog(this._loadingCtrl);
 		this.loader.present();
-		let option = {'limit': 90};
+		// let option = {'limit': 90};
 
 		this.api.setBrandCode(this.brand.getBrandCode());
-		this.api.setOption(option);
+		// this.api.setOption(option);
 		this.api.query()
 		.finally(() => this.completion())
 		.subscribe(
@@ -158,10 +167,10 @@ export class BrandPage implements OnInit, OnDestroy {
 
 		// 取得したデータの終値を抽出
 		for(let index in data) {
-			dateArray.push(data[index]['targetDate']);
+			dateArray.push(data[index]['targetDate'] + ' ' + data[index]['hour'] + ':' + data[index]['min']);
 			closeArray.push(data[index]['close']);
 		}
-		chartData.push(new ChartDatasetEntity(closeArray, '1日足'));
+		chartData.push(new ChartDatasetEntity(closeArray, '5分足'));
 		this.bidChart.setLabels(dateArray);
 		this.bidChart.setDataset(chartData);
 	}

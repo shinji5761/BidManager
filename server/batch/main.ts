@@ -2,7 +2,7 @@
 import { DBDaoCreater } from '../javascript/daoCreater/db/DBDaoCreater';
 
 // === Dao ===
-import { OneDayDao } from '../javascript/dao/one_day/OneDayDao';
+import { MarketInfoDao } from '../javascript/dao/market_info/MarketInfoDao'
 import { BrandListDao } from '../javascript/dao/brand_list/BrandListDao';
 
 // === Service ===
@@ -10,7 +10,7 @@ import { GoogleFinanceService } from './GoogleFinanceService';
 
 // === Entity ===
 import { GoogleFinanceEntity } from '../javascript/entity/GoogleFinanceEntity';
-import { OneDayEntity } from '../javascript/entity/OneDayEntity';
+import { MarketInfoEntity } from '../javascript/entity/market_info/MarketInfoEntity'
 
 // === Logger ===
 import logger = require('../LogSettings');
@@ -32,11 +32,11 @@ class Main {
 	private logger :any;
 
 	/**
-	 * OneDayDao
+	 * MarketInfoDao
 	 * @private
-	 * @type {OneDayDao}
+	 * @type {MarketInfoDao}
 	 */
-	private oneDayDao :OneDayDao;
+	private marketInfoDao :MarketInfoDao;
 
 	/**
 	 * BrandListDao
@@ -77,7 +77,7 @@ class Main {
 	constructor() {
 		this.logger = logger;
 		let daocreater = new DBDaoCreater();
-		this.oneDayDao = daocreater.getOneDayDao();
+		this.marketInfoDao = daocreater.getMarketInfoDao();
 		this.brandListDao = daocreater.getBrandListDao();
 		this.service = new GoogleFinanceService();
 
@@ -135,14 +135,16 @@ class Main {
 
 		for(let index in data) {
 			// 銘柄コードのデータ取得
-			let result = (this.service.getFinanceInfo(new GoogleFinanceEntity(this.term, this.step, data[index].brandCode, this.market)));
+			let result : Array<MarketInfoEntity> = (this.service.getFinanceInfo(new GoogleFinanceEntity(this.term, this.step, data[index].brandCode, this.market)));
 			this.logger.system.info('Main.getBidInfo: result=' + JSON.stringify(result));
 
 			// 90日分のデータをinsertする
 			for(let i in result) {
 				let key = {
 					'brandCode': result[i].getBrandCode(),
-					'targetDate': result[i].getTargetDate()
+					'targetDate': result[i].getTargetDate(),
+					'hour' : result[i].getHour(),
+					'min' : result[i].getMin()
 				};
 
 				let body = {
@@ -164,9 +166,9 @@ class Main {
 	}
 
 	/**
-	 * 
-	 * @param key 
-	 * @param body 
+	 *
+	 * @param key
+	 * @param body
 	 */
 	private postBidInfo(key :Object, body :Object) :any {
 		this.logger.system.debug('Main.postBidInfo: key=' + JSON.stringify(key));
@@ -174,7 +176,7 @@ class Main {
 
 		return new Promise((resolve, reject) => {
 			this.logger.system.debug('Main.Observable.create: start');
-			this.oneDayDao.post(key, body,
+			this.marketInfoDao.post(key, body,
 				// onSuccess
 				(data) => {
 					this.logger.system.info('Main.postBidInfo.onSuccess: ' + JSON.stringify(data));

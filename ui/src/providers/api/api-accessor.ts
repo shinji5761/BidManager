@@ -5,6 +5,7 @@ import { Http } from '@angular/http';
 import { PortfolioApiService } from './PortfolioApiService';
 import { BrandApiService } from './BrandApiService';
 import { OneDayApiService } from './OneDayApiService';
+import { MarketInfoApiService } from './MarketInfoApiService';
 
 @Injectable()
 export class ApiAccessor {
@@ -14,6 +15,7 @@ export class ApiAccessor {
 	 * @type {string}
 	 */
 	public host: string = 'http://192.168.33.101:18456/'
+	// public host: string = 'http://163.58.164.6:18456/'
 
 	constructor(
 		private _http: Http
@@ -43,6 +45,14 @@ export class ApiAccessor {
 	 */
 	public getOneDayApiService() :OneDayApiService {
 		return new OneDayApiService(this._http, this.host + 'oneDay/');
+	}
+
+	/**
+	 * MarketInfoApiService 取得
+	 * @return MarketInfoApiService
+	 */
+	public getMarketInfoApiService() :MarketInfoApiService {
+		return new MarketInfoApiService(this._http, this.host + 'marketInfo/');
 	}
 
 }

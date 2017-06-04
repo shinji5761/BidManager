@@ -11,6 +11,7 @@ echo 'テーブルを作成します...'
 mysql -u admin -padmin bid_manager < ./sql/table/table_portfolio.sql
 mysql -u admin -padmin bid_manager < ./sql/table/table_brand.sql
 mysql -u admin -padmin bid_manager < ./sql/table/table_one_day.sql
+mysql -u admin -padmin bid_manager < ./sql/table/table_market_info.sql
 echo 'テーブルを作成しました'
 
 
@@ -18,6 +19,10 @@ echo 'テーブルを作成しました'
 echo 'ビューを作成します...'
 # mysql -u admin -padmin bid_manager < ./sql/view/portfolio_list.sql
 mysql -u admin -padmin bid_manager < ./sql/view/brand_list.sql
+mysql -u admin -padmin bid_manager < ./sql/view/market_open_price_view.sql
+mysql -u admin -padmin bid_manager < ./sql/view/market_close_price_view.sql
+mysql -u admin -padmin bid_manager < ./sql/view/market_other_price_view.sql
+mysql -u admin -padmin bid_manager < ./sql/view/market_one_day_info_view.sql
 mysql -u admin -padmin bid_manager < ./sql/view/market_price.sql
 mysql -u admin -padmin bid_manager < ./sql/view/brand_view.sql
 echo 'ビューを作成しました'

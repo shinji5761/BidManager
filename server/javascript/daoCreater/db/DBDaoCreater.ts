@@ -6,6 +6,7 @@ import { PortfolioDao } from '../../dao/portfolio/PortfolioDAO';
 import { BrandDao } from '../../dao/brand/BrandDao';
 import { BrandListDao } from '../../dao/brand_list/BrandListDao';
 import { OneDayDao } from '../../dao/one_day/OneDayDao';
+import { MarketInfoDao } from '../../dao/market_info/MarketInfoDao';
 
 // === mysql ===
 import mysql = require('mysql');
@@ -95,6 +96,14 @@ export class DBDaoCreater implements DaoCreater {
 	 */
 	public getOneDayDao() :OneDayDao {
 		return new OneDayDao(this.connection);
+	}
+
+	/**
+	 * MarketInfoDao 取得
+	 * @return {MarketInfoDao}
+	 */
+	public getMarketInfoDao() : MarketInfoDao {
+		return new MarketInfoDao(this.connection);
 	}
 
 

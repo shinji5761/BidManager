@@ -1,6 +1,6 @@
 // === Entity ===
 import { GoogleFinanceEntity } from '../javascript/entity/GoogleFinanceEntity';
-import { OneDayEntity } from '../javascript/entity/OneDayEntity';
+import { MarketInfoEntity } from '../javascript/entity/market_info/MarketInfoEntity';
 
 // === Logger ===
 import logger = require('../LogSettings');
@@ -78,22 +78,22 @@ export class GoogleFinanceService {
 	 * @param  {GoogleFinanceEntity} data
 	 * @return {OneDayEntity}
 	 */
-	public getFinanceInfo(data :GoogleFinanceEntity) :Array<OneDayEntity> {
+	public getFinanceInfo(data :GoogleFinanceEntity) :Array<MarketInfoEntity> {
 		this.logger.system.debug('GoogleFinanceService.getFinanceInfo: start');
 		this.logger.system.info('GoogleFinanceService.getFinanceInfo: data=' + JSON.stringify(data));
 		this.logger.system.info('GoogleFinanceService.getFinanceInfo: url=' + this.url + data.createQueryParams());
 
-		let result :Array<OneDayEntity>;
+		let result :Array<MarketInfoEntity>;
 		let request = new xml();
 
 		try {
 			request.open('GET', this.url + data.createQueryParams(), false);
 			request.send();
 			this.logger.system.info('GoogleFinanceService.getFinanceInfo: response=' + request.responseText);
+			result = this.convert(request.responseText, data.getBrandCode());
 		} catch(e){
 			this.logger.system.error('GoogleFinanceService.getFinanceInfo: error=' + e.getMessage());
 		}
-		result = this.convert(request.responseText, data.getBrandCode());
 		return result;
 	}
 
@@ -103,8 +103,8 @@ export class GoogleFinanceService {
 	 * @param {string} response GoogleFinance Response Data
 	 * @return {Array<OneDayEntity>}
 	 */
-	private convert(response :string, code :number) :Array<OneDayEntity> {
-		let result :Array<OneDayEntity> = [];
+	private convert(response :string, code :number) :Array<MarketInfoEntity> {
+		let result :Array<MarketInfoEntity> = [];
 
 		// ResponseDataを1行ごとに配列にする｡
 		// 1行目: MarketOpenMinute
@@ -124,17 +124,21 @@ export class GoogleFinanceService {
 		let baseData :Array<any> = resArray[GoogleFinanceService.START_FINANCAL_INDEX].split(',');
 		let marketOpenTime :number = Number(resArray[1].split('=')[1]);
 		let interval :number = Number(resArray[3].split('=')[1]);
-		let startDate :Date = this.calcInterval(Number(baseData[0].substr(1)), 0, interval);
+		let startDate :Date = this.calcInterval(Number(baseData[0].substr(1)), 0, interval, marketOpenTime);
 
-		this.logger.system.info('GoogleFinanceService.convert: startDate=' + startDate.getFullYear() + startDate.getMonth() + startDate.getDate());
+		this.logger.system.info('GoogleFinanceService.convert: startDate=' +
+			startDate.getFullYear() + '/' + startDate.getMonth() + '/' + startDate.getDate()) + ' ' +
+			startDate.getHours() + ':' + startDate.getMinutes();
 		this.logger.system.info('GoogleFinanceService.convert: marketOpenTime=' + marketOpenTime);
 		this.logger.system.info('GoogleFinanceService.convert: interval=' + interval);
 
 		// 基準日のデータを作成する
 		result.push(
-			new OneDayEntity(
+			new MarketInfoEntity(
 				code,
 				startDate,
+				startDate.getHours() < 10 ? '0' + startDate.getHours() : '' + startDate.getHours(),
+				startDate.getMinutes() < 10 ? '0' + startDate.getMinutes() : '' + startDate.getMinutes(),
 				baseData[GoogleFinanceService.OPEN_INDEX],
 				baseData[GoogleFinanceService.HIGH_INDEX],
 				baseData[GoogleFinanceService.LOW_INDEX],
@@ -148,10 +152,13 @@ export class GoogleFinanceService {
 			let data :Array<any> = resArray[index].split(',');
 
 			// 日付を求める
+			let date  = this.calcInterval(Number(baseData[GoogleFinanceService.TIME_INDEX].substr(1)), data[GoogleFinanceService.TIME_INDEX], interval, marketOpenTime);
 			result.push(
-				new OneDayEntity(
+				new MarketInfoEntity(
 					code,
-					this.calcInterval(Number(baseData[0].substr(1)), data[GoogleFinanceService.TIME_INDEX], interval),
+					date,
+					date.getHours() < 10 ? '0' + date.getHours() : '' + date.getHours(),
+					date.getMinutes() < 10 ? '0' + date.getMinutes() : '' + date.getMinutes(),
 					data[GoogleFinanceService.OPEN_INDEX],
 					data[GoogleFinanceService.HIGH_INDEX],
 					data[GoogleFinanceService.LOW_INDEX],
@@ -168,10 +175,12 @@ export class GoogleFinanceService {
 	 * @param  {number} base   基準日時
 	 * @param  {number} n 番号
 	 * @param {number} interval 間隔
+	 * @param {number} openTime 市場開始時刻
 	 * @return {Date} 日付け
 	 */
-	private calcInterval(base :number, n :number, interval :number) :Date {
+	private calcInterval(base :number, n :number, interval :number, openTime : number) :Date {
 		let target = new Date((base + n * interval) * 1000);
+		console.log('calcInterval: target = ' + JSON.stringify(target));
 		return target;
 	}
 

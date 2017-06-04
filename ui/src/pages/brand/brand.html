@@ -13,7 +13,6 @@
 
 	<ion-list>
 		<ion-grid>
-			<!-- チャート -->
 			<ion-row>
 				<!-- 始値 -->
 				<ion-col width-50>
@@ -55,7 +54,25 @@
 				</ion-col>
 			</ion-row>
 
+			<ion-row>
+				<ion-col>
+					<ion-segment [(ngModel)]="selectedTerm">
+						<ion-segment-button value="5min">
+							5分足
+						</ion-segment-button>
+						<ion-segment-button value="1day">
+							1日足
+						</ion-segment-button>
+						<ion-segment-button value="1month">
+							1ヶ月足
+						</ion-segment-button>
+					</ion-segment>
+				</ion-col>
+			</ion-row>
 
+			<hr>
+
+			<!-- チャート -->
 			<ion-row>
 				<div style="width: 100%">
 					<canvas baseChart
