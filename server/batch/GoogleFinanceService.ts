@@ -132,7 +132,6 @@ export class GoogleFinanceService {
 		this.logger.system.info('GoogleFinanceService.convert: marketOpenTime=' + marketOpenTime);
 		this.logger.system.info('GoogleFinanceService.convert: interval=' + interval);
 
-		// 基準日のデータを作成する
 		result.push(
 			new MarketInfoEntity(
 				code,
@@ -151,21 +150,43 @@ export class GoogleFinanceService {
 		for(let index :number = GoogleFinanceService.START_FINANCAL_INDEX + 1; index < resArray.length - 1; index++) {
 			let data :Array<any> = resArray[index].split(',');
 
-			// 日付を求める
-			let date  = this.calcInterval(Number(baseData[GoogleFinanceService.TIME_INDEX].substr(1)), data[GoogleFinanceService.TIME_INDEX], interval, marketOpenTime);
-			result.push(
-				new MarketInfoEntity(
-					code,
-					date,
-					date.getHours() < 10 ? '0' + date.getHours() : '' + date.getHours(),
-					date.getMinutes() < 10 ? '0' + date.getMinutes() : '' + date.getMinutes(),
-					data[GoogleFinanceService.OPEN_INDEX],
-					data[GoogleFinanceService.HIGH_INDEX],
-					data[GoogleFinanceService.LOW_INDEX],
-					data[GoogleFinanceService.CLOSE_INDEX],
-					data[GoogleFinanceService.VOLUME_INDEX]
-				)
-			);
+
+			// 基準日の場合(日付の先頭に'a'がある場合)
+			if( data[GoogleFinanceService.TIME_INDEX][0] == 'a') {
+				// 基準日のデータを作成する
+				baseData = data;
+				startDate = this.calcInterval(Number(baseData[0].substr(1)), 0, interval, marketOpenTime);
+				result.push(
+					new MarketInfoEntity(
+						code,
+						startDate,
+						startDate.getHours() < 10 ? '0' + startDate.getHours() : '' + startDate.getHours(),
+						startDate.getMinutes() < 10 ? '0' + startDate.getMinutes() : '' + startDate.getMinutes(),
+						baseData[GoogleFinanceService.OPEN_INDEX],
+						baseData[GoogleFinanceService.HIGH_INDEX],
+						baseData[GoogleFinanceService.LOW_INDEX],
+						baseData[GoogleFinanceService.CLOSE_INDEX],
+						baseData[GoogleFinanceService.VOLUME_INDEX]
+					)
+				);
+			}
+			// それ以外
+			else {
+				let date  = this.calcInterval(Number(baseData[GoogleFinanceService.TIME_INDEX].substr(1)), data[GoogleFinanceService.TIME_INDEX], interval, marketOpenTime);
+				result.push(
+					new MarketInfoEntity(
+						code,
+						date,
+						date.getHours() < 10 ? '0' + date.getHours() : '' + date.getHours(),
+						date.getMinutes() < 10 ? '0' + date.getMinutes() : '' + date.getMinutes(),
+						data[GoogleFinanceService.OPEN_INDEX],
+						data[GoogleFinanceService.HIGH_INDEX],
+						data[GoogleFinanceService.LOW_INDEX],
+						data[GoogleFinanceService.CLOSE_INDEX],
+						data[GoogleFinanceService.VOLUME_INDEX]
+					)
+				);
+			}
 		}
 		return result;
 	}

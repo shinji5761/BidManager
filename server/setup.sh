@@ -23,6 +23,8 @@ mysql -u admin -padmin bid_manager < ./sql/view/market_open_price_view.sql
 mysql -u admin -padmin bid_manager < ./sql/view/market_close_price_view.sql
 mysql -u admin -padmin bid_manager < ./sql/view/market_other_price_view.sql
 mysql -u admin -padmin bid_manager < ./sql/view/market_one_day_info_view.sql
+mysql -u admin -padmin bid_manager < ./sql/view/view_market_latest_time.sql
+mysql -u admin -padmin bid_manager < ./sql/view/view_market_info_time.sql
 mysql -u admin -padmin bid_manager < ./sql/view/market_price.sql
 mysql -u admin -padmin bid_manager < ./sql/view/brand_view.sql
 echo 'ビューを作成しました'
