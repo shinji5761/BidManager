@@ -9,6 +9,7 @@ import { PortfolioController } from './javascript/controller/portfolio/Portfolio
 import { BrandController } from './javascript/controller/brand/BrandController';
 import { OneDayController } from './javascript/controller/one_day/OneDayController';
 import { MarketInfoController } from './javascript/controller/market_info/MarketInfoController';
+import { MarketOneDayInfoController } from './javascript/controller/market_one_day_info/MarketOneDayInfoController';
 
 /**
  * メインクラス
@@ -70,6 +71,7 @@ class Server {
 		this.controller['brand'] = new BrandController();
 		this.controller['oneDay'] = new OneDayController();
 		this.controller['marketInfo'] = new MarketInfoController();
+		this.controller['marketOneDayInfo'] = new MarketOneDayInfoController();
 	}
 
 	/**
@@ -95,6 +97,10 @@ class Server {
 
 		///////////////////// MarketInfo /////////////////////
 		this.app.get(this.controller['marketInfo'].getUrl() + '/:brandCode', (req, res) => this.controller['marketInfo'].query(req, res));		// GET(複数)
+
+		///////////////////// MarketOneDayInfo /////////////////////
+		this.app.get(this.controller['marketOneDayInfo'].getUrl() + '/:brandCode', (req, res) => this.controller['marketOneDayInfo'].query(req, res));		// GET(複数)
+
 	}
 
 

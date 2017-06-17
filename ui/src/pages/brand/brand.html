@@ -54,17 +54,12 @@
 				</ion-col>
 			</ion-row>
 
+			<!-- 表示幅切替 -->
 			<ion-row>
 				<ion-col>
-					<ion-segment [(ngModel)]="selectedTerm">
-						<ion-segment-button value="5min">
-							5分足
-						</ion-segment-button>
-						<ion-segment-button value="1day">
-							1日足
-						</ion-segment-button>
-						<ion-segment-button value="1month">
-							1ヶ月足
+					<ion-segment [(ngModel)]="selectedTerm" (ngModelChange)="changeSelectTerm()">
+						<ion-segment-button [value]="term.value" *ngFor="let term of terms">
+							{{term.name}}
 						</ion-segment-button>
 					</ion-segment>
 				</ion-col>

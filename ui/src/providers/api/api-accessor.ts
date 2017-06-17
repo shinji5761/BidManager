@@ -6,6 +6,7 @@ import { PortfolioApiService } from './PortfolioApiService';
 import { BrandApiService } from './BrandApiService';
 import { OneDayApiService } from './OneDayApiService';
 import { MarketInfoApiService } from './MarketInfoApiService';
+import { MarketOneDayInfoApiService } from './MarketOneDayInfoApiService';
 
 @Injectable()
 export class ApiAccessor {
@@ -53,6 +54,15 @@ export class ApiAccessor {
 	 */
 	public getMarketInfoApiService() :MarketInfoApiService {
 		return new MarketInfoApiService(this._http, this.host + 'marketInfo/');
+	}
+
+
+	/**
+	 * MarketOneDayInfoApiService 取得
+	 * @return MarketInfoApiService
+	 */
+	public getMarketOneDayInfoApiService() : MarketOneDayInfoApiService {
+		return new MarketOneDayInfoApiService(this._http, this.host + 'marketOneDayInfo/');
 	}
 
 }

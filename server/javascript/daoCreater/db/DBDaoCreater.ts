@@ -7,6 +7,7 @@ import { BrandDao } from '../../dao/brand/BrandDao';
 import { BrandListDao } from '../../dao/brand_list/BrandListDao';
 import { OneDayDao } from '../../dao/one_day/OneDayDao';
 import { MarketInfoDao } from '../../dao/market_info/MarketInfoDao';
+import { MarketOneDayInfoDao } from '../../dao/market_one_day_info/MarketOneDayInfoDao';
 
 // === mysql ===
 import mysql = require('mysql');
@@ -106,6 +107,10 @@ export class DBDaoCreater implements DaoCreater {
 		return new MarketInfoDao(this.connection);
 	}
 
+	public getMarketOneDayInfoDao() : MarketOneDayInfoDao {
+		return new MarketOneDayInfoDao(this.connection);
+	}
+
 
 	/**
 	 * Getter(connection)
@@ -114,4 +119,5 @@ export class DBDaoCreater implements DaoCreater {
 	public getConnection() :any {
 		return this.connection;
 	}
+
 }

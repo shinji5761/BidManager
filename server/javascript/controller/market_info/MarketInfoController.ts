@@ -5,7 +5,7 @@ import { Controller } from '../common/Controller';
 import { MarketInfoService } from '../../service/market_info/MarketInfoService';
 
 /**
- * @class OneDayController
+ * @class MarketInfoController
  * @extends Controller
  */
 export class MarketInfoController extends Controller {

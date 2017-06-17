@@ -1,9 +1,8 @@
 
 /**
- * 5分足
-
+ * 1日足
  */
-export class MarketInfoEntity {
+export class MarketOneDayInfoEntity {
 	/**
 	 * 銘柄コード
 	 * @type {number}
@@ -15,18 +14,6 @@ export class MarketInfoEntity {
 	 * @type {number}
 	 */
 	private targetDate : Date;
-
-	/**
-	 * 時
-	 * @type {string}
-	 */
-	private hour : string;
-
-	/**
-	 * 分
-	 * @type {string}
-	 */
-	private min : string;
 
 	/**
 	 * 始値
@@ -62,8 +49,6 @@ export class MarketInfoEntity {
 	/**
 	 * @param  {number} brandCode	銘柄コード
 	 * @param  {Date}   targetDate	日付
-	 * @param  {string} hour		時
-	 * @param  {string} min			分
 	 * @param  {number} open		始値
 	 * @param  {number} high		高値
 	 * @param  {number} low			安値
@@ -73,8 +58,6 @@ export class MarketInfoEntity {
 	constructor(
 		brandCode	: number,
 		targetDate	: Date,
-		hour		: string,
-		min			: string,
 		open		: number,
 		high		: number,
 		low			: number,
@@ -83,8 +66,6 @@ export class MarketInfoEntity {
 	) {
 		this.brandCode = brandCode;
 		this.targetDate = targetDate;
-		this.hour = hour;
-		this.min = min;
 		this.open = open;
 		this.high = high;
 		this.low = low;
@@ -109,25 +90,6 @@ export class MarketInfoEntity {
 	public getTargetDate() : Date {
 		return this.targetDate;
 	};
-
-	/**
-	 * Getter(hour)
-	 * @public
-	 * @return {string}
-	 */
-	public getHour() : string {
-		return this.hour;
-	};
-
-	/**
-	 * Getter(min)
-	 * @public
-	 * @return {number}
-	 */
-	public getMin() : string {
-		return this.min;
-	};
-
 
 	/**
 	 * Getter(open)

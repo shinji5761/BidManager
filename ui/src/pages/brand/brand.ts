@@ -6,6 +6,7 @@ import 'rxjs/add/operator/finally';
 import { BrandEntity } from '../../entity/BrandEntity';
 import { ChartEntity } from '../../entity/ChartEntity';
 import { ChartDatasetEntity } from '../../entity/ChartDatasetEntity';
+import { SelectTermEntity } from '../../entity/SelectTermEntity';
 
 // === Library ===
 import { DialogLibrary } from '../../providers/library/DialogLibrary';
@@ -55,6 +56,16 @@ export class BrandPage implements OnInit, OnDestroy {
 	private marketInfo :any;
 
 	/**
+	 * 表示期間一覧
+	 * @type {string}
+	 */
+	private terms : Array<SelectTermEntity> = [
+		new SelectTermEntity('5分足', '5min'),
+		new SelectTermEntity('1日足', '1day'),
+		new SelectTermEntity('1ヶ月足', '1month')
+	];
+
+	/**
 	 * 表示期間
 	 * @type {string}
 	 */
@@ -92,10 +103,12 @@ export class BrandPage implements OnInit, OnDestroy {
 		private _dateLib :DateLibrary,
 		public _accessor :ApiAccessor
 	) {
-		// APIの取得
-		this.api = this._accessor.getMarketInfoApiService();
 		this.brand = this._navParams.get('brand');
-		this.selectedTerm = '5min';
+		// 表示期間の初期化(5min)
+		this.selectedTerm = this.terms[1].getValue();
+
+		// 市場情報の初期化
+		this.marketInfo = {};
 	}
 
 	/**
@@ -108,8 +121,9 @@ export class BrandPage implements OnInit, OnDestroy {
 		// チャートデータの初期化
 		this.bidChart = new ChartEntity('line', [], [], bidOptions);
 
-		// 市場情報の初期化
-		this.marketInfo = {};
+		// APIの選択
+		this.api = this.selectApi();
+		this._accessor.getMarketInfoApiService();
 
 		// チャートデータの取得
 		this.createBrand();
@@ -124,6 +138,26 @@ export class BrandPage implements OnInit, OnDestroy {
 		this.loader.dismiss();
 	}
 
+	/**
+	 * API選択処理
+	 * 表示足によってAPIを選択する
+	 */
+	private selectApi() : any {
+		let api;
+		switch(this.selectedTerm) {
+			case this.terms[0].getValue() :
+				api = this._accessor.getMarketInfoApiService();
+				break;
+			case this.terms[1].getValue() :
+				api = this._accessor.getMarketOneDayInfoApiService();
+				break;
+			case this.terms[2].getValue() :
+				api = this._accessor.getMarketInfoApiService();
+				break;
+		}
+		return api;
+	}
+
 
 	/**
 	 * CreateBrand
@@ -134,10 +168,8 @@ export class BrandPage implements OnInit, OnDestroy {
 		// ローディングダイアログ 作成･開始
 		this.loader = this._dialogLib.createGetDialog(this._loadingCtrl);
 		this.loader.present();
-		// let option = {'limit': 90};
 
 		this.api.setBrandCode(this.brand.getBrandCode());
-		// this.api.setOption(option);
 		this.api.query()
 		.finally(() => this.completion())
 		.subscribe(
@@ -167,10 +199,14 @@ export class BrandPage implements OnInit, OnDestroy {
 
 		// 取得したデータの終値を抽出
 		for(let index in data) {
-			dateArray.push(data[index]['targetDate'] + ' ' + data[index]['hour'] + ':' + data[index]['min']);
+			// 5分足の場合
+			if(this.selectedTerm == this.terms[0].getValue())
+				dateArray.push(data[index]['targetDate'] + ' ' + data[index]['hour'] + ':' + data[index]['min']);
+			else
+				dateArray.push(data[index]['targetDate']);
 			closeArray.push(data[index]['close']);
 		}
-		chartData.push(new ChartDatasetEntity(closeArray, '5分足'));
+		chartData.push(new ChartDatasetEntity(closeArray, this.selectedTerm));
 		this.bidChart.setLabels(dateArray);
 		this.bidChart.setDataset(chartData);
 	}
@@ -194,5 +230,18 @@ export class BrandPage implements OnInit, OnDestroy {
 	private completion() :void {
 		this.loader.dismiss();
 	}
+
+
+	// === イベントハンドラ ===
+	/**
+	 * 表示足変更イベントハンドラ
+	 * @private
+	 */
+	private changeSelectTerm() :void {
+		console.log('Brand.changeSelectTerm : start');
+		console.log('Brand.changeSelectTerm : selectedTerm=' + this.selectedTerm);
+		this.ngOnInit();
+	};
+
 
 }
